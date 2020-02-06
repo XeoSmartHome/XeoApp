@@ -3,7 +3,7 @@ import React from 'react';
 import {
 	Image,
 	Platform,
-	ScrollView,
+	ScrollView, StatusBar,
 	StyleSheet,
 	Text,
 	TouchableOpacity,
@@ -16,7 +16,10 @@ import DevicesScreen from "./devices/DevicesScreen";
 
 export default function HomeScreen() {
 	return (
-		<DevicesScreen/>
+		<View>
+			<StatusBar hidden={true}/>
+			<DevicesScreen/>
+		</View>
 		/*<View style={styles.container}>
 		  <ScrollView
 			style={styles.container}

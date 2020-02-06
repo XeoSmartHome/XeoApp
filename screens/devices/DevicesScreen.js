@@ -11,6 +11,7 @@ import {
 	Button,
 	Switch,
 	CheckBox,
+	SectionList
 } from 'react-native';
 
 export default class DevicesScreen extends Component {
@@ -20,28 +21,32 @@ export default class DevicesScreen extends Component {
 	}
 
 	drawDevice(device){
+		return (
+			<View style={{width: '50%', borderWidth: 2, borderRadius: 10}}>
+				<Image style={{height: 150 , width: 150}} source={require('../../assets/images/logo_xeo_nobackground.png')}/>
+				<Text style={{alignSelf: 'center', fontSize: 24}}>{device.name}</Text>
+			</View>
+		)
 	}
 
-	loadDevices(){
-		fetch('https://dashboard.xeosmarthome.com/api/devices', {
-			method: 'GET'}
-		).then((response) => response.json()
-		).then((response) => {
-			response = response.map((device) => device.name)
-			alert(response);
-		}
-		).catch((error) => {
-			alert(error);
-		});
-
-		return <Text>Text</Text>
+	loadDevices() {
+		let response = fetch('https://dashboard.xeosmarthome.com/api/devices', {
+				method: 'GET'
+			}
+		);
+		let device = {id: 1, name: 'Feeder', image: ''};
+		return (this.drawDevice(device));
 	}
 
 	render() {
 		return (
-			<View style={{alignItems: 'center'}}>
-				<Text style={{fontSize: 24}}>Devices</Text>
+
+			<View style={{}}>
+				<Text style={{fontSize: 30, alignSelf: 'center'}}>Your devices</Text>
 				{this.loadDevices()}
+				{this.loadDevices()}
+				{this.loadDevices()}
+
 			</View>
 		);
 	}
