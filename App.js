@@ -1,26 +1,70 @@
-import React from "react";
+import React, { Component } from 'react';
+import {createAppContainer } from 'react-navigation';
 import {createStackNavigator} from "react-navigation-stack";
-import LoginScreen from "./screens/login/LoginScreen";
-import DevicesScreen from "./screens/devices/DevicesScreen";
-import { createAppContainer, createSwitchNavigator } from 'react-navigation';
+import LoginScreen from "./app/screens/LoginScreen";
+import WelcomeScreen from "./app/screens/WelcomeScreen";
+import DashboardScreen from "./app/screens/DashboardScreen";
+import {Button, Text} from "react-native";
+import ControlDeviceScreen from "./app/screens/ControlDeviceScreen";
+import DeviceSettingsScreen from "./app/screens/EditDeviceScreen";
+import AccountSettings from "./app/screens/AccountSettings";
+import AddDeviceScreen from "./app/screens/AddDeviceScreen";
 
-export default class App extends React.Component {
-	render() {
-		return <AppContainer />;
+
+const NavigationStack = createStackNavigator({
+	login: {
+		screen: LoginScreen,
+		navigationOptions: {
+			title: "Login",
+			headerStyle:{backgroundColor: '#4267b2'},
+			headerTintColor: 'white',
+		}
+	},
+	dashboard: {
+		screen: DashboardScreen,
+		navigationOptions: {
+			title: "Dashboard",
+			headerLeft: null,
+			headerStyle:{backgroundColor: '#4267b2'},
+			headerTintColor: 'white',
+		}
+	},
+	add_device:{
+		screen: AddDeviceScreen,
+		navigationOptions:{
+			title: "Add new device",
+			headerStyle:{backgroundColor: '#4267b2'},
+			headerTintColor: 'white',
+		}
+	},
+	control_device: {
+		screen: ControlDeviceScreen,
+		navigationOptions:{
+			title: "Device",
+			headerStyle:{backgroundColor: '#4267b2'},
+			headerTintColor: 'white',
+		}
+	},
+	device_settings:{
+		screen: DeviceSettingsScreen,
+		navigationOptions:{
+			title: "Device settings",
+			headerStyle:{backgroundColor: '#4267b2'},
+			headerTintColor: 'white',
+		}
+	},
+	account_settings:{
+		screen: AccountSettings,
+		navigationOptions:{
+			title: "Account settings",
+			headerStyle:{backgroundColor: '#4267b2'},
+			headerTintColor: 'white',
+		}
 	}
+
 }
+);
 
-const AuthenticationNavigator = createStackNavigator({
-	SignIn: LoginScreen
-});
+const Container = createAppContainer(NavigationStack);
 
-const AppNavigator = createSwitchNavigator({
-	/*
-	 * Rather than being rendered by a screen component, the
-	 * AuthenticationNavigator is a screen component
-	 */
-	Auth: AuthenticationNavigator,
-	Home: DevicesScreen,
-});
-
-const AppContainer = createAppContainer(AppNavigator);
+export default Container;
