@@ -1,6 +1,6 @@
-import React, {Component} from "react";
-import {Picker, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity} from "react-native";
-import QRCodeScanner from 'react-native-qrcode-scanner';
+import React, {Component, useEffect, useState} from "react";
+import {Button, Modal, Picker, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
+import { BarCodeScanner } from 'expo-barcode-scanner';
 
 
 export default class AddDeviceScreen extends Component{
@@ -10,6 +10,7 @@ export default class AddDeviceScreen extends Component{
 			deviceModels: [],
 			new_device_name: '',
 			new_device_serial: '',
+			showQRCodeScanner: false
 		};
 		this.loadDeviceModels();
 	}
@@ -57,7 +58,24 @@ export default class AddDeviceScreen extends Component{
 					value={this.state.new_device_serial}
 					onChangeText={text => this.setState({new_device_serial: text}) }
 				/>
-
+				<Button title="Scan QR Code" onPress={() => {this.setState({showQRCodeScanner: true}) } }/>
+				<Modal
+					animationType="fade"
+					transparent={true}
+					visible={this.state.showQRCodeScanner}
+					onRequestClose={()=>{
+						this.setState({showQRCodeScanner: false})
+					}}
+				>
+					<View style={{flex:1, width: '70%', alignSelf:'center'}}>
+						<BarCodeScanner
+							onBarCodeScanned={({ type, data })=>{
+								this.setState({showQRCodeScanner: false, new_device_serial: data})
+							}}
+							style={StyleSheet.absoluteFillObject}
+						/>
+					</View>
+				</Modal>
 			</SafeAreaView>
 		)
 	}
@@ -89,3 +107,41 @@ const styles = StyleSheet.create({
 		margin: 10
 	}
 });
+
+
+/*
+function A222() {
+	const [hasPermission, setHasPermission] = useState(null);
+	const [scanned, setScanned] = useState(false);
+
+	useEffect(() => {
+		(async () => {
+			const { status } = await BarCodeScanner.requestPermissionsAsync();
+			setHasPermission(status === 'granted');
+		})();
+	}, []);
+
+	const handleBarCodeScanned = ({ type, data }) => {
+		setScanned(true);
+		alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+	};
+
+	if (hasPermission === null) {
+		return <Text style={{alignSelf: 'center'}}>Requesting for camera permission</Text>;
+	}
+	if (hasPermission === false) {
+		return <Text style={{alignSelf: 'center'}}>No access to camera</Text>;
+	}
+
+	return (
+		<View
+			style={{flex: 1, width: '75%', alignSelf:'center'}}>
+			<BarCodeScanner
+				onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+				style={StyleSheet.absoluteFillObject}
+			/>
+
+			{scanned && <Button title={'Tap to Scan Again'} onPress={() => setScanned(false)} />}
+		</View>
+	);
+}*/
