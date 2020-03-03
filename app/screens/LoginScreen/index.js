@@ -49,7 +49,6 @@ export default class LoginScreen extends Component{
 					style={styles.logo}
 					source={require("../../assets/images/logo_xeo_no_background.png")}
 				/>
-				<Text style={styles.title}>XeoSmartHome</Text>
 				<View style={styles.form}>
 					<Text style={styles.inputHint}>Email:</Text>
 					<TextInput
@@ -90,17 +89,17 @@ const styles = StyleSheet.create({
 	screen:{
 		flex: 1,
 		alignItems: 'center',
-		backgroundColor: '#F5F5F5'
+		backgroundColor: '#F5F5F5',
 	},
 	logo:{
 		width: 125,
 		height: 125,
 		margin: 10
 	},
-	title:{
+	/*title:{
 		fontSize: 26,
 		margin: 5
-	},
+	},<Text style={styles.title}>XeoSmartHome</Text>*/
 	form:{
 		width: '80%',
 	},

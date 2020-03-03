@@ -11,6 +11,7 @@ import {
 	SectionList,
 	TouchableOpacity,
 } from "react-native";
+import {API_LOAD_DEVICES} from "../../constants";
 
 
 export default class DashboardScreen extends Component{
@@ -35,7 +36,7 @@ export default class DashboardScreen extends Component{
 	}
 
 	loadDevices(){
-		fetch('https://dashboard.xeosmarthome.com/api/devices', {
+		fetch(API_LOAD_DEVICES, {
 				method: 'GET'
 			}
 		).then(

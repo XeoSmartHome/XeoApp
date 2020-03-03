@@ -8,48 +8,105 @@ import {
 	FlatList,
 	SafeAreaView,
 	ScrollView,
-	SectionList, ImageBackground, Modal, Slider,TouchableOpacity
+	SectionList,
+	ImageBackground,
+	Modal,
+	Slider,
+	TouchableOpacity
 } from "react-native";
+import {API_CONTROL_DEVICE, API_LOAD_DEVICE} from "../../constants";
 
 
 export default class ControlDeviceScreen extends Component{
+	static navigationOptions = ({ navigation, screenProps }) => ({
+		headerRight:
+			<TouchableOpacity onPress={ () => {
+				navigation.navigate('device_alarms', {device_id: navigation.state.params.device_id})
+			}}>
+				<Image
+					style={{height: 40, width: 40, marginRight: 15}}
+					source={require('../../assets/images/clock_icon.png')}
+				/>
+			</TouchableOpacity>,
+	});
+
 	constructor() {
 		super();
 		this.state = {
 			modalVisible: [],
-			device:{
-				id: 0,
-				name: '',
-				serial: '',
-				image: '',
-				connected: false,
-				active: false,
-				schedule_active: false,
-				last_connection: '',
-				actions:[],
-				possible_actions: [],
-			}
+			device_id: 0,
+			device_name: '',
+			device_serial: '',
+			device_image: '',
+			device_connected: false,
+			device_active: false,
+			device_schedule_active: false,
+			device_last_connection: '',
+			device_actions: [],
+			device_actions_types: [],
 		};
 	}
 
+	componentDidMount() {
+		this.loadDevice().then(()=>{
+		});
+	}
+
 	async loadDevice(){
-		fetch('https://dashboard.xeosmarthome.com/api/device/' + this.props.navigation.state.params.device_id,{
+		fetch(API_LOAD_DEVICE + this.props.navigation.state.params.device_id,{
 				method: 'GET'
 			}
 		).then(
 			(response) => response.json()
 		).then((response) => {
-				this.setState({ device: response})
-			}
-		).catch((error) => {
+			this.setState({
+				device_id: response['id'],
+				device_name: response['name'],
+				device_serial: response['serial'],
+				device_image: response['image'],
+				device_connected: response['connected'],
+				device_active: response['active'],
+				device_schedule_active: response['schedule_active'],
+				device_last_connection: response['last_connection'],
+				device_actions: response['actions'],
+				device_actions_types: response['actions_types'],
+			})
+		}).catch((error) => {
 			alert(error)
 		});
 		return ''
 	}
 
+	sendActionForExecution(action_type_id: number, parameters: []){
+		fetch(API_CONTROL_DEVICE, {
+			method: 'POST',
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				device_id: this.state.device_id,
+				possible_action_id: action_type_id,
+				parameters: parameters
+			})
+		}).then(
+			(response) => response.json()
+		).then(
+			(response) => {
+				//alert(response.message);
+			}
+		).catch(
+			(error) => {
+				alert(error);
+			}
+		)
+	}
+
 	renderParameterOption(option){
 		return(
-			<TouchableOpacity style={styleActions.optionButton}>
+			<TouchableOpacity
+				style={styleActions.optionButton}
+			>
 				<Text style={styleActions.optionButtonText}>
 					{option['label']}
 				</Text>
@@ -89,15 +146,17 @@ export default class ControlDeviceScreen extends Component{
 		)
 	}
 
-	renderActionButton(action, index){
+	renderActionButton(action_type, index){
 		return(
 			<View style={styleActions.buttonBox}>
-				<Button onPress={()=>{
-					let aux = this.state.modalVisible.slice();
-					aux[index] = true;
-					this.setState({modalVisible: aux})}
-					}
-						title={action.name}
+				<Button
+					onPress={()=>{
+						let aux = this.state.modalVisible;
+						//aux[index] = true;
+						this.setState({modalVisible: aux});
+						this.sendActionForExecution(action_type.id, [{name: 'socket', value: '1'}]);
+					}}
+					title={action_type.name}
 				/>
 				<Modal
 					animationType="slide"
@@ -110,7 +169,7 @@ export default class ControlDeviceScreen extends Component{
 					}}>
 					<FlatList
 						numColumns={1}
-						data={action['possible_parameters']}
+						data={action_type['parameters_types']}
 						renderItem={({ item, index}) => this.renderParameter(item)}
 						keyExtractor={item => String(item.id)}
 					/>
@@ -119,24 +178,19 @@ export default class ControlDeviceScreen extends Component{
 		)
 	}
 
-	componentDidMount() {
-		this.loadDevice().then(()=>{
-		});
-	}
-
 	render(){
 		return (
 			<SafeAreaView style={styles.container}>
 				<Text
 					style={styles.deviceName}>
-					Device: {this.state.device.name}
+					Device: {this.state.device_name}
 				</Text>
 				<Text
 					style={styles.deviceStatus}>
-					Status: {this.state.device.connected ? 'connected': 'disconnected'}
+					Status: {this.state.device_connected ? 'connected': 'disconnected'}
 				</Text>
 				<Text style={styles.deviceLastConnection}>
-					(Last sync: {this.state.device.last_connection})
+					(Last sync: {this.state.device_last_connection})
 				</Text>
 				<View style={styleActions.container}>
 					<Text
@@ -146,7 +200,7 @@ export default class ControlDeviceScreen extends Component{
 					<View>
 						<FlatList
 							numColumns={1}
-							data={this.state.device.possible_actions}
+							data={this.state.device_actions_types}
 							renderItem={({ item, index}) => this.renderActionButton(item, index)}
 							keyExtractor={item => String(item.id)}
 						/>
@@ -156,6 +210,14 @@ export default class ControlDeviceScreen extends Component{
 		)
 	}
 }
+
+const styleAlarms = StyleSheet.create({
+	container:{
+		flex: 1,
+		backgroundColor: 'gray',
+		marginTop: 20
+	}
+});
 
 const styleActions = StyleSheet.create({
 	container:{
@@ -199,7 +261,6 @@ const styleActions = StyleSheet.create({
 const styles = StyleSheet.create({
 	container:{
 		flex: 1,
-		paddingHorizontal: 10,
 		paddingTop: 10,
 		backgroundColor: '#F5F5F5',
 	},

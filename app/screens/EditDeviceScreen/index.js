@@ -8,7 +8,7 @@ import {
 	FlatList,
 	SafeAreaView,
 	ScrollView,
-	SectionList, ImageBackground, Modal, Slider, TextInput,
+	SectionList, ImageBackground, Modal, Slider, TextInput, TouchableOpacity,
 } from "react-native";
 
 
@@ -34,7 +34,7 @@ export default class DeviceSettingsScreen extends Component{
 
 	async loadDevice(){
 		fetch('https://dashboard.xeosmarthome.com/api/device/' + this.props.navigation.state.params.device_id,{
-				method: 'GET'
+			method: 'GET'
 			}
 		).then(
 			(response) => response.json()
@@ -71,7 +71,35 @@ export default class DeviceSettingsScreen extends Component{
 				if(response.status === 'success'){
 					alert('Name successfully changed')
 				}else {
-					alert('Invalid name')
+					alert('Error 223')
+				}
+			}
+		).catch(
+			(error) => {
+				alert(error);
+			}
+		)
+	}
+
+	removeDevice(){
+		fetch('https://dashboard.xeosmarthome.com/api/delete_device', {
+			method: 'POST',
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				id: this.props.navigation.state.params.device_id,
+			})
+		}).then(
+			(response) => response.json()
+		).then(
+			(response) => {
+				if(response.status === 'success'){
+					alert('Device deleted');
+					this.props.navigation.goBack();
+				}else {
+					alert('An error occurred')
 				}
 			}
 		).catch(
@@ -99,6 +127,18 @@ export default class DeviceSettingsScreen extends Component{
 				<View style={styles.saveButton}>
 					<Button title="save" onPress={() => {this.setDeviceName()} }/>
 				</View>
+				<Text style={styles.inputHint}>
+					Remove device from account
+				</Text>
+				<TouchableOpacity
+					onPress={ () => {
+						this.removeDevice();
+					}}
+				>
+					<Text style={styles.removeButton}>
+						Remove
+					</Text>
+				</TouchableOpacity>
 			</SafeAreaView>
 		)
 	}
@@ -127,5 +167,15 @@ const styles = StyleSheet.create({
 		alignSelf: 'flex-end',
 		width: '20%',
 		margin: 10
+	},
+	removeButton:{
+		fontSize: 18,
+		width: '30%',
+		padding: 5,
+		margin: 10,
+		backgroundColor: '#dc3545',
+		color: '#ffffff',
+		textAlign: 'center',
+		borderRadius: 5
 	}
 });
