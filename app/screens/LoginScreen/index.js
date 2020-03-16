@@ -7,6 +7,7 @@ import {
 	Button,
 	Image, KeyboardAvoidingView
 } from "react-native";
+import {API_LOGIN_URL} from "../../constants";
 
 
 export default class LoginScreen extends Component{
@@ -19,7 +20,7 @@ export default class LoginScreen extends Component{
 	}
 
 	login(){
-		fetch('https://dashboard.xeosmarthome.com/api/login', {
+		fetch(API_LOGIN_URL, {
 			method: 'POST',
 			headers: {
 				Accept: 'application/json',

@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import {ToggleButton} from "react-native-paper";
 import CronParser from "../utils/CronParser";
+import {API_DELETE_ACTION} from "../../constants";
 
 
 export default class AlarmsScreen extends Component{
@@ -45,11 +46,15 @@ export default class AlarmsScreen extends Component{
 		};
 	}
 
-	componentDidMount(): void {
-		this.loadDevice().then();
+	componentDidMount(){
+		this.willFocusSubscription = this.props.navigation.addListener(
+			'willFocus', () => {
+				this.loadDevice();
+			}
+		);
 	}
 
-	async loadDevice(){
+	loadDevice(){
 		fetch('https://dashboard.xeosmarthome.com/api/device/' + this.props.navigation.state.params.device_id,{
 				method: 'GET'
 			}
@@ -74,6 +79,27 @@ export default class AlarmsScreen extends Component{
 		return ''
 	}
 
+	requestDeleteAction(action_id: number){
+		fetch(API_DELETE_ACTION,{
+			method: 'POST',
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				action_id: action_id,
+				})
+			}
+		).then(
+			(response) => response.json()
+		).then((response) => {
+			alert(response.message);
+			this.loadDevice();
+		}).catch((error) => {
+			alert(error)
+		});
+	}
+
 	RenderAlarm(action, index){
 		//TODO: use a cron deserializer to parse device.cron
 		//let days = [false, false, false, false, false, false, false];
@@ -91,10 +117,15 @@ export default class AlarmsScreen extends Component{
 						action: action, action_type: this.state.device_actions_types.find((obj) => obj.name === action.name)
 					})
 				} }
+				onLongPress={ () => {
+					this.requestDeleteAction(action.id);
+				} }
 			>
 				<View style={styles.alarmTimeView}>
 					<Text style={styles.alarmTimeText}>
-						{hour}:{minute}
+						{hour > 9 ? String(hour) : '0' + String(hour)}
+						:
+						{minute > 9 ? String(minute) : '0' + String(minute)}
 					</Text>
 					<Text style={styles.alarmActionText}>
 						{action['name']}

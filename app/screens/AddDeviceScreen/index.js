@@ -1,36 +1,41 @@
 import React, {Component, useEffect, useState} from "react";
 import {Button, Modal, Picker, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
 import { BarCodeScanner } from 'expo-barcode-scanner';
+import {API_ADD_DEVICE, API_LOGIN_URL} from "../../constants";
+import * as ImagePicker from 'expo-image-picker';
 
 
 export default class AddDeviceScreen extends Component{
 	constructor() {
 		super();
 		this.state = {
-			deviceModels: [],
 			new_device_name: '',
 			new_device_serial: '',
 			showQRCodeScanner: false
 		};
-		this.loadDeviceModels();
 	}
 
-	loadDeviceModels(){
-		fetch('https://dashboard.xeosmarthome.com/api/device_models', {
-				method: 'GET'
-			}
-		).then(
+	requestDeviceAdd(){
+		fetch(API_ADD_DEVICE, {
+			method: 'POST',
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				name: this.state.new_device_name,
+				serial: this.state.new_device_serial,
+			}),
+		}).then(
 			(response) => response.json()
-		).then((response) => {
-			this.setState({ deviceModels:response})
+		).then(response => {
+			alert(response.message);
+			if(response.status === 'success') {
+				this.props.navigation.goBack();
+			}
 		}).catch((error) => {
 			alert(error)
-		})
-	}
-
-
-	renderDeviceModelDropdown(){
-
+		});
 	}
 
 	render(){
@@ -58,7 +63,15 @@ export default class AddDeviceScreen extends Component{
 					value={this.state.new_device_serial}
 					onChangeText={text => this.setState({new_device_serial: text}) }
 				/>
-				<Button title="Scan QR Code" onPress={() => {this.setState({showQRCodeScanner: true}) } }/>
+				<View style={{width: '40%', left: 10}}>
+					<Button title="Scan QR Code" onPress={() => {this.setState({showQRCodeScanner: true}) } }/>
+				</View>
+				<Text style={{padding: 10, fontSize: 16}}>
+					Use the phone's camera to scan the qr code of the device.
+				</Text>
+				<View style={{position: 'absolute', bottom: 40, right: 40, left: 40}}>
+					<Button title="Add device"  onPress={ () => {this.requestDeviceAdd()}}/>
+				</View>
 				<Modal
 					animationType="fade"
 					transparent={true}
@@ -69,6 +82,7 @@ export default class AddDeviceScreen extends Component{
 				>
 					<View style={{flex:1, width: '70%', alignSelf:'center'}}>
 						<BarCodeScanner
+
 							onBarCodeScanned={({ type, data })=>{
 								this.setState({showQRCodeScanner: false, new_device_serial: data})
 							}}

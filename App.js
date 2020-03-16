@@ -6,7 +6,7 @@ import WelcomeScreen from "./app/screens/WelcomeScreen";
 import DashboardScreen from "./app/screens/DashboardScreen";
 import {Button, Text} from "react-native";
 import ControlDeviceScreen from "./app/screens/ControlDeviceScreen";
-import DeviceSettingsScreen from "./app/screens/EditDeviceScreen";
+import DeviceSettingsScreen from "./app/screens/EditDeviceScreen/EditDeviceScreen";
 import AccountSettings from "./app/screens/AccountSettings";
 import AddDeviceScreen from "./app/screens/AddDeviceScreen";
 import AlarmsScreen from "./app/screens/AlarmsScreen";

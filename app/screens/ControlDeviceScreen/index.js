@@ -7,12 +7,9 @@ import {
 	Image,
 	FlatList,
 	SafeAreaView,
-	ScrollView,
-	SectionList,
-	ImageBackground,
 	Modal,
 	Slider,
-	TouchableOpacity
+	TouchableOpacity, Picker
 } from "react-native";
 import {API_CONTROL_DEVICE, API_LOAD_DEVICE} from "../../constants";
 
@@ -33,7 +30,6 @@ export default class ControlDeviceScreen extends Component{
 	constructor() {
 		super();
 		this.state = {
-			modalVisible: [],
 			device_id: 0,
 			device_name: '',
 			device_serial: '',
@@ -44,15 +40,17 @@ export default class ControlDeviceScreen extends Component{
 			device_last_connection: '',
 			device_actions: [],
 			device_actions_types: [],
+			modal_visible: false,
+			selected_action_type_index: 0,
+			action_parameters: []
 		};
 	}
 
 	componentDidMount() {
-		this.loadDevice().then(()=>{
-		});
+		this.loadDevice();
 	}
 
-	async loadDevice(){
+	loadDevice(){
 		fetch(API_LOAD_DEVICE + this.props.navigation.state.params.device_id,{
 				method: 'GET'
 			}
@@ -74,10 +72,10 @@ export default class ControlDeviceScreen extends Component{
 		}).catch((error) => {
 			alert(error)
 		});
-		return ''
 	}
 
-	sendActionForExecution(action_type_id: number, parameters: []){
+	requestExecuteAction(action_type_id: number, parameters: []){
+		parameters = parameters ? parameters : [];
 		fetch(API_CONTROL_DEVICE, {
 			method: 'POST',
 			headers: {
@@ -86,7 +84,7 @@ export default class ControlDeviceScreen extends Component{
 			},
 			body: JSON.stringify({
 				device_id: this.state.device_id,
-				possible_action_id: action_type_id,
+				action_type_id: action_type_id,
 				parameters: parameters
 			})
 		}).then(
@@ -102,47 +100,85 @@ export default class ControlDeviceScreen extends Component{
 		)
 	}
 
-	renderParameterOption(option){
-		return(
-			<TouchableOpacity
-				style={styleActions.optionButton}
-			>
-				<Text style={styleActions.optionButtonText}>
-					{option['label']}
-				</Text>
-			</TouchableOpacity>
-		)
-	}
-
-	renderParameterOptions(options){
-		return(
-			<View style={styleActions.optionsBox}>
-				<FlatList
-					numColumns={1}
-					data={options}
-					renderItem={({ item}) => this.renderParameterOption(item)}
-					keyExtractor={(item => {String(item.id)} )}
+	renderParameterInput(parameter_type, index){
+		const current_value = this.state.action_parameters[index].value;
+		return parameter_type.options.length === 0 ? (
+			<View style={{padding: '5%'}}>
+				<Text style={{fontSize: 20}}>{parameter_type.name}: {current_value}</Text>
+				<Slider
+					style={{width: 300, height: 30, borderRadius: 50}}
+					minimumValue={parameter_type.min}
+					maximumValue={parameter_type.max}
+					step={parameter_type.step}
+					value={current_value}
+					onValueChange={ (value)=> {
+						let aux = this.state.action_parameters;
+						aux[index].value = value;
+						this.setState({action_parameters: aux});
+					}}
 				/>
 			</View>
+		) : (
+			<View style={{width: '60%',margin: '5%', alignSelf: 'center', borderBottomWidth: 2}}>
+				<Text style={{fontSize: 20}}>
+					{parameter_type.name}
+				</Text>
+				<Picker
+					mode="dialog"
+					selectedValue={current_value}
+					style={{}}
+					onValueChange={(itemValue, itemIndex) => {
+						let aux = this.state.action_parameters;
+						aux[index].value = itemValue;
+						this.setState({action_parameters: aux});
+					}}>
+					{
+						parameter_type['options'].map((item) =>{
+							return(
+								<Picker.Item  label={item.label} value={item.value} key={item.id}/>
+							);
+						})
+					}
+				</Picker>
+			</View>
 		)
 	}
 
-	/*<Slider
-						maximumTrackTintColor="red"
-						minimumTrackTintColor="blue"
-						minimumValue={parameter.min}
-						maximumValue={parameter.max}
-						value={parameter.default}
-						step={parameter.step}
-						onValueChange={(value) => {this.setState({a: value})} }
-					/>*/
-
-	renderParameter(parameter){
+	renderParametersList(){
+		const action_type = this.state.device_actions_types[this.state.selected_action_type_index];
 		return(
 			<View>
-				<Text style={{alignSelf: 'center', fontSize: 24, margin: 25}}>{parameter.name}</Text>
-				{this.renderParameterOptions(parameter['options'])}
+				<FlatList
+					data={action_type['parameters_types']}
+					renderItem={ ({item, index}) => this.renderParameterInput(item, index) }
+					keyExtractor={ (item) => String(item.id) }
+				/>
+				<View style={{width: '50%', alignSelf: 'center'}}>
+					<Button
+						title={action_type.name}
+						onPress={ () => {
+							this.requestExecuteAction(action_type.id, this.state.action_parameters);
+							// close modal after action button press
+							this.setState({
+								modal_visible: false
+							});
+						} }/>
+				</View>
 			</View>
+		)
+	}
+
+	renderParametersModal(){
+		return(
+			<Modal
+				visible={this.state.modal_visible}
+				onRequestClose={ () => {
+					this.setState({modal_visible: false} );
+				} }
+				animationType="fade"
+			>
+				{this.state.modal_visible && this.renderParametersList()}
+			</Modal>
 		)
 	}
 
@@ -151,29 +187,24 @@ export default class ControlDeviceScreen extends Component{
 			<View style={styleActions.buttonBox}>
 				<Button
 					onPress={()=>{
-						let aux = this.state.modalVisible;
-						//aux[index] = true;
-						this.setState({modalVisible: aux});
-						this.sendActionForExecution(action_type.id, [{name: 'socket', value: '1'}]);
+						if (action_type['parameters_types'].length === 0) {
+							this.requestExecuteAction(action_type.id);
+						} else {
+							let parameters = action_type['parameters_types'].map( (item) => (
+								{
+									value: item.default,
+									parameter_type_id: item.id
+								})
+							);
+							this.setState({
+								action_parameters: parameters,
+								selected_action_type_index: index,
+								modal_visible: true
+							});
+						}
 					}}
 					title={action_type.name}
 				/>
-				<Modal
-					animationType="slide"
-					transparent={false}
-					visible={this.state.modalVisible[index]===undefined ? false: this.state.modalVisible[index]}
-					onRequestClose={()=>{
-						let aux = this.state.modalVisible.slice();
-						aux[index] = false;
-						this.setState({modalVisible: aux})
-					}}>
-					<FlatList
-						numColumns={1}
-						data={action_type['parameters_types']}
-						renderItem={({ item, index}) => this.renderParameter(item)}
-						keyExtractor={item => String(item.id)}
-					/>
-				</Modal>
 			</View>
 		)
 	}
@@ -206,18 +237,11 @@ export default class ControlDeviceScreen extends Component{
 						/>
 					</View>
 				</View>
+				{this.renderParametersModal()}
 			</SafeAreaView>
 		)
 	}
 }
-
-const styleAlarms = StyleSheet.create({
-	container:{
-		flex: 1,
-		backgroundColor: 'gray',
-		marginTop: 20
-	}
-});
 
 const styleActions = StyleSheet.create({
 	container:{
@@ -278,3 +302,46 @@ const styles = StyleSheet.create({
 		padding: 10
 	}
 });
+
+/*<Slider
+					maximumTrackTintColor="red"
+					minimumTrackTintColor="blue"
+					minimumValue={parameter.min}
+					maximumValue={parameter.max}
+					value={parameter.default}
+					step={parameter.step}
+					onValueChange={(value) => {this.setState({a: value})} }
+				/>*/
+/*renderParameterOption(option){
+		return(
+			<TouchableOpacity
+				style={styleActions.optionButton}
+			>
+				<Text style={styleActions.optionButtonText}>
+					{option['label']}
+				</Text>
+			</TouchableOpacity>
+		)
+	}
+
+	renderParameterOptions(options){
+		return(
+			<View style={styleActions.optionsBox}>
+				<FlatList
+					numColumns={1}
+					data={options}
+					renderItem={({ item}) => this.renderParameterOption(item)}
+					keyExtractor={(item => {String(item.id)} )}
+				/>
+			</View>
+		)
+	}
+
+	renderParameter(parameter){
+		return(
+			<View>
+				<Text style={{alignSelf: 'center', fontSize: 24, margin: 25}}>{parameter.name}</Text>
+				{this.renderParameterOptions(parameter['options'])}
+			</View>
+		)
+	}*/

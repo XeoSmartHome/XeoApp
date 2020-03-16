@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import CronParser from "../utils/CronParser";
+import {API_ADD_ACTION, API_LOAD_DEVICE, API_UPDATE_ACTION} from "../../constants";
 
 
 function serializeCron(minute:string, hour:string, day_of_month:string, month: string, day_of_week:string, year:string) {
@@ -56,7 +57,7 @@ export default class EditAlarmScreen extends Component{
 					action_active: action['active'],
 					parameters: action['parameters'],
 					action_uri: action_descriptor['uri'],
-					possible_parameters: action_descriptor['parameters_types'],
+					parameters_types: action_descriptor['parameters_types'],
 					hour: cronParser.hours[0],
 					minute: cronParser.minutes[0],
 					repeat_days: cronParser.days_of_week,
@@ -66,7 +67,7 @@ export default class EditAlarmScreen extends Component{
 	}
 
 	loadDevice(){
-		fetch('https://dashboard.xeosmarthome.com/api/device/' + this.props.navigation.state.params.device_id,{
+		fetch(API_LOAD_DEVICE + this.props.navigation.state.params.device_id,{
 				method: 'GET'
 			}
 		).then(
@@ -79,7 +80,7 @@ export default class EditAlarmScreen extends Component{
 		});
 	}
 
-	requestActionUpdate(){
+	requestActionUpdate(parameters: [] = []){
 		// TODO: finish this ****
 		let repeat_days = '';
 		for(let i = 0; i < 7; i++)
@@ -95,7 +96,7 @@ export default class EditAlarmScreen extends Component{
 			repeat_days,
 			'*'
 		);
-		fetch('https://dashboard.xeosmarthome.com/api/update_action', {
+		fetch(API_UPDATE_ACTION, {
 			method: 'POST',
 			headers: {
 				Accept: 'application/json',
@@ -104,6 +105,7 @@ export default class EditAlarmScreen extends Component{
 			body: JSON.stringify({
 				action_id: this.state.action_id,
 				cron:cron,
+				parameters: parameters
 			})
 		}).then(
 			(response) => response.json()
@@ -137,20 +139,20 @@ export default class EditAlarmScreen extends Component{
 		)
 	}
 
-	renderParameterInput(possible_parameter, index){
-		let parameter = this.state.parameters.find( (obj) => obj.name === possible_parameter['name']);
+	renderParameterInput(parameter_type, index){
+		let parameter = this.state.parameters.find( (obj) => obj.name === parameter_type['name']);
 		return(
 			<View>
 				<Text style={{fontSize: 20}}>
-					{possible_parameter['name']}: {parameter.value}
+					{parameter_type['name']}: {parameter_type['default']} {parameter_type['unit']}
 				</Text>
 				<Slider style={styles.slider}
 					thumbTintColor="#4267b2"
 					minimumTrackTintColor="#abcaff"
-					value={parameter['value']}
-					minimumValue={possible_parameter['min']}
-					maximumValue={possible_parameter['max']}
-					step={possible_parameter['step']}
+					value={parameter_type['default']}
+					minimumValue={parameter_type['min']}
+					maximumValue={parameter_type['max']}
+					step={parameter_type['step']}
 					onValueChange={ (value) => {
 						let aux = this.state.parameters;
 						aux[index]['value'] = value;
@@ -162,7 +164,7 @@ export default class EditAlarmScreen extends Component{
 	}
 
 	requestAddAction(device_id, action_type_id){
-		fetch('https://dashboard.xeosmarthome.com/api/add_action', {
+		fetch(API_ADD_ACTION, {
 			method: 'POST',
 			headers: {
 				Accept: 'application/json',
@@ -208,9 +210,6 @@ export default class EditAlarmScreen extends Component{
 					keyExtractor={ (item) => String(item['id']) }
 				/>
 			</View>
-			//TODO: get a list of possible actions for this device, and render a select method,
-			// then make a request to api
-			// then set state.create_new to false
 		)
 	}
 
@@ -245,13 +244,13 @@ export default class EditAlarmScreen extends Component{
 				</View>
 				<FlatList
 					style={styles.flatList}
-					data={this.state.possible_parameters}
+					data={this.state.parameters_types}
 					numColumns={1}
 					renderItem={ ({item, index}) => this.renderParameterInput(item, index) }
 					keyExtractor={ (item) => String(item['id']) }
 				/>
 				<Button title="save" onPress={() => {
-					this.requestActionUpdate();
+					this.requestActionUpdate(this.state.parameters);
 				}}/>
 
 				{this.state.show_clock_input && (<DateTimePicker

@@ -11,7 +11,7 @@ import {
 	SectionList,
 	TouchableOpacity,
 } from "react-native";
-import {API_LOAD_DEVICES} from "../../constants";
+import {API_DEVICE_IMAGES_URL, API_LOAD_DEVICES} from "../../constants";
 
 
 export default class DashboardScreen extends Component{
@@ -32,7 +32,14 @@ export default class DashboardScreen extends Component{
 			devices: [],
 			refreshing: true
 		};
-		this.loadDevices();
+	}
+
+	componentDidMount(){
+		this.willFocusSubscription = this.props.navigation.addListener(
+			'willFocus', () => {
+				this.loadDevices();
+			}
+		);
 	}
 
 	loadDevices(){
@@ -58,7 +65,7 @@ export default class DashboardScreen extends Component{
 				<View style={styles.imageView}>
 					<Image
 						style={styles.deviceImage}
-						source={{uri: "https://dashboard.xeosmarthome.com/device_images/" + device.image}}
+						source={{uri: API_DEVICE_IMAGES_URL + device.image}}
 					/>
 				</View>
 
