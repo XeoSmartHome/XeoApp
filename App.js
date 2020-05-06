@@ -1,16 +1,18 @@
-import React, { Component } from 'react';
+import React from 'react';
 import {createAppContainer } from 'react-navigation';
 import {createStackNavigator} from "react-navigation-stack";
-import LoginScreen from "./app/screens/LoginScreen";
-import WelcomeScreen from "./app/screens/WelcomeScreen";
 import DashboardScreen from "./app/screens/DashboardScreen";
-import {Button, Text} from "react-native";
 import ControlDeviceScreen from "./app/screens/ControlDeviceScreen";
 import DeviceSettingsScreen from "./app/screens/EditDeviceScreen/EditDeviceScreen";
-import AccountSettings from "./app/screens/AccountSettings";
+import AccountSettings from "./app/screens/AccountManagement/AccountSettingsScreen";
 import AddDeviceScreen from "./app/screens/AddDeviceScreen";
 import AlarmsScreen from "./app/screens/AlarmsScreen";
 import EditAlarmScreen from "./app/screens/AlarmsScreen/EditAlarmScreen";
+import LoginScreen from "./app/screens/LoginScreen";
+import AccountOptionsScreen from "./app/screens/AccountManagement/AccountOptionsScreen";
+import UserActivityScreen from "./app/screens/AccountManagement/UserActivityScreen";
+import CreateAccount from "./app/screens/CreateAccountScreen";
+import {BOOTSTRAP_COLOR_LIGHT, XEO_BLUE} from "./app/constants";
 
 
 const NavigationStack = createStackNavigator({
@@ -55,14 +57,6 @@ const NavigationStack = createStackNavigator({
 			headerTintColor: 'white',
 		}
 	},
-	account_settings:{
-		screen: AccountSettings,
-		navigationOptions:{
-			title: "Account settings",
-			headerStyle:{backgroundColor: '#4267b2'},
-			headerTintColor: 'white',
-		}
-	},
 	device_alarms:{
 		screen: AlarmsScreen,
 		navigationOptions:{
@@ -77,6 +71,39 @@ const NavigationStack = createStackNavigator({
 			title: "",
 			headerStyle:{backgroundColor: '#4267b2'},
 			headerTintColor: 'white',
+		}
+	},
+	account_options:{
+		screen: AccountOptionsScreen,
+		navigationOptions:{
+			title: '',
+			headerStyle: {backgroundColor: '#4267b2'},
+			headerTintColor: 'white'
+		}
+	}
+	,
+	account_settings: {
+		screen: AccountSettings,
+		navigationOptions:{
+			title: "Account settings",
+			headerStyle:{backgroundColor: '#4267b2'},
+			headerTintColor: 'white',
+		}
+	},
+	user_activity:{
+		screen: UserActivityScreen,
+		navigationOptions:{
+			title: 'Activity',
+			headerStyle:{backgroundColor: '#4267b2'},
+			headerTintColor: 'white',
+		}
+	},
+	create_account:{
+		screen: CreateAccount,
+		navigationOptions: {
+			title: "Create account",
+			headerStyle:{backgroundColor: XEO_BLUE},
+			headerTintColor: BOOTSTRAP_COLOR_LIGHT,
 		}
 	}
 

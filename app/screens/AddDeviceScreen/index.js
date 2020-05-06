@@ -38,6 +38,13 @@ export default class AddDeviceScreen extends Component{
 		});
 	}
 
+	openQRCodeScanner(){
+		BarCodeScanner.requestPermissionsAsync().then( (status) => {
+			if(status.granted)
+				this.setState({showQRCodeScanner: true});
+		});
+	}
+
 	render(){
 		return(
 			<SafeAreaView style={styles.container}>
@@ -48,7 +55,7 @@ export default class AddDeviceScreen extends Component{
 					style={styles.inputText}
 					placeholder="Device name"
 					autoCorrect={true}
-					autoCapitalize='none'
+					autoCapitalize='sentences'
 					value={this.state.new_device_name}
 					onChangeText={text => this.setState({new_device_name: text}) }
 				/>
@@ -64,7 +71,7 @@ export default class AddDeviceScreen extends Component{
 					onChangeText={text => this.setState({new_device_serial: text}) }
 				/>
 				<View style={{width: '40%', left: 10}}>
-					<Button title="Scan QR Code" onPress={() => {this.setState({showQRCodeScanner: true}) } }/>
+					<Button title="Scan QR Code" onPress={this.openQRCodeScanner.bind(this)}/>
 				</View>
 				<Text style={{padding: 10, fontSize: 16}}>
 					Use the phone's camera to scan the qr code of the device.
@@ -82,7 +89,6 @@ export default class AddDeviceScreen extends Component{
 				>
 					<View style={{flex:1, width: '70%', alignSelf:'center'}}>
 						<BarCodeScanner
-
 							onBarCodeScanned={({ type, data })=>{
 								this.setState({showQRCodeScanner: false, new_device_serial: data})
 							}}

@@ -5,9 +5,11 @@ import {
 	StyleSheet,
 	TextInput,
 	Button,
-	Image, KeyboardAvoidingView
+	Image,
+	TouchableOpacity,
+	AsyncStorage
 } from "react-native";
-import {API_LOGIN_URL} from "../../constants";
+import {API_LOGIN_URL, BOOTSTRAP_COLOR_LIGHT, BOOTSTRAP_COLOR_PRIMARY, BOOTSTRAP_COLOR_SECONDARY} from "../constants";
 
 
 export default class LoginScreen extends Component{
@@ -16,7 +18,15 @@ export default class LoginScreen extends Component{
 		this.state = {
 			email: "neco31@yahoo.com",
 			password: "12345678",
-		}
+		};
+		AsyncStorage.getItem('session_cookie').then(value => {
+			if (value !== '')
+				this.props.navigation.replace('dashboard');
+		});
+	}
+
+	save_session(){
+
 	}
 
 	login(){
@@ -31,16 +41,24 @@ export default class LoginScreen extends Component{
 				password: this.state.password,
 			}),
 		}).then(
-			(response) => response.json()
+			(response) => {
+				const cookie = response.headers['map']['set-cookie'].split('=')[1].split(';')[0];
+				AsyncStorage.setItem('session_cookie', cookie).then();
+				return response.json();
+			}
 		).then(response => {
 			if(response.status === 'success') {
-				this.props.navigation.navigate('dashboard')
+				this.props.navigation.replace('dashboard');
 			}else {
-				alert('bad credentials')
+				alert('bad credentials');
 			}
 		}).catch((error) => {
 			alert(error)
 		});
+	}
+
+	create_account(){
+		this.props.navigation.navigate('create_account');
 	}
 
 	render(){
@@ -48,7 +66,7 @@ export default class LoginScreen extends Component{
 			<View style={styles.screen}>
 				<Image
 					style={styles.logo}
-					source={require("../../assets/images/logo_xeo_no_background.png")}
+					source={require("../assets/images/logo_xeo_no_background.png")}
 				/>
 				<View style={styles.form}>
 					<Text style={styles.inputHint}>Email:</Text>
@@ -70,14 +88,20 @@ export default class LoginScreen extends Component{
 						value={this.state.password}
 						onChangeText={text => this.setState({password: text})}
 					/>
-					<View style={styles.loginButton}>
-						<Button
-							title="login"
-							onPress={() => this.login()}
-						/>
-					</View>
-					<View style={styles.newAccountButton}>
-						<Button title="create new account" color="gray" onPress={() => alert("not implemented yet")}/>
+					<View style={{top: 20}}>
+						<TouchableOpacity
+							style={[styles.button, styles.loginButton]}
+							onPress={this.login.bind(this)}
+						>
+							<Text style={styles.buttonText}>Sign in</Text>
+						</TouchableOpacity>
+
+						<TouchableOpacity
+							style={[styles.button, styles.newAccountButton]}
+							onPress={this.create_account.bind(this)}
+						>
+							<Text style={styles.buttonText}>Create account</Text>
+						</TouchableOpacity>
 					</View>
 				</View>
 			</View>
@@ -97,10 +121,6 @@ const styles = StyleSheet.create({
 		height: 125,
 		margin: 10
 	},
-	/*title:{
-		fontSize: 26,
-		margin: 5
-	},<Text style={styles.title}>XeoSmartHome</Text>*/
 	form:{
 		width: '80%',
 	},
@@ -111,17 +131,24 @@ const styles = StyleSheet.create({
 	textInput:{
 		height: 50,
 		fontSize: 18,
-		borderBottomWidth: 2
+		borderBottomWidth: 2,
+	},
+	button:{
+		padding: 8,
+		marginVertical: 10,
+		alignSelf: 'center',
+		borderRadius: 8,
+		width: '70%',
+	},
+	buttonText:{
+		color: BOOTSTRAP_COLOR_LIGHT,
+		fontSize: 20,
+		alignSelf: 'center'
 	},
 	loginButton:{
-		margin: 5,
-		width: '40%',
-		alignSelf: 'center',
-		padding: 10
+		backgroundColor: BOOTSTRAP_COLOR_PRIMARY
 	},
 	newAccountButton:{
-		alignSelf: 'center',
-		width: '50%',
-		padding: 10
+		backgroundColor: BOOTSTRAP_COLOR_SECONDARY,
 	}
 });

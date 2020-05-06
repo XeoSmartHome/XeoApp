@@ -9,11 +9,11 @@
             "android",
             "web"
         ],
-        "version": "1.0.0",
+        "version": "1.0.1",
         "orientation": "portrait",
         "icon": "./app/assets/images/logo_xeo_no_background.png",
         "splash": {
-            "image": "./app/assets/images/logo_xeo_no_background.png",
+            "image": "./app/assets/images/splash_screen.png",
             "resizeMode": "contain",
             "backgroundColor": "#ffffff"
         },

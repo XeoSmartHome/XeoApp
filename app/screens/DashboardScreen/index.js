@@ -11,14 +11,17 @@ import {
 	SectionList,
 	TouchableOpacity,
 } from "react-native";
-import {API_DEVICE_IMAGES_URL, API_LOAD_DEVICES} from "../../constants";
+import {API_DEFAULT_IMAGES_URL, API_DEVICE_IMAGES_URL, API_LOAD_DEVICES} from "../../constants";
+import io from "socket.io-client";
 
+
+//const socket = io("ws://xeosmarthome.com/socket.io");
 
 export default class DashboardScreen extends Component{
 	static navigationOptions = ({ navigation, screenProps }) => ({
 		title: "My Profile!",
 		headerRight:
-			<TouchableOpacity onPress={()=>{navigation.navigate('account_settings')}}>
+			<TouchableOpacity onPress={()=>{navigation.navigate('account_options')}}>
 				<Image
 					style={{height: 40, width: 40, margin: 10}}
 					source={require('../../assets/images/user_icon.png')}
@@ -32,6 +35,13 @@ export default class DashboardScreen extends Component{
 			devices: [],
 			refreshing: true
 		};
+		this.startWebSocket().then(()=>{});
+	}
+
+	async startWebSocket(){
+		/*socket.on("chat message", msg => {
+			console.warn(msg);
+		});*/
 	}
 
 	componentDidMount(){
@@ -65,7 +75,7 @@ export default class DashboardScreen extends Component{
 				<View style={styles.imageView}>
 					<Image
 						style={styles.deviceImage}
-						source={{uri: API_DEVICE_IMAGES_URL + device.image}}
+						source={{uri: device.image !== '' ? API_DEVICE_IMAGES_URL + device.image : API_DEFAULT_IMAGES_URL + device['default_image']}}
 					/>
 				</View>
 

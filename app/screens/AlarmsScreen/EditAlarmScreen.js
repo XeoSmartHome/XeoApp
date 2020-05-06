@@ -144,12 +144,12 @@ export default class EditAlarmScreen extends Component{
 		return(
 			<View>
 				<Text style={{fontSize: 20}}>
-					{parameter_type['name']}: {parameter_type['default']} {parameter_type['unit']}
+					{parameter_type['name']}: {parameter['value']} {parameter_type['unit']}
 				</Text>
 				<Slider style={styles.slider}
 					thumbTintColor="#4267b2"
 					minimumTrackTintColor="#abcaff"
-					value={parameter_type['default']}
+					value={parameter['value']}
 					minimumValue={parameter_type['min']}
 					maximumValue={parameter_type['max']}
 					step={parameter_type['step']}
