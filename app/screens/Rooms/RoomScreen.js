@@ -10,67 +10,57 @@ import {
 	ScrollView,
 	SectionList,
 	TouchableOpacity,
+	TextInput,
+	BackHandler
 } from "react-native";
-import {API_DEFAULT_IMAGES_URL, API_DEVICE_IMAGES_URL, API_LOAD_DEVICES} from "../../constants";
-import io from "socket.io-client";
+import {
+	API_DEFAULT_IMAGES_URL,
+	API_DEVICE_IMAGES_URL,
+	API_LOAD_DEVICES,
+	API_URL,
+	BOOTSTRAP_COLOR_LIGHT,
+	BOOTSTRAP_COLOR_PRIMARY,
+	XEO_BLUE
+} from "../../constants";
+import {string} from "prop-types";
 
 
-//const socket = io("ws://xeosmarthome.com/socket.io");
-
-export default class DashboardScreen extends Component{
+export default class RoomScreen extends Component {
 	static navigationOptions = ({ navigation, screenProps }) => ({
-		title: "My Profile!",
-		headerRight:
-			<TouchableOpacity onPress={()=>{navigation.navigate('account_options')}}>
-				<Image
-					style={{height: 40, width: 40, margin: 10}}
-					source={require('../../assets/images/user_icon.png')}
-				/>
-			</TouchableOpacity>,
+		title: 'Room: ' + ( navigation.state.params.room_name === undefined ? '' : navigation.state.params.room_name )
 	});
 
 	constructor() {
 		super();
 		this.state = {
+			house_id: 0,
+			room_id: 0,
 			devices: [],
 			refreshing: true
 		};
-		this.startWebSocket().then(()=>{});
-	}
-
-	async startWebSocket(){
-		/*socket.on("chat message", msg => {
-			console.warn(msg);
-		});*/
 	}
 
 	componentDidMount(){
+		this.state.house_id = this.props.navigation.state.params.house_id;
+		this.state.room_id = this.props.navigation.state.params.room_id;
+
 		this.willFocusSubscription = this.props.navigation.addListener(
 			'willFocus', () => {
-				this.loadDevices();
+				this.loadDevicesFromRoom();
 			}
 		);
 	}
 
-	loadDevices(){
-		fetch(API_LOAD_DEVICES, {
-				method: 'GET'
-			}
-		).then(
-			(response) => response.json()
-		).then((response) => {
-			this.setState({ devices: response, refreshing: false})
-		}
-		).catch((error) => {
-			alert(error)
-		})
+	componentWillUnmount(){
 	}
 
 	DeviceBox(device) {
 		return (
 			<TouchableOpacity
 				onPress={ (event) =>{this.props.navigation.navigate('control_device', {device_id: device.id})}}
-				onLongPress={()=>{this.props.navigation.navigate('device_settings', {device_id: device.id})}}
+				onLongPress={()=>{
+					this.props.navigation.navigate('room_device_options', {device_id: device.id, house_id: this.state.house_id, room_id: this.state.room_id, room_name: this.state.room_name})
+				}}
 				style={styles.deviceBox}>
 				<View style={styles.imageView}>
 					<Image
@@ -80,7 +70,7 @@ export default class DashboardScreen extends Component{
 				</View>
 
 				<View style={styles.nameView}>
-					<Text style={styles.deviceName}>{device.name}</Text>
+					<Text style={styles.deviceName}>{ device.name.length < 15 ? device.name : device.name.substr(0, 14) + '...' }</Text>
 				</View>
 			</TouchableOpacity>
 		);
@@ -95,25 +85,44 @@ export default class DashboardScreen extends Component{
 					data={this.state.devices}
 					renderItem={({ item}) => this.DeviceBox(item)}
 					keyExtractor={item => String(item.id)}
-					onRefresh={()=>{this.loadDevices()}}
+					onRefresh={()=>{this.loadDevicesFromRoom()}}
 				/>
-				{this.AddDeviceButton()}
+				<TouchableOpacity
+					onPress={()=> {
+						this.props.navigation.navigate('add_device_in_room', {house_id: this.state.house_id, room_id: this.state.room_id, room_name: this.state.room_name});
+					}}
+					style={styles.fab}
+				>
+					<Text style={styles.fabIcon}>+</Text>
+				</TouchableOpacity>
 			</SafeAreaView>
 		)
 	}
 
-	AddDeviceButton(){
-		return (
-			<TouchableOpacity
-				onPress={()=> {
-					this.props.navigation.navigate('add_device');
-				}}
-				style={styles.fab}
-			>
-				<Text style={styles.fabIcon}>+</Text>
-			</TouchableOpacity>
-		)
+	loadDevicesFromRoom(){
+		fetch(API_URL + 'house/' + 1 + '/room/' + this.state.room_id, {
+				method: 'GET'
+			}
+		).then(
+			(response) => response.json()
+		).then((response) => {
+			if(response.status === 'error'){
+				alert(response.message);
+				return;
+			}
+			this.props.navigation.setParams({
+				room_name: response['name']
+			});
+			this.setState({
+				room_name: response['name'],
+				devices: response['devices'],
+				refreshing: false
+			});
+		}).catch((error) => {
+			alert(error);
+		})
 	}
+
 }
 
 
@@ -151,7 +160,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center'
 	},
 	deviceName:{
-		fontSize: 20
+		fontSize: 18
 	},
 	fab: {
 		position: 'absolute',

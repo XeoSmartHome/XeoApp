@@ -1,3 +1,5 @@
+import {StyleSheet} from "react-native";
+
 export const API_URL = 'https://dashboard.xeosmarthome.com/api/';
 export const API_STATUS_URL = API_URL + 'status';
 export const API_LOGIN_URL = API_URL + 'login';
@@ -13,6 +15,7 @@ export const API_ADD_ACTION = API_URL + 'add_action';
 export const API_UPDATE_ACTION = API_URL + 'update_action';
 export const API_DELETE_ACTION = API_URL + 'delete_action';
 export const API_UPDATE_DEVICE_IMAGE = API_URL + 'update_device_image';
+export const API_UPDATE_PASSWORD = API_URL + 'update_password';
 export const XEO_BLUE = '#4267b2';
 export const BOOTSTRAP_COLOR_PRIMARY = '#0275d8';
 export const BOOTSTRAP_COLOR_SECONDARY = '#6c757d';
@@ -21,3 +24,22 @@ export const BOOTSTRAP_COLOR_WARNING = '#ffc107';
 export const BOOTSTRAP_COLOR_DANGER = '#dc3545';
 export const BOOTSTRAP_COLOR_LIGHT = '#f8f9fa';
 export const BOOTSTRAP_COLOR_DARK = '#343a40';
+
+
+export const menu_style = StyleSheet.create({
+	button:{
+		alignSelf: 'center',
+		width: '100%',
+		padding: 14,
+	},
+	button_text:{
+		alignSelf: 'center',
+		fontSize: 18
+	},
+	separator:{
+		alignSelf: 'center',
+		width: '94%',
+		borderBottomWidth: 2,
+		borderBottomColor: BOOTSTRAP_COLOR_SECONDARY
+	}
+});

@@ -9,11 +9,11 @@ import {
 	TouchableOpacity,
 	Image,
 	Slider,
-	Alert, Button, Modal
+	Alert, Button, Modal, Picker
 } from "react-native";
 import DateTimePicker from '@react-native-community/datetimepicker';
-import CronParser from "../utils/CronParser";
-import {API_ADD_ACTION, API_LOAD_DEVICE, API_UPDATE_ACTION} from "../../constants";
+import CronParser from "../../utils/CronParser";
+import {API_ADD_ACTION, API_LOAD_DEVICE, API_UPDATE_ACTION, XEO_BLUE} from "../../../constants";
 
 
 function serializeCron(minute:string, hour:string, day_of_month:string, month: string, day_of_week:string, year:string) {
@@ -38,6 +38,8 @@ export default class EditAlarmScreen extends Component{
 			repeat_days: [false, false, false, false, false, false, false],
 			create_new: false,
 			possible_actions: [],
+			show_action_type_description_modal: false,
+			action_type_description: '',
 		};
 
 	};
@@ -52,6 +54,7 @@ export default class EditAlarmScreen extends Component{
 			cronParser.deserializeCron(action['cron']);
 			this.setState(
 				{
+					device_id: this.props.navigation.state.params['device_id'],
 					action_id: action['id'],
 					action_name: action_descriptor['name'],
 					action_active: action['active'],
@@ -103,6 +106,7 @@ export default class EditAlarmScreen extends Component{
 				'Content-Type': 'application/json',
 			},
 			body: JSON.stringify({
+				device_id: this.state.device_id,
 				action_id: this.state.action_id,
 				cron:cron,
 				parameters: parameters
@@ -141,24 +145,51 @@ export default class EditAlarmScreen extends Component{
 
 	renderParameterInput(parameter_type, index){
 		let parameter = this.state.parameters.find( (obj) => obj.name === parameter_type['name']);
-		return(
+		//console.warn(parameter);
+		if(parameter_type['options'].length === 0){
+			return(
+				<View>
+					<Text style={{fontSize: 20}}>
+						{parameter_type['name']}: {parameter['value']} {parameter_type['unit']}
+					</Text>
+					<Slider style={styles.slider}
+							thumbTintColor="#4267b2"
+							minimumTrackTintColor="#abcaff"
+							value={parameter['value']}
+							minimumValue={parameter_type['min']}
+							maximumValue={parameter_type['max']}
+							step={parameter_type['step']}
+							onValueChange={ (value) => {
+								let aux = this.state.parameters;
+								aux[index]['value'] = value;
+								this.setState( {parameters: aux} );
+							} }
+					/>
+				</View>
+			)
+		}
+		return (
 			<View>
 				<Text style={{fontSize: 20}}>
 					{parameter_type['name']}: {parameter['value']} {parameter_type['unit']}
 				</Text>
-				<Slider style={styles.slider}
-					thumbTintColor="#4267b2"
-					minimumTrackTintColor="#abcaff"
-					value={parameter['value']}
-					minimumValue={parameter_type['min']}
-					maximumValue={parameter_type['max']}
-					step={parameter_type['step']}
-					onValueChange={ (value) => {
+				<Picker
+					mode="dialog"
+					selectedValue={parameter['value']}
+					style={{}}
+					onValueChange={(itemValue, itemIndex) => {
 						let aux = this.state.parameters;
-						aux[index]['value'] = value;
+						aux[index]['value'] = itemValue;
 						this.setState( {parameters: aux} );
-					} }
-				/>
+					}}>
+					{
+						parameter_type['options'].map((item) =>{
+							return(
+								<Picker.Item label={item.label} value={item.value} key={item.id}/>
+							);
+						})
+					}
+				</Picker>
 			</View>
 		)
 	}
@@ -177,25 +208,38 @@ export default class EditAlarmScreen extends Component{
 		}).then(
 			(response) => response.json()
 		).then((response) => {
-				alert(response['message'])
+				//alert(response['message'])
 			}
 		).catch((error) => {
 			alert(error)
 		});
 	}
 
+	showActionTypeDescription(description){
+		this.setState({show_action_type_description_modal: true, action_type_description: description});
+	}
+
 	renderPossibleActionItem(action_type, index){
 		return(
-			<TouchableOpacity
-				style={{alignSelf: 'center', borderWidth: 3, borderColor: '#4267b2', padding: 10, margin: 10, borderRadius: 10, width: '50%'}}
-				onPress={ () => {
-					this.requestAddAction(this.state.device_id, action_type.id);
-					//this.setState({create_new: false});
-					this.props.navigation.goBack();
-				}}
-			>
-				<Text style={{alignSelf: 'center', fontSize: 22}}>{action_type["name"]}</Text>
-			</TouchableOpacity>
+			<View style={styles.separator}>
+				<TouchableOpacity
+					style={{
+						width: '96%',
+						padding: 10,
+						alignSelf: 'center'
+					}}
+					onPress={ () => {
+						this.requestAddAction(this.state.device_id, action_type.id);
+						this.props.navigation.goBack();
+					}}
+					onLongPress={ () => {
+						this.showActionTypeDescription(action_type['description']);
+					}}
+				>
+					<Text style={{alignSelf: 'center', fontSize: 22}}>{action_type["name"]}</Text>
+				</TouchableOpacity>
+			</View>
+
 		)
 	}
 
@@ -209,6 +253,21 @@ export default class EditAlarmScreen extends Component{
 					numColumns={1}
 					keyExtractor={ (item) => String(item['id']) }
 				/>
+				<Modal
+					animationType="slide"
+					transparent={false}
+					visible={this.state.show_action_type_description_modal}
+					onRequestClose={() => {
+						this.setState({show_action_type_description_modal: false})
+					}}
+				>
+					<Text style={{
+						margin: 16,
+						fontSize: 18
+					}}>
+						{this.state.action_type_description === undefined ? 'No description available' : this.state.action_type_description}
+					</Text>
+				</Modal>
 			</View>
 		)
 	}
@@ -341,6 +400,10 @@ const styles = StyleSheet.create({
 	slider:{
 		marginVertical: 10
 	},
+	separator: {
+		borderColor: XEO_BLUE,
+		borderBottomWidth: 2,
+	}
 });
 
 const weekDays = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];

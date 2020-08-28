@@ -19,10 +19,10 @@ export default class LoginScreen extends Component{
 			email: "neco31@yahoo.com",
 			password: "12345678",
 		};
-		AsyncStorage.getItem('session_cookie').then(value => {
+		/*AsyncStorage.getItem('session_cookie').then(value => {
 			if (value !== '')
-				this.props.navigation.replace('dashboard');
-		});
+				this.props.navigation.replace('main', {});
+		});*/
 	}
 
 	save_session(){
@@ -31,6 +31,7 @@ export default class LoginScreen extends Component{
 
 	login(){
 		fetch(API_LOGIN_URL, {
+			mode: 'cors',
 			method: 'POST',
 			headers: {
 				Accept: 'application/json',
@@ -48,7 +49,7 @@ export default class LoginScreen extends Component{
 			}
 		).then(response => {
 			if(response.status === 'success') {
-				this.props.navigation.replace('dashboard');
+				this.props.navigation.replace('main', {});
 			}else {
 				alert('bad credentials');
 			}

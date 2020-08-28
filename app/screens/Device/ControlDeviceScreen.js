@@ -32,6 +32,9 @@ import {
 	ContributionGraph,
 	StackedBarChart
 } from 'react-native-chart-kit'
+import {element} from "prop-types";
+
+import {socket_io} from "../DashboardScreen/DashboardScreen";
 
 
 export default class ControlDeviceScreen extends Component{
@@ -45,6 +48,7 @@ export default class ControlDeviceScreen extends Component{
 					source={require('../../assets/images/clock_icon.png')}
 				/>
 			</TouchableOpacity>,
+		title: 'Device: ' + ( navigation.state.params.device_name === undefined ? '' : navigation.state.params.device_name )
 	});
 
 	constructor() {
@@ -62,13 +66,20 @@ export default class ControlDeviceScreen extends Component{
 			device_actions_types: [],
 			modal_visible: false,
 			selected_action_type_index: 0,
-			action_parameters: []
+			action_parameters: [],
+
+			device_status_types_list:[],
+			device_status_list: []
 		};
 	}
 
 	componentDidMount() {
 		this.loadDevice();
-		this.loadSensorData();
+		this.setWebSocketHandler();
+	}
+
+	componentWillUnmount(){
+		this.removeWebSocketHandler();
 	}
 
 	loadDevice(){
@@ -89,7 +100,12 @@ export default class ControlDeviceScreen extends Component{
 				device_last_connection: response['last_connection'],
 				device_actions: response['actions'],
 				device_actions_types: response['actions_types'],
-			})
+				device_status_types_list: response['status_types'],
+				device_status_list: response['statuses']
+			});
+			this.props.navigation.setParams({
+				device_name: response['name']
+			});
 		}).catch((error) => {
 			alert(error)
 		});
@@ -175,15 +191,26 @@ export default class ControlDeviceScreen extends Component{
 					keyExtractor={ (item) => String(item.id) }
 				/>
 				<View style={{width: '50%', alignSelf: 'center'}}>
-					<Button
-						title={action_type.name}
-						onPress={ () => {
-							this.requestExecuteAction(action_type.id, this.state.action_parameters);
-							// close modal after action button press
-							this.setState({
-								modal_visible: false
-							});
-						} }/>
+						<TouchableOpacity
+							onPress={ () => {
+								this.requestExecuteAction(action_type.id, this.state.action_parameters);
+								this.setState({
+									modal_visible: false
+								});
+							}}>
+							<Text
+								style={{
+									backgroundColor: BOOTSTRAP_COLOR_PRIMARY,
+									padding: '5%',
+									color: BOOTSTRAP_COLOR_LIGHT,
+									fontSize: 16,
+									textAlign: 'center',
+									borderRadius: 10
+								}}
+							>
+								{action_type.name}
+							</Text>
+						</TouchableOpacity>
 				</View>
 			</View>
 		)
@@ -244,13 +271,68 @@ export default class ControlDeviceScreen extends Component{
 		)
 	}
 
+	setWebSocketHandler(){
+		//console.warn("aaa");
+		socket_io.off().on('message', (message) => {
+
+			if(message['device_id'] !== this.state.device_id)
+				return;
+
+			let index = this.state.device_status_list.findIndex( element => element['status_type_id'] === message['status_type_id']);
+
+			if (index === -1)
+				return;
+
+			let aux = this.state.device_status_list;
+			aux[index].value = message['value'];
+			this.setState({
+				device_status_list: aux
+			});
+		});
+
+	}
+
+	removeWebSocketHandler(){
+		//console.warn("bbb");
+	}
+
+	renderStatusView(){
+		try {
+			return (
+				<View style={{paddingHorizontal: '5%'}}>
+					{
+						this.state.device_status_types_list.map(item => {
+
+								let status = this.state.device_status_list.find(element => element['status_type_id'] === item['id']);
+								let status_value = "Unknown";
+
+								try {
+									status_value = item.options.find(element => element.value === status.value).label;
+								} catch (e) {
+									status_value = status.value;
+								}
+
+								return (
+									<Text
+										key={'status_' + item.id}
+										style={{fontSize: 18, padding: 2}}
+									>
+										{item['label']}: {status_value}{item.unit}
+									</Text>
+								)
+							}
+						)
+					}
+				</View>
+			)
+		}catch (e) {
+			return (<View/>)
+		}
+	}
+
 	render(){
 		return (
 			<SafeAreaView style={styles.container}>
-				<Text
-					style={styles.deviceName}>
-					Device: {this.state.device_name}
-				</Text>
 				<Text
 					style={styles.deviceStatus}>
 					Status: <Text style={this.state.device_connected ? styles.deviceStatusConnected : styles.deviceStatusDisconnected}>
@@ -260,6 +342,7 @@ export default class ControlDeviceScreen extends Component{
 				<Text style={styles.deviceLastConnection}>
 					(Last sync: {this.state.device_last_connection})
 				</Text>
+				{this.renderStatusView()}
 				<View style={styleActions.container}>
 					<Text
 						style={styleActions.title}>
@@ -275,7 +358,6 @@ export default class ControlDeviceScreen extends Component{
 					</View>
 				</View>
 				{this.renderParametersModal()}
-				{this.renderCharts()}
 			</SafeAreaView>
 		)
 	}

@@ -1,18 +1,78 @@
 import React from 'react';
 import {createAppContainer } from 'react-navigation';
 import {createStackNavigator} from "react-navigation-stack";
-import DashboardScreen from "./app/screens/DashboardScreen";
-import ControlDeviceScreen from "./app/screens/ControlDeviceScreen";
-import DeviceSettingsScreen from "./app/screens/EditDeviceScreen/EditDeviceScreen";
-import AccountSettings from "./app/screens/AccountManagement/AccountSettingsScreen";
-import AddDeviceScreen from "./app/screens/AddDeviceScreen";
-import AlarmsScreen from "./app/screens/AlarmsScreen";
-import EditAlarmScreen from "./app/screens/AlarmsScreen/EditAlarmScreen";
+import DashboardScreen from "./app/screens/DashboardScreen/DashboardScreen";
+import ControlDeviceScreen from "./app/screens/Device/ControlDeviceScreen";
+import AddDeviceScreen from "./app/screens/Device/AddDeviceScreen";
+import AlarmsScreen from "./app/screens/Device/AlarmsScreen";
+import EditAlarmScreen from "./app/screens/Device/AlarmsScreen/EditAlarmScreen";
 import LoginScreen from "./app/screens/LoginScreen";
-import AccountOptionsScreen from "./app/screens/AccountManagement/AccountOptionsScreen";
+import SettingsScreen from "./app/screens/Settings/SettingsScreen";
 import UserActivityScreen from "./app/screens/AccountManagement/UserActivityScreen";
 import CreateAccount from "./app/screens/CreateAccountScreen";
 import {BOOTSTRAP_COLOR_LIGHT, XEO_BLUE} from "./app/constants";
+import {createMaterialBottomTabNavigator} from "react-navigation-material-bottom-tabs"
+import {Icon} from "react-native-elements";
+import RoomSharingMainScreen from "./app/screens/RoomSharing/RoomSharingMainScreen";
+import AccountScreen from "./app/screens/Settings/Account/AccountScreen";
+import DeviceSettingsScreen2 from "./app/screens/Device/EditDeviceScreen2";
+import {Button, Text, TouchableOpacity} from "react-native";
+import CreateNewRoom from "./app/screens/Rooms/CreateNewRoom";
+import AddDeviceInRoom from "./app/screens/Rooms/AddDeviceInRoom";
+import RenameRoomScreen from "./app/screens/Rooms/RenameRoom";
+import RoomOptionsScreen from "./app/screens/Rooms/RoomOptionsScreen";
+import RoomDeviceOptionsScreen from "./app/screens/Rooms/RoomDeviceOptionsScreen";
+import RoomScreen from "./app/screens/Rooms/RoomScreen";
+import RoomsScreen from "./app/screens/Rooms/RoomsScreen";
+import HelpScreen from "./app/screens/Settings/Help/HelpScreen";
+import SecurityScreen from "./app/screens/Settings/Security/SecurityScreen";
+import ChangePasswordScreen from "./app/screens/Settings/Security/ChangePasswordScreen";
+
+
+const BottomNavigator = createMaterialBottomTabNavigator(
+	{
+		sensors:{
+			screen: RoomsScreen,
+			navigationOptions:{
+				tabBarLabel: 'Sensors',
+				tabBarIcon: ({tintColor}) => (
+					<Icon name="show-chart" color={tintColor} size={24} />
+				)
+			}
+		},
+		dashboard:{
+			screen: DashboardScreen,
+			navigationOptions:{
+				tabBarLabel: 'Devices',
+				tabBarIcon: ({tintColor}) => (
+					<Icon name="devices-other" color={tintColor} size={24} />
+					// <Icon name="dashboard" color={tintColor} size={24} />
+				)
+			}
+		},
+		rooms:{
+			screen: RoomsScreen,
+			navigationOptions:{
+				tabBarLabel: 'Rooms',
+				tabBarIcon: ({tintColor}) => (
+					<Icon name="home" color={tintColor} size={24} />
+				)
+			}
+		},
+	}, {
+		shifting: false,
+		initialRouteName: 'rooms',
+		order: ['dashboard', 'rooms', 'sensors'],
+		barStyleLight:{
+			backgroundColor: XEO_BLUE,
+			borderTopWidth: 2,
+			borderStyle: 'solid',
+			borderColor: '#d0cfd0',
+			paddingBottom: 5,
+
+		}
+	}
+);
 
 
 const NavigationStack = createStackNavigator({
@@ -24,13 +84,20 @@ const NavigationStack = createStackNavigator({
 			headerTintColor: 'white',
 		}
 	},
-	dashboard: {
-		screen: DashboardScreen,
-		navigationOptions: {
-			title: "Dashboard",
-			headerLeft: null,
-			headerStyle:{backgroundColor: '#4267b2'},
-			headerTintColor: 'white',
+	main: {
+		screen: BottomNavigator,
+		navigationOptions: ({navigation}) => {
+			return ({
+				title: 'XeoApp',
+				headerStyle:{backgroundColor: '#4267b2'},
+				headerTintColor: 'white',
+				headerRight: <TouchableOpacity
+					style={{marginRight: 15}}
+					onPress={ () => navigation.navigate('settings_screen')}
+				>
+					<Icon name="more-horiz" color={BOOTSTRAP_COLOR_LIGHT} size={40} />
+				</TouchableOpacity>
+			})
 		}
 	},
 	add_device:{
@@ -44,13 +111,12 @@ const NavigationStack = createStackNavigator({
 	control_device: {
 		screen: ControlDeviceScreen,
 		navigationOptions:{
-			title: "Device",
 			headerStyle:{backgroundColor: '#4267b2'},
 			headerTintColor: 'white',
 		}
 	},
 	device_settings:{
-		screen: DeviceSettingsScreen,
+		screen: DeviceSettingsScreen2,
 		navigationOptions:{
 			title: "Device settings",
 			headerStyle:{backgroundColor: '#4267b2'},
@@ -73,19 +139,43 @@ const NavigationStack = createStackNavigator({
 			headerTintColor: 'white',
 		}
 	},
-	account_options:{
-		screen: AccountOptionsScreen,
+	settings_screen:{
+		screen: SettingsScreen,
 		navigationOptions:{
-			title: '',
+			title: 'Settings',
 			headerStyle: {backgroundColor: '#4267b2'},
 			headerTintColor: 'white'
 		}
 	}
 	,
 	account_settings: {
-		screen: AccountSettings,
+		screen: AccountScreen,
 		navigationOptions:{
-			title: "Account settings",
+			title: "Account",
+			headerStyle:{backgroundColor: '#4267b2'},
+			headerTintColor: 'white',
+		}
+	},
+	security: {
+		screen: SecurityScreen,
+		navigationOptions:{
+			title: "Security",
+			headerStyle:{backgroundColor: '#4267b2'},
+			headerTintColor: 'white',
+		}
+	},
+	change_password: {
+		screen: ChangePasswordScreen,
+		navigationOptions:{
+			title: "Change password",
+			headerStyle:{backgroundColor: '#4267b2'},
+			headerTintColor: 'white',
+		}
+	},
+	help: {
+		screen: HelpScreen,
+		navigationOptions:{
+			title: "Help",
 			headerStyle:{backgroundColor: '#4267b2'},
 			headerTintColor: 'white',
 		}
@@ -105,7 +195,63 @@ const NavigationStack = createStackNavigator({
 			headerStyle:{backgroundColor: XEO_BLUE},
 			headerTintColor: BOOTSTRAP_COLOR_LIGHT,
 		}
-	}
+	},
+	/*rooms: {
+		screen: BottomNavigator,
+		navigationOptions:{
+			headerStyle:{backgroundColor: XEO_BLUE},
+			headerTintColor: BOOTSTRAP_COLOR_LIGHT,
+		}
+	},*/
+	room: {
+		screen: RoomScreen,
+		navigationOptions:{
+			headerStyle:{backgroundColor: XEO_BLUE},
+			headerTintColor: BOOTSTRAP_COLOR_LIGHT,
+		}
+	},
+	create_new_room: {
+		screen: CreateNewRoom,
+		navigationOptions:{
+			headerStyle:{backgroundColor: XEO_BLUE},
+			headerTintColor: BOOTSTRAP_COLOR_LIGHT,
+		}
+	},
+	add_device_in_room:{
+		screen: AddDeviceInRoom,
+		navigationOptions:{
+			headerStyle:{backgroundColor: XEO_BLUE},
+			headerTintColor: BOOTSTRAP_COLOR_LIGHT,
+		}
+	},
+	rename_room:{
+		screen: RenameRoomScreen,
+		navigationOptions:{
+			headerStyle:{backgroundColor: XEO_BLUE},
+			headerTintColor: BOOTSTRAP_COLOR_LIGHT,
+		}
+	},
+	room_options: {
+		screen: RoomOptionsScreen,
+		navigationOptions:{
+			headerStyle:{backgroundColor: XEO_BLUE},
+			headerTintColor: BOOTSTRAP_COLOR_LIGHT,
+		}
+	},
+	room_device_options: {
+		screen: RoomDeviceOptionsScreen,
+		navigationOptions:{
+			headerStyle:{backgroundColor: XEO_BLUE},
+			headerTintColor: BOOTSTRAP_COLOR_LIGHT,
+		}
+	},
+	room_sharing:{
+		screen: RoomSharingMainScreen,
+		navigationOptions:{
+			headerStyle:{backgroundColor: XEO_BLUE},
+			headerTintColor: BOOTSTRAP_COLOR_LIGHT,
+		}
+	},
 
 }
 );
@@ -113,3 +259,5 @@ const NavigationStack = createStackNavigator({
 const Container = createAppContainer(NavigationStack);
 
 export default Container;
+
+
