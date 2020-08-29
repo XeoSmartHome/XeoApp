@@ -1,7 +1,13 @@
 import React, {Component} from "react";
 import {SafeAreaView, StyleSheet, Text, TouchableOpacity, View, TextInput} from "react-native";
 import {Icon} from "react-native-elements";
-import {API_UPDATE_PASSWORD, BOOTSTRAP_COLOR_DANGER, BOOTSTRAP_COLOR_LIGHT, XEO_BLUE} from "../../../constants";
+import {
+	API_UPDATE_PASSWORD,
+	BOOTSTRAP_COLOR_DANGER,
+	BOOTSTRAP_COLOR_LIGHT,
+	BOOTSTRAP_COLOR_PRIMARY,
+	XEO_BLUE
+} from "../../../constants";
 
 export default class ChangePasswordScreen extends Component{
 	constructor() {
@@ -10,6 +16,7 @@ export default class ChangePasswordScreen extends Component{
 			current_password: '',
 			new_password: '',
 			confirm_new_password: '',
+			error_message: '',
 		}
 	}
 
@@ -29,7 +36,8 @@ export default class ChangePasswordScreen extends Component{
 					style={styles.text_input}
 					value={this.state.new_password}
 					onChangeText={ (value) => {
-						this.setState({new_password: value})
+						this.setState({new_password: value});
+						this.checkNewPasswords(value, this.state.confirm_new_password);
 					}}
 					placeholder='New password'
 					secureTextEntry={true}
@@ -38,24 +46,44 @@ export default class ChangePasswordScreen extends Component{
 					style={styles.text_input}
 					value={this.state.confirm_new_password}
 					onChangeText={ (value) => {
-						this.setState({confirm_new_password: value})
+						this.setState({confirm_new_password: value});
+						this.checkNewPasswords(this.state.new_password, value);
 					}}
 					placeholder='New password, again'
 					secureTextEntry={true}
 				/>
-				<TouchableOpacity
-					style={styles.save_button}
-					onPress={() => {this.requestUpdatePassword()}}
-				>
-					<Text style={styles.save_button_text}>
-						Save
+
+				<View style={{flexDirection: 'row', justifyContent: 'space-between', margin: '5%'}}>
+					<Text style={styles.warning_text}>
+						{this.state.error_message}
 					</Text>
-				</TouchableOpacity>
+					<TouchableOpacity
+						style={styles.save_button}
+						onPress={() => {this.requestUpdatePassword()}}
+					>
+						<Text style={styles.save_button_text}>
+							SAVE
+						</Text>
+					</TouchableOpacity>
+				</View>
+
 				<Text style={styles.explanation}>
 
 				</Text>
 			</SafeAreaView>
 		)
+	}
+
+	checkNewPasswords(new_password, confirm_new_password){
+		if(new_password.length<8){
+			this.setState({error_message: "Password must contain at least 8 characters"});
+			return;
+		}
+		if(new_password !== confirm_new_password){
+			this.setState({error_message: "Passwords don't match"});
+			return;
+		}
+		this.setState({error_message: ''});
 	}
 
 	requestUpdatePassword(){
@@ -104,13 +132,11 @@ const styles = StyleSheet.create({
 		margin: '5%',
 	},
 	save_button:{
-		backgroundColor: XEO_BLUE,
-		width: '20%',
+		backgroundColor: BOOTSTRAP_COLOR_PRIMARY,
+		width: '25%',
 		borderRadius: 10,
 		padding: 8,
-		alignSelf: 'flex-end',
-		marginRight: '10%',
-		marginTop: '8%'
+		justifyContent: 'center'
 	},
 	save_button_text:{
 		fontSize: 20,
@@ -119,6 +145,8 @@ const styles = StyleSheet.create({
 	},
 	warning_text:{
 		color: BOOTSTRAP_COLOR_DANGER,
-		fontSize: 16
+		fontSize: 16,
+		fontWeight: 'bold',
+		width: '70%'
 	}
 });

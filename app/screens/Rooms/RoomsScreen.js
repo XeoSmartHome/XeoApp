@@ -28,11 +28,6 @@ import {Icon} from "react-native-elements";
 
 
 export default class RoomsScreen extends Component {
-	static navigationOptions = ({ navigation, screenProps }) => ({
-		title: 'House: ' + ( navigation.state.params.house_name === undefined ? '' : navigation.state.params.house_name),
-		headerRight: <Icon name="more-horiz" color={BOOTSTRAP_COLOR_LIGHT} size={40} />
-	});
-
 	 constructor() {
 		 super();
 		 this.state = {
@@ -86,15 +81,17 @@ export default class RoomsScreen extends Component {
 							 </View>
 						 )
 					 )}
+					 <TouchableOpacity
+						 style={{backgroundColor: BOOTSTRAP_COLOR_PRIMARY, borderRadius: 10, padding:8, width:'30%', alignSelf: 'center', marginVertical: 15}}
+						 onPress={()=> {
+							 this.props.navigation.navigate('create_new_room', {house_id: this.state.house_id});
+						 }}
+					 >
+						 <Text style={{alignSelf: 'center', fontSize: 14, color: BOOTSTRAP_COLOR_LIGHT}}>
+							 ADD ROOM
+						 </Text>
+					 </TouchableOpacity>
 				 </ScrollView>
-				 <TouchableOpacity
-					 onPress={()=> {
-						 this.props.navigation.navigate('create_new_room', {house_id: this.state.house_id});
-					 }}
-					 style={styles.fab}
-				 >
-					 <Text style={styles.fabIcon}>+</Text>
-				 </TouchableOpacity>
 			 </SafeAreaView>
 		 )
 	 }
@@ -171,45 +168,3 @@ const styles = StyleSheet.create({
 		borderWidth: 1
 	}
 });
-
-
-/*<Modal
-					 visible={this.state.options_visible}
-					 onRequestClose={ () => {
-						 this.setState({options_visible: false} );
-					 } }
-					 animationType="fade"
-					 contentContainerStyle={{opacity: 1}}
-				 >
-					 <View style={{alignSelf:'center', width: '60%', height: '25%', backgroundColor: '#fffff', borderRadius: 10, borderWidth: 2,}}>
-						 <TouchableOpacity
-						  style={styles.optionButton}
-						 >
-							 <Text
-								 style={[styles.optionButtonText, {color: BOOTSTRAP_COLOR_DANGER, textB}]}
-							 >
-								 Delete
-							 </Text>
-						 </TouchableOpacity>
-						 <View style={styles.optionLine}/>
-						 <TouchableOpacity
-							 style={styles.optionButton}
-						 >
-							 <Text
-							 style={styles.optionButtonText}
-							 >
-								 Rename
-							 </Text>
-						 </TouchableOpacity>
-						 <View style={styles.optionLine}/>
-						 <TouchableOpacity
-							 style={styles.optionButton}
-						 >
-							 <Text
-								 style={styles.optionButtonText}
-							 >
-								 Cancel
-							 </Text>
-						 </TouchableOpacity>
-					 </View>
-				 </Modal>*/

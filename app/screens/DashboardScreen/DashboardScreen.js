@@ -12,8 +12,9 @@ import {
 	TouchableOpacity,
 	YellowBox
 } from "react-native";
-import {API_DEFAULT_IMAGES_URL, API_DEVICE_IMAGES_URL, API_LOAD_DEVICES} from "../../constants";
+import {API_DEFAULT_IMAGES_URL, API_DEVICE_IMAGES_URL, API_LOAD_DEVICES, BOOTSTRAP_COLOR_LIGHT} from "../../constants";
 import io from "socket.io-client";
+import {Icon} from "react-native-elements";
 
 export let socket_io = io('http://xeosmarthome.com', {transports: ['websocket'], timeout: 30000});
 //let socket = io('ws://xeosmarthome.com/socket.io');
@@ -34,7 +35,7 @@ export default class DashboardScreen extends Component{
 	constructor() {
 		super();
 		this.state = {
-			devices: [],
+			devices: ['add_button'],
 			refreshing: true
 		};
 		this.initWebSocket();
@@ -74,7 +75,7 @@ export default class DashboardScreen extends Component{
 		).then(
 			(response) => response.json()
 		).then((response) => {
-			this.setState({ devices: response, refreshing: false})
+			this.setState({ devices: response.concat('add_button'), refreshing: false})
 		}
 		).catch((error) => {
 			alert(error)
@@ -82,23 +83,37 @@ export default class DashboardScreen extends Component{
 	}
 
 	DeviceBox(device) {
+		if(typeof device !== 'string')
+			return (
+				<TouchableOpacity
+					onPress={ (event) =>{this.props.navigation.navigate('control_device', {device_id: device.id})}}
+					onLongPress={()=>{this.props.navigation.navigate('device_settings', {device_id: device.id})}}
+					style={styles.deviceBox}>
+					<View style={styles.imageView}>
+						<Image
+							style={styles.deviceImage}
+							source={{uri: device.image !== '' ? API_DEVICE_IMAGES_URL + device.image : API_DEFAULT_IMAGES_URL + device['default_image']}}
+						/>
+					</View>
+
+					<View style={styles.nameView}>
+						<Text style={styles.deviceName}>{ device.name.length < 15 ? device.name : device.name.substr(0, 14) + '...' }</Text>
+					</View>
+				</TouchableOpacity>
+			);
 		return (
 			<TouchableOpacity
-				onPress={ (event) =>{this.props.navigation.navigate('control_device', {device_id: device.id})}}
-				onLongPress={()=>{this.props.navigation.navigate('device_settings', {device_id: device.id})}}
+				onPress={ () => {this.props.navigation.navigate('add_device');}}
+				onLongPress={()=>{}}
 				style={styles.deviceBox}>
-				<View style={styles.imageView}>
-					<Image
-						style={styles.deviceImage}
-						source={{uri: device.image !== '' ? API_DEVICE_IMAGES_URL + device.image : API_DEFAULT_IMAGES_URL + device['default_image']}}
-					/>
+				<View style={{flex: 1, marginTop: 10}}>
+					<Icon name="add-circle-outline" type='material' size={100} />
 				</View>
-
 				<View style={styles.nameView}>
-					<Text style={styles.deviceName}>{ device.name.length < 15 ? device.name : device.name.substr(0, 14) + '...' }</Text>
+					<Text style={{fontSize: 22}}>Add device</Text>
 				</View>
 			</TouchableOpacity>
-		);
+		)
 	}
 
 	render(){
@@ -112,21 +127,7 @@ export default class DashboardScreen extends Component{
 					keyExtractor={item => String(item.id)}
 					onRefresh={()=>{this.loadDevices()}}
 				/>
-				{this.AddDeviceButton()}
 			</SafeAreaView>
-		)
-	}
-
-	AddDeviceButton(){
-		return (
-			<TouchableOpacity
-				onPress={()=> {
-					this.props.navigation.navigate('add_device');
-				}}
-				style={styles.fab}
-			>
-				<Text style={styles.fabIcon}>+</Text>
-			</TouchableOpacity>
 		)
 	}
 }
@@ -168,21 +169,4 @@ const styles = StyleSheet.create({
 	deviceName:{
 		fontSize: 18
 	},
-	fab: {
-		position: 'absolute',
-		width: 60,
-		height: 60,
-		alignItems: 'center',
-		justifyContent: 'center',
-		right: 20,
-		bottom: 20,
-		backgroundColor: '#4267b2',
-		borderRadius: 30,
-		elevation: 8
-	},
-	fabIcon: {
-		top: -2,
-		fontSize: 50,
-		color: 'white'
-	}
 });

@@ -27,12 +27,13 @@ import RoomsScreen from "./app/screens/Rooms/RoomsScreen";
 import HelpScreen from "./app/screens/Settings/Help/HelpScreen";
 import SecurityScreen from "./app/screens/Settings/Security/SecurityScreen";
 import ChangePasswordScreen from "./app/screens/Settings/Security/ChangePasswordScreen";
+import SensorsDashboardScreen from "./app/screens/Sensors/SensorsDashboardScreeen";
 
 
 const BottomNavigator = createMaterialBottomTabNavigator(
 	{
 		sensors:{
-			screen: RoomsScreen,
+			screen: SensorsDashboardScreen,
 			navigationOptions:{
 				tabBarLabel: 'Sensors',
 				tabBarIcon: ({tintColor}) => (
@@ -45,7 +46,7 @@ const BottomNavigator = createMaterialBottomTabNavigator(
 			navigationOptions:{
 				tabBarLabel: 'Devices',
 				tabBarIcon: ({tintColor}) => (
-					<Icon name="devices-other" color={tintColor} size={24} />
+					<Icon name="device-hub" color={tintColor} size={24} />
 					// <Icon name="dashboard" color={tintColor} size={24} />
 				)
 			}

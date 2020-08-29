@@ -20,20 +20,18 @@ export default class SecurityScreen extends Component{
 					</Text>
 				</TouchableOpacity>
 
-				<TouchableOpacity
+			</SafeAreaView>
+		)
+	}
+}
+/*<TouchableOpacity
 					style={styles.row}
 					onPress={ () => { alert('Comming soon') } }
 				>
 					<Text style={styles.button_text}>
 						Two factor authentication
 					</Text>
-				</TouchableOpacity>
-
-			</SafeAreaView>
-		)
-	}
-}
-
+				</TouchableOpacity>*/
 
 const styles = StyleSheet.create({
 	row: {
