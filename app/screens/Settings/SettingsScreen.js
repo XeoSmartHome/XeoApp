@@ -3,6 +3,7 @@ import {SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from "react-nati
 import {BOOTSTRAP_COLOR_DARK, BOOTSTRAP_COLOR_LIGHT, XEO_BLUE} from "../../constants";
 import {Icon} from "react-native-elements";
 
+
 export default class SettingsScreen extends Component{
 	constructor() {
 		super();
@@ -11,6 +12,7 @@ export default class SettingsScreen extends Component{
 	render(){
 		return(
 			<SafeAreaView>
+
 				<View style={styles.row}>
 					<TouchableOpacity style={{flexDirection: 'row'}}
 						onPress={ () => { this.props.navigation.navigate('account_settings') } }
@@ -25,20 +27,38 @@ export default class SettingsScreen extends Component{
 						</Text>
 					</TouchableOpacity>
 				</View>
-				<View style={styles.row}>
+
+				{/*<View style={styles.row}>
 					<TouchableOpacity style={{flexDirection: 'row'}}
 						onPress={ () => { this.props.navigation.navigate('account_settings') } }
 					>
 						<Icon
 							name='settings'
 							type='feather'
-							size={25}
+							size={26}
 						/>
 						<Text style={styles.button_text}>
 							App settings
 						</Text>
 					</TouchableOpacity>
+				</View>*/}
+
+				<View style={styles.row}>
+					<TouchableOpacity
+						style={{flexDirection: 'row'}}
+						onPress={ () => { this.props.navigation.navigate('notifications_settings') } }
+					>
+						<Icon
+							name='notifications-none'
+							type='ionicons'
+							size={26}
+						/>
+						<Text style={styles.button_text}>
+							Notifications
+						</Text>
+					</TouchableOpacity>
 				</View>
+
 				<View style={styles.row}>
 					<TouchableOpacity style={{flexDirection: 'row'}}
 									  onPress={ () => { this.props.navigation.navigate('security') } }
@@ -46,13 +66,30 @@ export default class SettingsScreen extends Component{
 						<Icon
 							name='security'
 							type='material-community'
-							size={25}
+							size={26}
 						/>
 						<Text style={styles.button_text}>
 							Security
 						</Text>
 					</TouchableOpacity>
 				</View>
+
+				<View style={styles.row}>
+					<TouchableOpacity
+						style={{flexDirection: 'row'}}
+						onPress={ () => { this.props.navigation.navigate('language_settings') } }
+					>
+						<Icon
+							name='language'
+							type='ionicons'
+							size={26}
+						/>
+						<Text style={styles.button_text}>
+							Language
+						</Text>
+					</TouchableOpacity>
+				</View>
+
 				<View style={styles.row}>
 					<TouchableOpacity style={{flexDirection: 'row'}}
 									  onPress={ () => { this.props.navigation.navigate('help') } }
@@ -60,7 +97,7 @@ export default class SettingsScreen extends Component{
 						<Icon
 							name='help-circle'
 							type='feather'
-							size={25}
+							size={26}
 						/>
 						<Text style={styles.button_text}>
 							Help

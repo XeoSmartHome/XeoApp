@@ -22,9 +22,7 @@ import {
 	BOOTSTRAP_COLOR_PRIMARY,
 	XEO_BLUE
 } from "../../constants";
-
-import Modal from "react-native-modal"
-import {Icon} from "react-native-elements";
+import {t} from 'i18n-js'
 
 
 export default class RoomsScreen extends Component {

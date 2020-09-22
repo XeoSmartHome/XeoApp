@@ -39,6 +39,7 @@ import {socket_io} from "../DashboardScreen/DashboardScreen";
 
 export default class ControlDeviceScreen extends Component{
 	static navigationOptions = ({ navigation, screenProps }) => ({
+		title: 'Device: ' + ( navigation.state.params.device_name === undefined ? '' : navigation.state.params.device_name ),
 		headerRight:
 			<TouchableOpacity onPress={ () => {
 				navigation.navigate('device_alarms', {device_id: navigation.state.params.device_id})
@@ -48,7 +49,6 @@ export default class ControlDeviceScreen extends Component{
 					source={require('../../assets/images/clock_icon.png')}
 				/>
 			</TouchableOpacity>,
-		title: 'Device: ' + ( navigation.state.params.device_name === undefined ? '' : navigation.state.params.device_name )
 	});
 
 	constructor() {

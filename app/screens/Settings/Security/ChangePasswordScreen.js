@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
 		backgroundColor: BOOTSTRAP_COLOR_PRIMARY,
 		width: '25%',
 		borderRadius: 10,
-		padding: 8,
+		padding: 5,
 		justifyContent: 'center'
 	},
 	save_button_text:{

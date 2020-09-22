@@ -11,7 +11,7 @@ import {
 	ScrollView
 } from "react-native";
 import {BOOTSTRAP_COLOR_DARK} from "../../../constants";
-import WebView from "react-native-webview";
+import { NavigationActions, StackActions } from 'react-navigation';
 
 
 export default class AccountScreen extends Component{
@@ -44,6 +44,15 @@ export default class AccountScreen extends Component{
 					</Text>
 				</View>
 
+				<Button
+					title='Sign out'
+					onPress={() => {
+						const resetAction = StackActions.reset({
+							index: 0,
+							actions: [NavigationActions.navigate({ routeName: 'login' })],
+						});
+						this.props.navigation.dispatch(resetAction);
+				}}/>
 			</ScrollView>
 		)
 

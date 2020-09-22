@@ -15,27 +15,16 @@ import {
 import {API_DEFAULT_IMAGES_URL, API_DEVICE_IMAGES_URL, API_LOAD_DEVICES, BOOTSTRAP_COLOR_LIGHT} from "../../constants";
 import io from "socket.io-client";
 import {Icon} from "react-native-elements";
+import {t} from 'i18n-js';
 
-export let socket_io = io('http://xeosmarthome.com', {transports: ['websocket'], timeout: 30000});
-//let socket = io('ws://xeosmarthome.com/socket.io');
+export let socket_io = io('https://xeosmarthome.com', {transports: ['websocket'], timeout: 30000});
 
 
 export default class DashboardScreen extends Component{
-	static navigationOptions = ({ navigation, screenProps }) => ({
-		title: "My Profile!",
-		headerRight:
-			<TouchableOpacity onPress={()=>{navigation.navigate('account_options')}}>
-				<Image
-					style={{height: 40, width: 40, margin: 10}}
-					source={require('../../assets/images/user_icon.png')}
-				/>
-			</TouchableOpacity>,
-	});
-
 	constructor() {
 		super();
 		this.state = {
-			devices: ['add_button'],
+			devices: [],
 			refreshing: true
 		};
 		this.initWebSocket();
@@ -45,15 +34,6 @@ export default class DashboardScreen extends Component{
 		YellowBox.ignoreWarnings([
 			'Unrecognized WebSocket connection option(s) `agent`, `perMessageDeflate`, `pfx`, `key`, `passphrase`, `cert`, `ca`, `ciphers`, `rejectUnauthorized`. Did you mean to put these under `headers`?'
 		]);
-
-		//this.socket.connect();
-		/*socket_io.on('connect', () => {
-			console.warn('connected');
-		});
-
-		socket_io.on('message', (message) => {
-			console.warn(message);
-		});*/
 	}
 
 	componentDidMount(){
@@ -62,10 +42,6 @@ export default class DashboardScreen extends Component{
 				this.loadDevices();
 			}
 		);
-	}
-
-	componentWillUnmount() {
-		this.socket.close();
 	}
 
 	loadDevices(){
@@ -110,7 +86,11 @@ export default class DashboardScreen extends Component{
 					<Icon name="add-circle-outline" type='material' size={100} />
 				</View>
 				<View style={styles.nameView}>
-					<Text style={{fontSize: 22}}>Add device</Text>
+					<Text style={{fontSize: 22}}>
+						{
+							t('screens.dashboard.add_device')
+						}
+					</Text>
 				</View>
 			</TouchableOpacity>
 		)

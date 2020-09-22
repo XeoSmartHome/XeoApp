@@ -8,7 +8,12 @@ import {
 	FlatList,
 	SafeAreaView,
 	ScrollView,
-	SectionList, ImageBackground, Modal, Slider, TextInput, TouchableOpacity,
+	SectionList,
+	ImageBackground,
+	Modal,
+	Slider,
+	TextInput,
+	TouchableOpacity,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import {API_UPDATE_DEVICE_IMAGE, BOOTSTRAP_COLOR_DARK} from "../../constants";
@@ -30,7 +35,8 @@ export default class DeviceSettingsScreen2 extends Component{
 				last_connection: '',
 				actions:[],
 				possible_actions: [],
-			}
+			},
+			hide_serial: true
 		};
 	}
 
@@ -154,27 +160,51 @@ export default class DeviceSettingsScreen2 extends Component{
 		)
 	}
 
+	onShowSerial(){
+		this.setState({
+			hide_serial: !this.state.hide_serial
+		});
+	}
+
+	hideString(str){
+		let hide = '';
+		for(let i=0; i<str.length - 3; i++)
+			hide += '*'
+		hide += str.substr(str.length-3);
+		return hide;
+	}
+
 	render(){
 		return (
 			<ScrollView style={{width: '96%', alignSelf: 'center'}}>
+
 				<View style={{borderBottomWidth: 2, borderBottomColor: BOOTSTRAP_COLOR_DARK, padding: 10, flexDirection: 'row'}}>
 					<Text style={{fontSize: 20, flex: 5}}>
 						Name: {this.state.device.name}
 					</Text>
-					<Text style={{fontSize: 18, alignSelf: 'flex-end', flex: 1, color: BOOTSTRAP_COLOR_DARK}}>Edit</Text>
+					<TouchableOpacity
+						style={{ alignSelf: 'flex-end', flex: 1, color: BOOTSTRAP_COLOR_DARK}}
+					>
+						<Text style={{fontSize: 18,}}>Edit</Text>
+					</TouchableOpacity>
 				</View>
+
 				<View style={{borderBottomWidth: 2, borderBottomColor: BOOTSTRAP_COLOR_DARK, padding: 10, flexDirection: 'row'}}>
 					<Text style={{fontSize: 20, flex: 5}}>
-						Serial: {this.state.device.serial}
+						Serial: {this.state.hide_serial ? this.hideString(this.state.device.serial) : this.state.device.serial}
 					</Text>
-					<Text style={{fontSize: 18, alignSelf: 'flex-end', flex: 1, color: BOOTSTRAP_COLOR_DARK}}>Show</Text>
+					<TouchableOpacity
+						style={{ alignSelf: 'flex-end', flex: 1, color: BOOTSTRAP_COLOR_DARK}}
+						onPress={ () => {
+							this.onShowSerial();
+						}}
+					>
+						<Text style={{fontSize: 18,}}>
+							{this.state.hide_serial ? 'Show' : 'Hide'}
+						</Text>
+					</TouchableOpacity>
 				</View>
-				<View style={{borderBottomWidth: 2, borderBottomColor: BOOTSTRAP_COLOR_DARK, padding: 10, flexDirection: 'row'}}>
-					<Text style={{fontSize: 20, flex: 5}}>
-						Serial: {this.state.device.serial}
-					</Text>
-					<Text style={{fontSize: 18, alignSelf: 'flex-end', flex: 1, color: BOOTSTRAP_COLOR_DARK}}>Show</Text>
-				</View>
+
 			</ScrollView>
 		)
 	}

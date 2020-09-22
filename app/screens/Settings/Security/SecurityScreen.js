@@ -20,6 +20,15 @@ export default class SecurityScreen extends Component{
 					</Text>
 				</TouchableOpacity>
 
+				<TouchableOpacity
+					style={styles.row}
+					onPress={ () => { this.props.navigation.navigate('pin_settings') } }
+				>
+					<Text style={styles.button_text}>
+						App PIN
+					</Text>
+				</TouchableOpacity>
+
 			</SafeAreaView>
 		)
 	}

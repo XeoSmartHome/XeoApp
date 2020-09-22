@@ -1,0 +1,18 @@
+{
+    "name": "English",
+    "navigation": {
+        "devices": "Devices",
+        "rooms": "Rooms",
+        "sensors": "Sensors",
+        "login": "Login"
+    },
+    "screens": {
+        "dashboard": {
+            "add_device": "Add device"
+        },
+        "login": {
+            "sign_in": "Sign in",
+            "create_account": "Create account"
+        }
+    }
+}
