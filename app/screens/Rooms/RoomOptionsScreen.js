@@ -5,13 +5,11 @@ import {
 	ScreenRect, TouchableOpacity, Text, StyleSheet
 } from "react-native"
 import {API_URL, BOOTSTRAP_COLOR_DANGER, BOOTSTRAP_COLOR_SECONDARY, menu_style} from "../../constants";
+// noinspection ES6CheckImport
+import {t} from 'i18n-js'
 
 
 export default class RoomOptionsScreen extends Component{
-	static navigationOptions = ({navigation, screenProps}) => ({
-		title: 'Room settings'
-	});
-
 	constructor() {
 		super();
 	}
@@ -34,7 +32,7 @@ export default class RoomOptionsScreen extends Component{
 					<Text
 						style={menu_style.button_text}
 					>
-						Change name
+						{t('room_options.rename')}
 					</Text>
 				</TouchableOpacity>
 
@@ -49,7 +47,7 @@ export default class RoomOptionsScreen extends Component{
 					<Text
 						style={menu_style.button_text}
 					>
-						Manage access
+						{t('room_options.access_settings')}
 					</Text>
 				</TouchableOpacity>
 
@@ -64,7 +62,7 @@ export default class RoomOptionsScreen extends Component{
 					<Text
 						style={[menu_style.button_text, {color: BOOTSTRAP_COLOR_DANGER}]}
 					>
-						Delete
+						{t('room_options.delete')}
 					</Text>
 				</TouchableOpacity>
 

@@ -1,18 +1,121 @@
 {
     "name": "English",
-    "navigation": {
-        "devices": "Devices",
-        "rooms": "Rooms",
-        "sensors": "Sensors",
-        "login": "Login"
+    "login": {
+        "login": "Sign in",
+        "create_account": "Create account",
+        "login_with_google": "Continue with google",
+        "login_with_facebook": "Continue with facebook",
+        "navigation": {
+            "title": "Sign in"
+        },
+        "errors": {
+
+        }
     },
-    "screens": {
-        "dashboard": {
+    "settings": {
+        "account": "Account",
+        "notifications": "Notifications",
+        "security": "Security",
+        "language": "Language",
+        "help": "Help",
+        "theme": "Theme",
+        "navigation": {
+            "title": "Settings"
+        }
+    },
+    "account_settings": {
+        "user": "User",
+        "email": "Email",
+        "sign_out": "Sign out",
+        "switch_account": "Switch account",
+        "navigation": {
+            "title": "Account"
+        }
+    },
+    "security": {
+        "change_password": "Change password",
+        "app_pin": "App PIN"
+    },
+    "pin_check": {
+        "title": "Enter PIN",
+        "wrong_pin": "The PIN entered is incorrect. Please try again."
+    },
+    "theme_settings": {
+        "light": "Light",
+        "dark": "Dark"
+    },
+    "report_a_bug": {
+        "input_placeholder": "Please describe your error",
+        "upload_screenshot_button": "Upload a screenshot",
+        "send_button": "Send report",
+        "navigation": {
+            "title": "Report a bug"
+        }
+    },
+    "dashboard": {
+        "devices": {
             "add_device": "Add device"
         },
-        "login": {
-            "sign_in": "Sign in",
-            "create_account": "Create account"
+        "rooms": {
+            "add_room": "Add room"
+        },
+        "sensors": {
+
+        },
+        "navigation": {
+            "devices": "DEVICES",
+            "rooms": "ROOMS",
+            "sensors": "SENSORS"
         }
+    },
+    "add_device":  {
+        "name": "Name",
+        "name_info": "Customize your device name",
+        "serial": "Serial",
+        "serial_info": "Unique id written on device back",
+        "scan_qr_code_button": "Scan QR code",
+        "qr_code_info": "Use the phone's camera to scan the qr code of the device.",
+        "confirm_button": "Add device"
+    },
+    "device_settings": {
+        "name": "Name",
+        "edit_name": "Edit",
+        "cancel_edit_name": "Cancel",
+        "confirm_name_editing": "Save",
+        "serial": "Serial",
+        "show_serial": "Show",
+        "hide_serial": "Hide",
+        "status": "Status",
+        "connected": "connected",
+        "disconnected": "disconnected",
+        "last_connection": "Last connection",
+        "logs": "Logs",
+        "navigation": {
+            "title": "Device settings"
+        }
+    },
+    "create_new_room": {
+        "default_name": "New room",
+        "confirm_button": "Add",
+        "navigation": {
+            "title": "Create new room"
+        }
+    },
+    "room_options": {
+        "rename": "Change name",
+        "access_settings": "Manage access",
+        "delete": "Delete",
+        "navigation": {
+            "title": "Room settings"
+        }
+    },
+    "add_device_in_room": {
+        "hint": "Select a device to add it in",
+        "navigation": {
+            "title": "Add device in"
+        }
+    },
+    "edit_alarm": {
+        "save": "SAVE"
     }
 }

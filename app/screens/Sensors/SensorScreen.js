@@ -23,8 +23,6 @@ import {
 } from "../../constants";
 import {Notifications} from 'expo';
 import * as Permissions from 'expo-permissions';
-import {Notification} from "expo/build/Notifications/Notifications.types";
-
 
 
 export default class SensorScreen extends Component{

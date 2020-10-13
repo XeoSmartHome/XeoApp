@@ -22,14 +22,15 @@ import {
 	BOOTSTRAP_COLOR_PRIMARY,
 	XEO_BLUE
 } from "../../constants";
-
+// noinspection ES6CheckImport
+import {t} from 'i18n-js'
 
 export default class CreateNewRoom extends Component {
 	constructor() {
 		super();
 		this.state = {
 			house_id: -1,
-			new_room_name: 'New room',
+			new_room_name: t('create_new_room.default_name'),
 		};
 	}
 
@@ -46,7 +47,7 @@ export default class CreateNewRoom extends Component {
 				<Text
 					style={{alignSelf: 'center', fontSize: 24, padding: 14}}
 				>
-					Create new room
+					{t('create_new_room.confirm_button')}
 				</Text>
 				<View>
 					<TextInput

@@ -1,27 +1,21 @@
 import React, {Component} from "react";
 import {
-	Button,
 	Text,
 	View,
-	StyleSheet,
-	Image,
-	FlatList,
-	SafeAreaView,
 	ScrollView,
-	SectionList,
 	TouchableOpacity,
-	TextInput,
-	BackHandler
 } from "react-native";
 import {
 	API_LOAD_DEVICES,
 	API_URL,
 } from "../../constants";
+// noinspection ES6CheckImport
+import {t} from 'i18n-js';
 
 
 export default class AddDeviceInRoomScreen extends Component {
 	static navigationOptions = ({navigation, screenProps}) => ({
-		title: 'Add device in ' + (navigation.state.params.room_name === undefined ? '' : navigation.state.params.room_name)
+		title: t('add_device_in_room.navigation.title') + ' ' + (navigation.state.params.room_name === undefined ? '' : navigation.state.params.room_name)
 	});
 
 	constructor() {
@@ -51,7 +45,7 @@ export default class AddDeviceInRoomScreen extends Component {
 				<Text
 					style={{alignSelf: 'center', fontSize: 18, padding: 14, textAlign: 'center'}}
 				>
-					Select a device to add to { this.state.room_name }
+					{t('add_device_in_room.hint')} { this.state.room_name }
 				</Text>
 				<View style={{alignSelf: 'center', borderBottomWidth: 2, width: '90%', marginTop: 10}}/>
 				{

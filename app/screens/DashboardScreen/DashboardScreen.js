@@ -1,20 +1,17 @@
 import React, {Component} from "react";
 import {
-	Button,
 	Text,
 	View,
 	StyleSheet,
 	Image,
 	FlatList,
 	SafeAreaView,
-	ScrollView,
-	SectionList,
-	TouchableOpacity,
-	YellowBox
+	TouchableOpacity, StatusBar,
 } from "react-native";
-import {API_DEFAULT_IMAGES_URL, API_DEVICE_IMAGES_URL, API_LOAD_DEVICES, BOOTSTRAP_COLOR_LIGHT} from "../../constants";
+import {API_DEFAULT_IMAGES_URL, API_DEVICE_IMAGES_URL, API_LOAD_DEVICES} from "../../constants";
 import io from "socket.io-client";
 import {Icon} from "react-native-elements";
+// noinspection ES6CheckImport
 import {t} from 'i18n-js';
 
 export let socket_io = io('https://xeosmarthome.com', {transports: ['websocket'], timeout: 30000});
@@ -27,13 +24,6 @@ export default class DashboardScreen extends Component{
 			devices: [],
 			refreshing: true
 		};
-		this.initWebSocket();
-	}
-
-	initWebSocket(){
-		YellowBox.ignoreWarnings([
-			'Unrecognized WebSocket connection option(s) `agent`, `perMessageDeflate`, `pfx`, `key`, `passphrase`, `cert`, `ca`, `ciphers`, `rejectUnauthorized`. Did you mean to put these under `headers`?'
-		]);
 	}
 
 	componentDidMount(){
@@ -59,10 +49,11 @@ export default class DashboardScreen extends Component{
 	}
 
 	DeviceBox(device) {
+		const {mode, theme, setTheme} = this.props.screenProps;
 		if(typeof device !== 'string')
 			return (
 				<TouchableOpacity
-					onPress={ (event) =>{this.props.navigation.navigate('control_device', {device_id: device.id})}}
+					onPress={ () =>{this.props.navigation.navigate('control_device', {device_id: device.id})}}
 					onLongPress={()=>{this.props.navigation.navigate('device_settings', {device_id: device.id})}}
 					style={styles.deviceBox}>
 					<View style={styles.imageView}>
@@ -73,7 +64,11 @@ export default class DashboardScreen extends Component{
 					</View>
 
 					<View style={styles.nameView}>
-						<Text style={styles.deviceName}>{ device.name.length < 15 ? device.name : device.name.substr(0, 14) + '...' }</Text>
+						<Text style={[styles.deviceName, {
+							color: theme.textColor
+						}]}>
+							{ device.name.length < 15 ? device.name : device.name.substr(0, 14) + '...' }
+						</Text>
 					</View>
 				</TouchableOpacity>
 			);
@@ -83,12 +78,20 @@ export default class DashboardScreen extends Component{
 				onLongPress={()=>{}}
 				style={styles.deviceBox}>
 				<View style={{flex: 1, marginTop: 10}}>
-					<Icon name="add-circle-outline" type='material' size={100} />
+					<Icon
+						name="add-circle-outline"
+						type='material'
+						size={90}
+						color={theme.textColor}
+					/>
 				</View>
 				<View style={styles.nameView}>
-					<Text style={{fontSize: 22}}>
+					<Text style={{
+						fontSize: 22,
+						color: theme.textColor
+					}}>
 						{
-							t('screens.dashboard.add_device')
+							t('dashboard.devices.add_device')
 						}
 					</Text>
 				</View>
@@ -97,9 +100,12 @@ export default class DashboardScreen extends Component{
 	}
 
 	render(){
+		const {mode, theme, setTheme} = this.props.screenProps;
 		return (
-			<SafeAreaView style={styles.container}>
+			<SafeAreaView style={[styles.container, {backgroundColor: theme.screenBackgroundColor}]}>
+				<StatusBar hidden={true}/>
 				<FlatList
+					style={{paddingHorizontal: 10}}
 					numColumns={2}
 					refreshing={this.state.refreshing}
 					data={this.state.devices}
@@ -116,9 +122,9 @@ export default class DashboardScreen extends Component{
 const styles = StyleSheet.create({
 	container:{
 		flex: 1,
-		paddingHorizontal: 10,
-		paddingTop: 10,
-		backgroundColor: '#F5F5F5'
+		//paddingHorizontal: 10,
+		paddingTop: 2,
+		//backgroundColor: '#F5F5F5'
 	},
 	deviceBox: {
 		height: 170,

@@ -1,8 +1,11 @@
 import React, {Component, useEffect, useState} from "react";
 import {Button, Modal, Picker, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
 import { BarCodeScanner } from 'expo-barcode-scanner';
-import {API_ADD_DEVICE, API_LOGIN_URL} from "../../constants";
-import * as ImagePicker from 'expo-image-picker';
+import {API_ADD_DEVICE, API_LOGIN_URL, BOOTSTRAP_COLOR_LIGHT, BOOTSTRAP_COLOR_PRIMARY, XEO_BLUE} from "../../constants";
+import I18N from 'i18n-js'
+
+
+const t = (key) => I18N.t('add_device.' + key);
 
 
 export default class AddDeviceScreen extends Component{
@@ -29,9 +32,18 @@ export default class AddDeviceScreen extends Component{
 		}).then(
 			(response) => response.json()
 		).then(response => {
-			alert(response.message);
-			if(response.status === 'success') {
+			if(response.status === 200) {
 				this.props.navigation.goBack();
+			}
+			if(response.status === 400){
+				switch (response.error) {
+					case 'ValueError':
+						alert('val error')
+						break;
+					case 'DeviceTypeNotFound':
+						alert('Serial invalid')
+						break;
+				}
 			}
 		}).catch((error) => {
 			alert(error)
@@ -46,24 +58,36 @@ export default class AddDeviceScreen extends Component{
 	}
 
 	render(){
+		const {theme} = this.props.screenProps;
+		const add_device_button_enabled = this.state.new_device_name.length !== 0 && this.state.new_device_serial.length !== 0;
 		return(
-			<SafeAreaView style={styles.container}>
-				<Text style={styles.inputHint}>
-					Name <Text style={{fontSize: 16}}>(Customize your device name)</Text>
+			<SafeAreaView style={[styles.container, {
+				backgroundColor: theme.screenBackgroundColor
+			}]}>
+				<Text style={[styles.inputHint, {
+					color: theme.textColor
+				}]}>
+					{ t('name') } <Text style={{fontSize: 16}}>({t('name_info')})</Text>
 				</Text>
 				<TextInput
-					style={styles.inputText}
+					style={[styles.inputText,{
+						color: theme.textColor
+					}]}
 					placeholder="Device name"
 					autoCorrect={true}
 					autoCapitalize='sentences'
 					value={this.state.new_device_name}
 					onChangeText={text => this.setState({new_device_name: text}) }
 				/>
-				<Text style={styles.inputHint}>
-					Serial <Text style={{fontSize: 16}}>(Unique id written on device back)</Text>
+				<Text style={[styles.inputHint, {
+					color: theme.textColor
+				}]}>
+					{t('serial')} <Text style={{fontSize: 16}}>({t('serial_info')})</Text>
 				</Text>
 				<TextInput
-					style={styles.inputText}
+					style={[styles.inputText, {
+						color: theme.textColor
+					}]}
 					placeholder="Device serial"
 					autoCorrect={true}
 					autoCapitalize='none'
@@ -71,14 +95,39 @@ export default class AddDeviceScreen extends Component{
 					onChangeText={text => this.setState({new_device_serial: text}) }
 				/>
 				<View style={{width: '40%', left: 10}}>
-					<Button title="Scan QR Code" onPress={this.openQRCodeScanner.bind(this)}/>
+					<TouchableOpacity
+						style={{backgroundColor: BOOTSTRAP_COLOR_PRIMARY, padding: 8, borderRadius: 10}}
+						onPress={this.openQRCodeScanner.bind(this)}
+					>
+						<Text
+							style={{color: BOOTSTRAP_COLOR_LIGHT, fontSize: 16, alignSelf: "center"}}
+						>
+							{t('scan_qr_code_button')}
+						</Text>
+					</TouchableOpacity>
 				</View>
-				<Text style={{padding: 10, fontSize: 16}}>
-					Use the phone's camera to scan the qr code of the device.
+				<Text style={{padding: 10, fontSize: 16, color: theme.textColor}}>
+					{t('qr_code_info')}
 				</Text>
 				<View style={{position: 'absolute', bottom: 40, right: 40, left: 40}}>
-					<Button title="Add device"  onPress={ () => {this.requestDeviceAdd()}}/>
+					<TouchableOpacity
+						style={{
+							backgroundColor: BOOTSTRAP_COLOR_PRIMARY,
+							padding: 8,
+							borderRadius: 10,
+							opacity: add_device_button_enabled ? 1 : theme.buttonDisabledOpacity,
+						}}
+						disabled={!add_device_button_enabled}
+						onPress={ () => {this.requestDeviceAdd()}}
+					>
+						<Text
+							style={{color: BOOTSTRAP_COLOR_LIGHT, fontSize: 16, alignSelf: "center"}}
+						>
+							{t('confirm_button')}
+						</Text>
+					</TouchableOpacity>
 				</View>
+
 				<Modal
 					animationType="fade"
 					transparent={true}
@@ -96,6 +145,7 @@ export default class AddDeviceScreen extends Component{
 						/>
 					</View>
 				</Modal>
+
 			</SafeAreaView>
 		)
 	}
@@ -107,7 +157,6 @@ const styles = StyleSheet.create({
 		flex: 1,
 		paddingHorizontal: 10,
 		paddingTop: 10,
-		backgroundColor: '#F5F5F5'
 	},
 	inputText:{
 		padding: 8,

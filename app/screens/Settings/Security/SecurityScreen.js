@@ -1,6 +1,7 @@
 import React, {Component} from "react";
-import {SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import {Icon} from "react-native-elements";
+import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
+// noinspection ES6CheckImport
+import {t} from "i18n-js"
 
 export default class SecurityScreen extends Component{
 	constructor() {
@@ -8,15 +9,21 @@ export default class SecurityScreen extends Component{
 	}
 
 	render(){
+		const {mode, theme, setTheme} = this.props.screenProps;
 		return(
-			<SafeAreaView>
+			<ScrollView style={{
+				backgroundColor: theme.screenBackgroundColor,
+				flex: 1,
+			}}>
 
 				<TouchableOpacity
 					style={styles.row}
 					onPress={ () => { this.props.navigation.navigate('change_password') } }
 				>
-					<Text style={styles.button_text}>
-						Change password
+					<Text style={[styles.button_text, {
+						color: theme.textColor
+					}]}>
+						{t('security.change_password')}
 					</Text>
 				</TouchableOpacity>
 
@@ -24,28 +31,21 @@ export default class SecurityScreen extends Component{
 					style={styles.row}
 					onPress={ () => { this.props.navigation.navigate('pin_settings') } }
 				>
-					<Text style={styles.button_text}>
-						App PIN
+					<Text style={[styles.button_text, {
+						color: theme.textColor
+					}]}>
+						{t('security.app_pin')}
 					</Text>
 				</TouchableOpacity>
 
-			</SafeAreaView>
+			</ScrollView>
 		)
 	}
 }
-/*<TouchableOpacity
-					style={styles.row}
-					onPress={ () => { alert('Comming soon') } }
-				>
-					<Text style={styles.button_text}>
-						Two factor authentication
-					</Text>
-				</TouchableOpacity>*/
+
 
 const styles = StyleSheet.create({
 	row: {
-		//borderBottomWidth: 2,
-		//borderColor: BOOTSTRAP_COLOR_DARK,
 		paddingVertical: '3%',
 		paddingHorizontal: '1%',
 		width: '94%',

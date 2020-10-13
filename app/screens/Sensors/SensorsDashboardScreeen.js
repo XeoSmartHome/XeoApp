@@ -1,7 +1,16 @@
 import React, {Component} from "react";
-import {SafeAreaView, StyleSheet, Text, TouchableOpacity, View, TextInput, ScrollView, FlatList} from "react-native";
+import {
+	SafeAreaView,
+	StyleSheet,
+	Text,
+	TouchableOpacity,
+	View,
+	TextInput,
+	ScrollView,
+	FlatList,
+	StatusBar
+} from "react-native";
 import {Icon} from "react-native-elements";
-import TabBarBottom from "react-navigation-tabs/src/views/BottomTabBar";
 import {API_LOAD_SENSORS, BOOTSTRAP_COLOR_SECONDARY, XEO_BLUE} from "../../constants";
 
 
@@ -30,9 +39,13 @@ export default class SensorsDashboardScreen extends Component{
 	}
 
 	renderDeviceBox(device, index){
+		const {mode, theme, setTheme} = this.props.screenProps;
 		return(
 			<View style={styles.device_box}>
-				<Text style={styles.device_name}>
+				<Text style={[styles.device_name, {
+					color: theme.textColor,
+					borderColor: theme.textColor
+				}]}>
 					{device.name}
 				</Text>
 				<View>
@@ -50,7 +63,9 @@ export default class SensorsDashboardScreen extends Component{
 										})
 								}}
 							>
-								<Text style={styles.sensor_row_text}>
+								<Text style={[styles.sensor_row_text, {
+									color: theme.textColor
+								}]}>
 									{sensor.name}: {sensor.value}{sensor.unit}
 								</Text>
 							</TouchableOpacity>
@@ -62,8 +77,13 @@ export default class SensorsDashboardScreen extends Component{
 	}
 
 	render(){
+		const {theme} = this.props.screenProps;
 		return(
-			<SafeAreaView>
+			<SafeAreaView style={{
+				backgroundColor: theme.screenBackgroundColor,
+				flex: 1
+			}}>
+				<StatusBar hidden={true}/>
 				<FlatList
 					data={this.state.devices}
 					renderItem={ ({item, index}) => this.renderDeviceBox(item, index) }

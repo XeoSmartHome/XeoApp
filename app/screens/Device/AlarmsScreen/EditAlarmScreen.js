@@ -4,16 +4,20 @@ import {
 	Text,
 	StyleSheet,
 	View,
-	Switch,
-	SafeAreaView,
 	TouchableOpacity,
-	Image,
 	Slider,
-	Alert, Button, Modal, Picker
+	Button, Modal, Picker, ScrollView
 } from "react-native";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import CronParser from "../../utils/CronParser";
-import {API_ADD_ACTION, API_LOAD_DEVICE, API_UPDATE_ACTION, XEO_BLUE} from "../../../constants";
+import {
+	API_ADD_ACTION,
+	API_LOAD_DEVICE,
+	API_UPDATE_ACTION, BOOTSTRAP_COLOR_LIGHT,
+	BOOTSTRAP_COLOR_PRIMARY,
+	XEO_BLUE
+} from "../../../constants";
+import {t} from 'i18n-js'
 
 
 function serializeCron(minute:string, hour:string, day_of_month:string, month: string, day_of_week:string, year:string) {
@@ -148,7 +152,7 @@ export default class EditAlarmScreen extends Component{
 		//console.warn(parameter);
 		if(parameter_type['options'].length === 0){
 			return(
-				<View>
+				<View key={'parameter_input_' + index}>
 					<Text style={{fontSize: 20}}>
 						{parameter_type['name']}: {parameter['value']} {parameter_type['unit']}
 					</Text>
@@ -169,7 +173,7 @@ export default class EditAlarmScreen extends Component{
 			)
 		}
 		return (
-			<View>
+			<View  key={'parameter_input_' + index}>
 				<Text style={{fontSize: 20}}>
 					{parameter_type['name']}: {parameter['value']} {parameter_type['unit']}
 				</Text>
@@ -273,16 +277,25 @@ export default class EditAlarmScreen extends Component{
 	}
 
 	renderEditAction(){
+		const {theme} = this.props.screenProps;
 		return(
-			<SafeAreaView style={styles.container}>
-				<Text style={styles.alarmTitle}>{this.state.action_name}</Text>
+			<ScrollView style={[styles.container, {
+				backgroundColor: theme.screenBackgroundColor
+			}]}>
+				<Text style={[styles.alarmTitle, {
+					color: theme.textColor
+				}]}>
+					{this.state.action_name}
+				</Text>
 				<View style={styles.alarmClockView}>
 					<TouchableOpacity
 						onPress={ () => {
 							this.setState({show_clock_input: true});
 						}}
 					>
-						<Text style={styles.alarmClockText}>
+						<Text style={[styles.alarmClockText, {
+							color: theme.textColor
+						}]}>
 							{this.state.hour > 9 ? String(this.state.hour) : '0' + String(this.state.hour)}
 							:
 							{this.state.minute > 9 ? String(this.state.minute) : '0' + String(this.state.minute)}
@@ -301,16 +314,18 @@ export default class EditAlarmScreen extends Component{
 						{this.WeekDay(6)}
 					</View>
 				</View>
-				<FlatList
-					style={styles.flatList}
-					data={this.state.parameters_types}
-					numColumns={1}
-					renderItem={ ({item, index}) => this.renderParameterInput(item, index) }
-					keyExtractor={ (item) => String(item['id']) }
-				/>
-				<Button title="save" onPress={() => {
+				<View style={styles.flatList}>
+					{
+						this.state.parameters_types
+							?
+							this.state.parameters_types.map( (item, index) => this.renderParameterInput(item, index))
+							:
+							null
+					}
+				</View>
+				{/*<Button title="save" onPress={() => {
 					this.requestActionUpdate(this.state.parameters);
-				}}/>
+				}}/>*/}
 
 				{this.state.show_clock_input && (<DateTimePicker
 					testID="dateTimePicker"
@@ -328,7 +343,28 @@ export default class EditAlarmScreen extends Component{
 						}
 					}}
 				/>)}
-			</SafeAreaView>
+
+				<TouchableOpacity
+					style={{
+						backgroundColor: BOOTSTRAP_COLOR_PRIMARY,
+						padding: 8,
+						borderRadius: 6,
+						width: '50%',
+						alignSelf: 'center',
+					}}
+					onPress={ () => this.requestActionUpdate(this.state.parameters) }
+				>
+					<Text
+						style={{
+							color: BOOTSTRAP_COLOR_LIGHT,
+							fontSize: 18,
+							alignSelf: 'center'
+						}}
+					>
+						{ t('edit_alarm.save') }
+					</Text>
+				</TouchableOpacity>
+			</ScrollView>
 		)
 	}
 
@@ -342,7 +378,7 @@ const styles = StyleSheet.create({
 	container:{
 		flex: 1,
 		paddingHorizontal: '2%',
-		paddingTop: 10
+		paddingTop: 10,
 	},
 	alarmTitle:{
 		alignSelf: 'center',
@@ -395,6 +431,7 @@ const styles = StyleSheet.create({
 		fontWeight: 'bold',
 	},
 	flatList:{
+		flex: 1,
 		padding: 10
 	},
 	slider:{
@@ -407,30 +444,3 @@ const styles = StyleSheet.create({
 });
 
 const weekDays = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
-
-
-/*renderAddActionModal(){
-	return(
-		<Modal
-			animationType="fade"
-			transparent={false}
-			visible={this.state.add_action_modal_visible}
-			onRequestClose={() => {
-				this.setState({add_action_modal_visible: false});
-			}}>
-			<Picker
-				selectedValue={this.state.language}
-				style={{height: 50, width: 100}}
-				onValueChange={(itemValue, itemIndex) => {
-					this.requestAddAction(this.state.device.id, itemValue);
-					this.setState({language: itemValue, add_action_modal_visible: false});
-				}}>
-				{
-					this.state.device.possible_actions.map( (item) =>
-						<Picker.Item label={item['name']} value={item['id']} key={item['name']}/>
-					)
-				}
-			</Picker>
-		</Modal>
-	)
-}*/

@@ -1,44 +1,42 @@
 import React, {Component} from "react";
 import {
-	Image,
-	SafeAreaView,
 	Text,
-	TextInput,
 	TouchableOpacity,
 	StyleSheet,
-	Button,
-	View,
 	ScrollView
 } from "react-native";
-import {BOOTSTRAP_COLOR_DARK} from "../../../constants";
-import WebView from "react-native-webview";
 
 
 export default class HelpScreen extends Component{
 	constructor() {
 		super();
-		this.state = {
-			user:{
-				first_name: '',
-				last_name: '',
-				email: '',
-				phone_number: '',
-			}
-		};
 	}
 
 	render(){
+		const {mode, theme, setTheme} = this.props.screenProps;
 		return(
-			<ScrollView>
+			<ScrollView style={{
+				backgroundColor: theme.screenBackgroundColor
+			}}>
 
-				<TouchableOpacity style={styles.row}>
-					<Text style={styles.row_text}>
+				<TouchableOpacity
+					style={styles.row}
+					onPress={ () => this.props.navigation.navigate('report_a_bug') }
+				>
+					<Text style={[styles.row_text, {
+						color: theme.textColor
+					}]}>
 						Report a bug
 					</Text>
 				</TouchableOpacity>
 
-				<TouchableOpacity style={styles.row}>
-					<Text style={styles.row_text}>
+				<TouchableOpacity
+					style={styles.row}
+					onPress={ () => this.props.navigation.navigate('help_center') }
+				>
+					<Text style={[styles.row_text, {
+						color: theme.textColor
+					}]}>
 						Help center
 					</Text>
 				</TouchableOpacity>

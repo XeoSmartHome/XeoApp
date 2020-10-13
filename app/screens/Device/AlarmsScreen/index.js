@@ -19,14 +19,14 @@ import {API_DELETE_ACTION} from "../../../constants";
 export default class AlarmsScreen extends Component{
 	static navigationOptions = ({ navigation, screenProps }) => ({
 		title: "Programed actions",
-		headerRight:
+		headerRight: () => (
 			<TouchableOpacity onPress={ () => {
 				navigation.navigate('device_edit_alarm', {
 					device_id: navigation.state.params.device_id, create_new: true
 				})
 			}}>
 				<Text style={styles.addButton}>+</Text>
-			</TouchableOpacity>,
+			</TouchableOpacity>)
 	});
 
 	constructor() {
@@ -102,6 +102,7 @@ export default class AlarmsScreen extends Component{
 	}
 
 	RenderAlarm(action, index){
+		const {theme} = this.props.screenProps;
 		//TODO: use a cron deserializer to parse device.cron
 		//let days = [false, false, false, false, false, false, false];
 
@@ -126,12 +127,16 @@ export default class AlarmsScreen extends Component{
 					} }
 				>
 					<View style={styles.alarmTimeView}>
-						<Text style={styles.alarmTimeText}>
+						<Text style={[styles.alarmTimeText, {
+							color: theme.textColor
+						}]}>
 							{hour > 9 ? String(hour) : '0' + String(hour)}
 							:
 							{minute > 9 ? String(minute) : '0' + String(minute)}
 						</Text>
-						<Text style={styles.alarmActionText}>
+						<Text style={[styles.alarmActionText, {
+							color: theme.textColor
+						}]}>
 							{action['name']}
 						</Text>
 					</View>
@@ -166,8 +171,11 @@ export default class AlarmsScreen extends Component{
 	}
 
 	render(){
+		const {theme} = this.props.screenProps;
 		return(
-			<View style={styles.container}>
+			<View style={[styles.container, {
+				backgroundColor: theme.screenBackgroundColor
+			}]}>
 				<FlatList
 					style={styles.flatList}
 					numColumns={1}

@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {AsyncStorage, SafeAreaView, StyleSheet, Switch, Text, TouchableOpacity, View} from "react-native";
+import {Button, SafeAreaView, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View} from "react-native";
 import {Icon} from "react-native-elements";
 
 
@@ -20,11 +20,20 @@ export default class NotificationsSettingsScreen extends Component{
 	}
 
 	render() {
+		const {theme} = this.props.screenProps;
 		return(
-			<SafeAreaView>
+			<ScrollView
+				style={{
+					backgroundColor: theme.screenBackgroundColor,
+					flex: 1
+				}}
+			>
 
 				<View style={styles.row}>
-					<Text style={[styles.row_text, {flex: 5} ]}>
+					<Text style={[styles.row_text, {
+						flex: 5,
+						color: theme.textColor
+					}]}>
 						Notifications
 					</Text>
 					<Switch
@@ -41,7 +50,10 @@ export default class NotificationsSettingsScreen extends Component{
 				</View>
 
 				<View style={styles.row}>
-					<Text style={[styles.row_text, {flex: 5} ]}>
+					<Text style={[styles.row_text, {
+						flex: 5,
+						color: theme.textColor
+					}]}>
 						Sound
 					</Text>
 					<Switch
@@ -58,7 +70,10 @@ export default class NotificationsSettingsScreen extends Component{
 				</View>
 
 				<View style={styles.row}>
-					<Text style={[styles.row_text, {flex: 5} ]}>
+					<Text style={[styles.row_text, {
+						flex: 5,
+						color: theme.textColor
+					}]}>
 						Vibration
 					</Text>
 					<Switch
@@ -73,7 +88,7 @@ export default class NotificationsSettingsScreen extends Component{
 						} }
 					/>
 				</View>
-			</SafeAreaView>
+			</ScrollView>
 			)
 	}
 }

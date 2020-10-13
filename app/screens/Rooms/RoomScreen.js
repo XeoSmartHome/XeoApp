@@ -22,7 +22,7 @@ import {
 	BOOTSTRAP_COLOR_PRIMARY,
 	XEO_BLUE
 } from "../../constants";
-import {string} from "prop-types";
+
 
 
 export default class RoomScreen extends Component {
@@ -55,6 +55,7 @@ export default class RoomScreen extends Component {
 	}
 
 	DeviceBox(device) {
+		const {theme} = this.props.screenProps;
 		return (
 			<TouchableOpacity
 				onPress={ (event) =>{this.props.navigation.navigate('control_device', {device_id: device.id})}}
@@ -70,15 +71,22 @@ export default class RoomScreen extends Component {
 				</View>
 
 				<View style={styles.nameView}>
-					<Text style={styles.deviceName}>{ device.name.length < 15 ? device.name : device.name.substr(0, 14) + '...' }</Text>
+					<Text style={[styles.deviceName, {
+						color: theme.textColor
+					}]}>
+						{ device.name.length < 15 ? device.name : device.name.substr(0, 14) + '...' }
+					</Text>
 				</View>
 			</TouchableOpacity>
 		);
 	}
 
 	render(){
+		const {theme} = this.props.screenProps;
 		return (
-			<SafeAreaView style={styles.container}>
+			<SafeAreaView style={[styles.container, {
+				backgroundColor: theme.screenBackgroundColor
+			}]}>
 				<FlatList
 					numColumns={2}
 					refreshing={this.state.refreshing}

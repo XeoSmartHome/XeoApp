@@ -1,18 +1,25 @@
 import React, {Component} from "react";
-import {SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import {BOOTSTRAP_COLOR_DARK, BOOTSTRAP_COLOR_LIGHT, XEO_BLUE} from "../../constants";
+import {Button, Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {Icon} from "react-native-elements";
+// noinspection ES6CheckImport
+import {t} from "i18n-js"
+import { Ionicons } from '@expo/vector-icons';
 
 
 export default class SettingsScreen extends Component{
+
 	constructor() {
 		super();
 	}
 
 	render(){
+		const {mode, theme, setTheme} = this.props.screenProps;
 		return(
-			<SafeAreaView>
-
+			<ScrollView
+				style={{
+					backgroundColor: theme.screenBackgroundColor
+				}}
+			>
 				<View style={styles.row}>
 					<TouchableOpacity style={{flexDirection: 'row'}}
 						onPress={ () => { this.props.navigation.navigate('account_settings') } }
@@ -21,27 +28,15 @@ export default class SettingsScreen extends Component{
 							name='account-circle-outline'
 							type='material-community'
 							size={25}
+							color={theme.textColor}
 						/>
-						<Text style={styles.button_text}>
-							Account
+						<Text style={[styles.button_text, {
+							color: theme.textColor
+						}]}>
+							{t('settings.account')}
 						</Text>
 					</TouchableOpacity>
 				</View>
-
-				{/*<View style={styles.row}>
-					<TouchableOpacity style={{flexDirection: 'row'}}
-						onPress={ () => { this.props.navigation.navigate('account_settings') } }
-					>
-						<Icon
-							name='settings'
-							type='feather'
-							size={26}
-						/>
-						<Text style={styles.button_text}>
-							App settings
-						</Text>
-					</TouchableOpacity>
-				</View>*/}
 
 				<View style={styles.row}>
 					<TouchableOpacity
@@ -52,9 +47,12 @@ export default class SettingsScreen extends Component{
 							name='notifications-none'
 							type='ionicons'
 							size={26}
+							color={theme.textColor}
 						/>
-						<Text style={styles.button_text}>
-							Notifications
+						<Text style={[styles.button_text, {
+							color: theme.textColor
+						}]}>
+							{t('settings.notifications')}
 						</Text>
 					</TouchableOpacity>
 				</View>
@@ -67,9 +65,12 @@ export default class SettingsScreen extends Component{
 							name='security'
 							type='material-community'
 							size={26}
+							color={theme.textColor}
 						/>
-						<Text style={styles.button_text}>
-							Security
+						<Text style={[styles.button_text, {
+							color: theme.textColor
+						}]}>
+							{t('settings.security')}
 						</Text>
 					</TouchableOpacity>
 				</View>
@@ -83,9 +84,30 @@ export default class SettingsScreen extends Component{
 							name='language'
 							type='ionicons'
 							size={26}
+							color={theme.textColor}
 						/>
-						<Text style={styles.button_text}>
-							Language
+						<Text style={[styles.button_text, {
+							color: theme.textColor
+						}]}>
+							{t('settings.language')}
+						</Text>
+					</TouchableOpacity>
+				</View>
+
+				<View style={styles.row}>
+					<TouchableOpacity
+						style={{flexDirection: 'row'}}
+						onPress={ () => { this.props.navigation.navigate('theme_settings') } }
+					>
+						<Ionicons
+							name="ios-color-palette"
+							size={26}
+							color={theme.textColor}
+						/>
+						<Text style={[styles.button_text, {
+							color: theme.textColor
+						}]}>
+							{t('settings.theme')}
 						</Text>
 					</TouchableOpacity>
 				</View>
@@ -98,14 +120,17 @@ export default class SettingsScreen extends Component{
 							name='help-circle'
 							type='feather'
 							size={26}
+							color={theme.textColor}
 						/>
-						<Text style={styles.button_text}>
-							Help
+						<Text style={[styles.button_text, {
+							color: theme.textColor
+						}]}>
+							{t('settings.help')}
 						</Text>
 					</TouchableOpacity>
 				</View>
 
-			</SafeAreaView>
+			</ScrollView>
 		)
 	}
 }

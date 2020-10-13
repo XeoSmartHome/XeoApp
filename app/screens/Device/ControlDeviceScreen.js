@@ -21,8 +21,6 @@ import {
 	BOOTSTRAP_COLOR_SUCCESS, XEO_BLUE
 } from "../../constants";
 
-import { WebView } from 'react-native-webview';
-
 
 import {
 	LineChart,
@@ -40,7 +38,7 @@ import {socket_io} from "../DashboardScreen/DashboardScreen";
 export default class ControlDeviceScreen extends Component{
 	static navigationOptions = ({ navigation, screenProps }) => ({
 		title: 'Device: ' + ( navigation.state.params.device_name === undefined ? '' : navigation.state.params.device_name ),
-		headerRight:
+		headerRight: () => (
 			<TouchableOpacity onPress={ () => {
 				navigation.navigate('device_alarms', {device_id: navigation.state.params.device_id})
 			}}>
@@ -48,7 +46,8 @@ export default class ControlDeviceScreen extends Component{
 					style={{height: 40, width: 40, marginRight: 15}}
 					source={require('../../assets/images/clock_icon.png')}
 				/>
-			</TouchableOpacity>,
+			</TouchableOpacity>
+		)
 	});
 
 	constructor() {
@@ -138,12 +137,18 @@ export default class ControlDeviceScreen extends Component{
 	}
 
 	renderParameterInput(parameter_type, index){
+		const {theme} = this.props.screenProps;
 		const current_value = this.state.action_parameters[index].value;
 		return parameter_type.options.length === 0 ? (
 			<View style={{paddingHorizontal: '10%', paddingVertical: '5%'}}>
-				<Text style={{fontSize: 20}}>{parameter_type.name}: {current_value} {parameter_type['unit']}</Text>
+				<Text style={{fontSize: 20, color: theme.textColor}}>
+					{parameter_type.name}: {current_value} {parameter_type['unit']}
+				</Text>
 				<Slider
 					style={{width: 300, height: 30, borderRadius: 50}}
+					thumbTintColor={XEO_BLUE}
+					minimumTrackTintColor={theme.textColor}
+					maximumTrackTintColor={theme.textColor}
 					minimumValue={parameter_type.min}
 					maximumValue={parameter_type.max}
 					step={parameter_type.step}
@@ -182,9 +187,10 @@ export default class ControlDeviceScreen extends Component{
 	}
 
 	renderParametersList(){
+		const {theme} = this.props.screenProps;
 		const action_type = this.state.device_actions_types[this.state.selected_action_type_index];
 		return(
-			<View>
+			<View style={{backgroundColor: theme.screenBackgroundColor, flex: 1}}>
 				<FlatList
 					data={action_type['parameters_types']}
 					renderItem={ ({item, index}) => this.renderParameterInput(item, index) }
@@ -205,7 +211,7 @@ export default class ControlDeviceScreen extends Component{
 									color: BOOTSTRAP_COLOR_LIGHT,
 									fontSize: 16,
 									textAlign: 'center',
-									borderRadius: 10
+									borderRadius: 10,
 								}}
 							>
 								{action_type.name}
@@ -297,6 +303,7 @@ export default class ControlDeviceScreen extends Component{
 	}
 
 	renderStatusView(){
+		const {theme} = this.props.screenProps;
 		try {
 			return (
 				<View style={{paddingHorizontal: '5%'}}>
@@ -315,7 +322,7 @@ export default class ControlDeviceScreen extends Component{
 								return (
 									<Text
 										key={'status_' + item.id}
-										style={{fontSize: 18, padding: 2}}
+										style={{fontSize: 18, padding: 2, color: theme.textColor}}
 									>
 										{item['label']}: {status_value}{item.unit}
 									</Text>
@@ -331,21 +338,31 @@ export default class ControlDeviceScreen extends Component{
 	}
 
 	render(){
+		const {theme} = this.props.screenProps;
 		return (
-			<SafeAreaView style={styles.container}>
+			<SafeAreaView style={[styles.container, {
+				backgroundColor: theme.screenBackgroundColor
+			}]}>
 				<Text
-					style={styles.deviceStatus}>
+					style={[styles.deviceStatus, {
+						color: theme.textColor
+					}]}>
 					Status: <Text style={this.state.device_connected ? styles.deviceStatusConnected : styles.deviceStatusDisconnected}>
 						{this.state.device_connected ? 'connected': 'disconnected'}
 						</Text>
 				</Text>
-				<Text style={styles.deviceLastConnection}>
+				<Text style={[styles.deviceLastConnection, {
+					color: theme.textColor
+				}]}>
 					(Last sync: {this.state.device_last_connection})
 				</Text>
 				{this.renderStatusView()}
 				<View style={styleActions.container}>
 					<Text
-						style={styleActions.title}>
+						style={[styleActions.title, {
+							color: theme.textColor
+						}]}
+					>
 						Remote control
 					</Text>
 					<View>
@@ -484,7 +501,6 @@ const styles = StyleSheet.create({
 	container:{
 		flex: 1,
 		paddingTop: 10,
-		backgroundColor: '#F5F5F5',
 	},
 	deviceName:{
 		//alignSelf: 'center',

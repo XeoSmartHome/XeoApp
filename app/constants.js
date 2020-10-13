@@ -1,6 +1,7 @@
 import {StyleSheet} from "react-native";
 
-export const GOOGLE_OAUTH_CLIENT_ID = '998191555443-5ueke76hrlko6h7of29rtva5dao1vgjv.apps.googleusercontent.com';
+export const GOOGLE_OAUTH_CLIENT_ID_EXPO = '998191555443-smvquk0pskm7d69sbv6arg9173eh8vhp.apps.googleusercontent.com';
+export const GOOGLE_OAUTH_CLIENT_ID_STANDALONE = '998191555443-5ueke76hrlko6h7of29rtva5dao1vgjv.apps.googleusercontent.com';
 export const FACEBOOK_APP_ID = '248947746417873';
 
 export const API_URL = 'https://dashboard.xeosmarthome.com/api/';
@@ -9,7 +10,7 @@ export const API_LOGIN_URL = API_URL + 'login';
 export const API_LOAD_DEVICES = API_URL + 'devices';
 export const API_ADD_DEVICE = API_URL + 'add_device';
 export const API_DELETE_DEVICE = API_URL + 'delete_device';
-export const API_CHANGE_DEVICE_NAME = API_URL + 'change_device_name';
+export const API_CHANGE_DEVICE_NAME = API_URL + 'set_device_name';
 export const API_LOAD_DEVICE = API_URL + 'device/';
 export const API_CONTROL_DEVICE = API_URL + 'control_device';
 export const API_DEVICE_IMAGES_URL = 'https://dashboard.xeosmarthome.com/device_images/';

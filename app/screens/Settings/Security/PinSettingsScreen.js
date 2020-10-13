@@ -1,7 +1,6 @@
 import React, {Component} from "react";
-import {AsyncStorage, SafeAreaView, StyleSheet, Switch, Text, TouchableOpacity, View} from "react-native";
-import {Icon} from "react-native-elements";
-import {string} from "prop-types";
+import {ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View} from "react-native";
+import AsyncStorage from "@react-native-community/async-storage";
 
 
 export default class PinSettingsScreen extends Component {
@@ -18,11 +17,22 @@ export default class PinSettingsScreen extends Component {
 	}
 
 	render() {
+		const {theme} = this.props.screenProps;
 		return (
-			<SafeAreaView>
+			<ScrollView
+				style={{
+					flex: 1,
+					padding: '3%',
+					backgroundColor: theme.screenBackgroundColor
+				}}
+			>
 
 				<View style={[styles.row, {flexDirection: 'row'} ]}>
-					<Text style={[styles.button_text, {flex: 1} ]}>
+					<Text
+						style={[styles.button_text, {
+							flex: 1,
+							color: theme.textColor
+						}]}>
 						Lock app with PIN
 					</Text>
 					<Switch
@@ -40,13 +50,17 @@ export default class PinSettingsScreen extends Component {
 				<TouchableOpacity
 					style={styles.row}
 					onPress={ () => {
-						this.props.navigation.navigate('pin');
+						this.props.navigation.navigate('pin', {next: 'pin', params: {scope: 'setPIN', next: 'pin_settings', params: {}}});
 					}}>
-					<Text style={styles.button_text}>
+					<Text
+						style={[styles.button_text, {
+							color: theme.textColor
+						}]}
+					>
 						Change PIN
 					</Text>
 				</TouchableOpacity>
-			</SafeAreaView>
+			</ScrollView>
 		);
 	}
 }
@@ -54,9 +68,6 @@ export default class PinSettingsScreen extends Component {
 const styles = StyleSheet.create({
 	row: {
 		paddingVertical: '3%',
-		paddingHorizontal: '1%',
-		width: '94%',
-		marginHorizontal: '3%',
 	},
 	button_text:{
 		fontSize: 20,

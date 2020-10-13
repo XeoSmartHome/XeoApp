@@ -1,8 +1,9 @@
 import React, {Component} from "react";
-import {AsyncStorage, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import I18n, {t} from 'i18n-js';
 import * as Localization from "expo-localization";
 import {Icon} from "react-native-elements";
+import AsyncStorage from "@react-native-community/async-storage";
 
 
 export default class LanguageSettingsScreen extends Component{
@@ -43,9 +44,12 @@ export default class LanguageSettingsScreen extends Component{
 	}
 
 	render() {
+		const {mode, theme, setTheme} = this.props.screenProps;
 		return(
 			<ScrollView
-				style={styles.page}
+				style={[styles.page, {
+					backgroundColor: theme.screenBackgroundColor
+				}]}
 			>
 				{
 					this.state.languages.map( (item) => {
@@ -58,7 +62,9 @@ export default class LanguageSettingsScreen extends Component{
 								}}
 							>
 								<Text
-									style={styles.button_text}
+									style={[styles.button_text, {
+										color: theme.textColor
+									}]}
 								>
 									{
 										item.name
@@ -66,7 +72,11 @@ export default class LanguageSettingsScreen extends Component{
 								</Text>
 								{
 									this.state.locale === item.locale ?
-										<Icon name='check' style={{flex: 1}}/>
+										<Icon
+											name='check'
+											style={{flex: 1}}
+											color={theme.textColor}
+										/>
 										:
 										null
 								}

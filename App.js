@@ -1,6 +1,5 @@
 import React from 'react';
 import {createAppContainer } from 'react-navigation';
-import {createStackNavigator} from "react-navigation-stack";
 import DashboardScreen from "./app/screens/DashboardScreen/DashboardScreen";
 import ControlDeviceScreen from "./app/screens/Device/ControlDeviceScreen";
 import AddDeviceScreen from "./app/screens/Device/AddDeviceScreen";
@@ -14,9 +13,9 @@ import {BOOTSTRAP_COLOR_LIGHT, XEO_BLUE} from "./app/constants";
 import {createMaterialBottomTabNavigator} from "react-navigation-material-bottom-tabs"
 import {Icon} from "react-native-elements";
 import RoomSharingMainScreen from "./app/screens/RoomSharing/RoomSharingMainScreen";
-import AccountScreen from "./app/screens/Settings/Account/AccountScreen";
-import DeviceSettingsScreen2 from "./app/screens/Device/EditDeviceScreen2";
-import {AsyncStorage, Button, Text, TouchableOpacity} from "react-native";
+import AccountSettingsScreen from "./app/screens/Settings/Account/AccountSettingsScreen";
+import {TouchableOpacity} from "react-native";
+import AsyncStorage from "@react-native-community/async-storage";
 import CreateNewRoom from "./app/screens/Rooms/CreateNewRoom";
 import AddDeviceInRoom from "./app/screens/Rooms/AddDeviceInRoom";
 import RenameRoomScreen from "./app/screens/Rooms/RenameRoom";
@@ -32,10 +31,17 @@ import PinSettingsScreen from "./app/screens/Settings/Security/PinSettingsScreen
 import PinScreen from "./app/screens/Settings/Security/PinScreen";
 import SensorScreen from "./app/screens/Sensors/SensorScreen";
 import NotificationsSettingsScreen from "./app/screens/Settings/Notifications/NotificationsSettingsScreen";
-import DeviceSettingsScreen from "./app/screens/Device/EditDeviceScreen";
-import I18n, {t} from 'i18n-js';
 import LanguageSettingsScreen from "./app/screens/Settings/Language/LanguageSettingsScreen";
 import * as Localization from "expo-localization";
+import createStackNavigator from "react-navigation-stack/src/navigators/createStackNavigator";
+import ThemeProvider, {ThemeContext} from "./app/themes/ThemeProvider";
+import ThemeSettingsScreen from "./app/screens/Settings/Theme/ThemeSettingsScreen";
+import {createBottomTabNavigator} from 'react-navigation-tabs';
+import DeviceSettingsScreen2 from "./app/screens/Device/Settings/DeviceSettings";
+import HelpCenterScreen from "./app/screens/Settings/Help/HelpCenterScreen";
+import ReportABug from "./app/screens/Settings/Help/ReportABug";
+// noinspection ES6CheckImport
+import I18n, {t} from 'i18n-js';
 
 
 I18n.fallbacks = true;
@@ -53,48 +59,64 @@ AsyncStorage.getItem('locale').then( (item) => {
 });
 
 
-const BottomNavigator = createMaterialBottomTabNavigator(
+const BottomNavigator = createBottomTabNavigator(
 	{
 		sensors:{
 			screen: SensorsDashboardScreen,
-			navigationOptions:{
-				tabBarLabel: t('navigation.sensors'),
+			navigationOptions: ({screenProps}) => ({
+				tabBarLabel: t('dashboard.navigation.sensors'),
 				tabBarIcon: ({tintColor}) => (
 					<Icon name="show-chart" color={tintColor} size={24} />
 				)
-			}
+			})
 		},
 		dashboard:{
 			screen: DashboardScreen,
-			navigationOptions:{
-				tabBarLabel: t('navigation.devices'),
+			navigationOptions: ({screenProps}) => ({
+				tabBarLabel: t('dashboard.navigation.devices'),
 				tabBarIcon: ({tintColor}) => (
 					<Icon name="device-hub" color={tintColor} size={24} />
-					// <Icon name="dashboard" color={tintColor} size={24} />
 				)
-			}
+			})
 		},
 		rooms:{
 			screen: RoomsScreen,
-			navigationOptions:{
-				tabBarLabel: t('navigation.rooms'),
+			navigationOptions: ({screenProps}) => ({
+				tabBarLabel: t('dashboard.navigation.rooms'),
 				tabBarIcon: ({tintColor}) => (
 					<Icon name="home" color={tintColor} size={24} />
 				)
-			}
+			})
 		},
-	}, {
+	}, /*{
 		shifting: false,
 		initialRouteName: 'rooms',
 		order: ['dashboard', 'rooms', 'sensors'],
-		barStyleLight:{
+		barStyleLight: {
 			backgroundColor: XEO_BLUE,
 			borderTopWidth: 2,
 			borderStyle: 'solid',
 			borderColor: '#d0cfd0',
 			paddingBottom: 5,
-
-		}
+		},
+	}*/
+	{
+		defaultNavigationOptions: ({ navigation, screenProps }) => ({
+			tabBarOptions: {
+				keyboardHidesTabBar: true,
+				activeTintColor: screenProps.theme.headerTextColor,
+				inactiveTintColor: '#b3b5b8',
+				style: {
+					borderWidth: 0,
+					backgroundColor: screenProps.theme.headerBackgroundColor,
+					paddingBottom: 10,
+					height: 60,
+				},
+			},
+		}),
+		resetOnBlur: true,
+		initialRouteName: 'rooms',
+		order: ['dashboard', 'rooms', 'sensors'],
 	}
 );
 
@@ -102,211 +124,252 @@ const BottomNavigator = createMaterialBottomTabNavigator(
 const NavigationStack = createStackNavigator({
 	login: {
 		screen: LoginScreen,
-		navigationOptions: () => ({
-			title: t('navigation.login'),
-			headerStyle:{backgroundColor: '#4267b2'},
+		navigationOptions: ({screenProps}) => ({
+			title: t('login.navigation.title'),
+			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
 			headerTintColor: 'white',
 		})
 	},
 	main: {
 		screen: BottomNavigator,
-		navigationOptions: ({navigation}) => ({
+		navigationOptions: ({navigation, screenProps}) => ({
 			title: 'XeoApp',
-			headerStyle:{backgroundColor: '#4267b2'},
+			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
 			headerTintColor: 'white',
-			headerRight: <TouchableOpacity
+			headerRight: () => (<TouchableOpacity
 				style={{marginRight: 15}}
 				onPress={ () => navigation.navigate('settings_screen')}
 			>
 				<Icon name="more-horiz" color={BOOTSTRAP_COLOR_LIGHT} size={40} />
-			</TouchableOpacity>,
+			</TouchableOpacity>)
 		})
 	},
 	add_device:{
 		screen: AddDeviceScreen,
-		navigationOptions: () => ({
+		navigationOptions: ({screenProps}) => ({
 			title: "Add new device",
-			headerStyle:{backgroundColor: '#4267b2'},
+			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
 			headerTintColor: 'white',
 		})
 	},
 	control_device: {
 		screen: ControlDeviceScreen,
-		navigationOptions: () => ({
-			headerStyle:{backgroundColor: '#4267b2'},
+		navigationOptions: ({screenProps}) => ({
+			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
 			headerTintColor: 'white',
 		})
 	},
 	device_settings: {
-		screen: DeviceSettingsScreen,
-		navigationOptions: () => ({
+		screen: DeviceSettingsScreen2,
+		navigationOptions: ({screenProps}) => ({
 			title: "Device settings",
-			headerStyle:{backgroundColor: '#4267b2'},
+			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
 			headerTintColor: 'white',
 		})
 	},
 	device_alarms: {
 		screen: AlarmsScreen,
-		navigationOptions: () => ({
+		navigationOptions: ({screenProps}) => ({
 			title: "Programmed actions",
-			headerStyle:{backgroundColor: '#4267b2'},
+			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
 			headerTintColor: 'white',
 		})
 	},
 	device_edit_alarm:{
 		screen: EditAlarmScreen,
-		navigationOptions: () => ({
+		navigationOptions: ({screenProps}) => ({
 			title: "",
-			headerStyle:{backgroundColor: '#4267b2'},
+			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
 			headerTintColor: 'white',
 		})
 	},
 	settings_screen:{
 		screen: SettingsScreen,
-		navigationOptions: () => ({
-			title: 'Settings',
-			headerStyle:{backgroundColor: '#4267b2'},
+		navigationOptions: ({screenProps}) => ({
+			title: t('settings.navigation.title'),
+			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
 			headerTintColor: 'white',
 		})
 	}
 	,
 	account_settings: {
-		screen: AccountScreen,
-		navigationOptions: () => ({
+		screen: AccountSettingsScreen,
+		navigationOptions: ({screenProps}) => ({
 			title: "Account",
-			headerStyle:{backgroundColor: '#4267b2'},
+			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
 			headerTintColor: 'white',
 		})
 	},
 	security: {
 		screen: SecurityScreen,
-		navigationOptions: () => ({
+		navigationOptions: ({screenProps}) => ({
 			title: "Security",
-			headerStyle:{backgroundColor: '#4267b2'},
+			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
 			headerTintColor: 'white',
 		})
 	},
 	change_password: {
 		screen: ChangePasswordScreen,
-		navigationOptions:() => ({
+		navigationOptions:({screenProps}) => ({
 			title: "Change password",
-			headerStyle:{backgroundColor: '#4267b2'},
+			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
 			headerTintColor: 'white',
 		})
 	},
 	help: {
 		screen: HelpScreen,
-		navigationOptions: () => ({
+		navigationOptions: ({screenProps}) => ({
 			title: "Help",
-			headerStyle:{backgroundColor: '#4267b2'},
+			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
 			headerTintColor: 'white',
 		})
 	},
 	user_activity:{
 		screen: UserActivityScreen,
-		navigationOptions: () => ({
+		navigationOptions: ({screenProps}) => ({
 			title: 'Activity',
-			headerStyle:{backgroundColor: '#4267b2'},
+			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
 			headerTintColor: 'white',
 		})
 	},
 	create_account:{
 		screen: CreateAccount,
-		navigationOptions: () => ({
+		navigationOptions: ({screenProps}) => ({
 			title: "Create account",
-			headerStyle:{backgroundColor: XEO_BLUE},
+			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
 			headerTintColor: BOOTSTRAP_COLOR_LIGHT,
 		})
 	},
 	room: {
 		screen: RoomScreen,
-		navigationOptions: () => ({
-			headerStyle:{backgroundColor: XEO_BLUE},
+		navigationOptions: ({screenProps}) => ({
+			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
 			headerTintColor: BOOTSTRAP_COLOR_LIGHT,
 		})
 	},
 	create_new_room: {
 		screen: CreateNewRoom,
-		navigationOptions: () => ({
-			headerStyle:{backgroundColor: XEO_BLUE},
+		navigationOptions: ({screenProps}) => ({
+			title: t('create_new_room.navigation.title'),
+			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
 			headerTintColor: BOOTSTRAP_COLOR_LIGHT,
 		})
 	},
 	add_device_in_room: {
 		screen: AddDeviceInRoom,
-		navigationOptions: () => ({
-			headerStyle:{backgroundColor: XEO_BLUE},
+		navigationOptions: ({screenProps}) => ({
+			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
 			headerTintColor: BOOTSTRAP_COLOR_LIGHT,
 		})
 	},
 	rename_room:{
 		screen: RenameRoomScreen,
-		navigationOptions: () => ({
-			headerStyle:{backgroundColor: XEO_BLUE},
+		navigationOptions: ({screenProps}) => ({
+			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
 			headerTintColor: BOOTSTRAP_COLOR_LIGHT,
 		})
 	},
 	room_options: {
 		screen: RoomOptionsScreen,
-		navigationOptions: () => ({
-			headerStyle:{backgroundColor: XEO_BLUE},
+		navigationOptions: ({screenProps}) => ({
+			title: t('room_options.navigation.title'),
+			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
 			headerTintColor: BOOTSTRAP_COLOR_LIGHT,
 		})
 	},
 	room_device_options: {
 		screen: RoomDeviceOptionsScreen,
-		navigationOptions: () => ({
-			headerStyle:{backgroundColor: XEO_BLUE},
+		navigationOptions: ({screenProps}) => ({
+			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
 			headerTintColor: BOOTSTRAP_COLOR_LIGHT,
 		})
 	},
 	room_sharing:{
 		screen: RoomSharingMainScreen,
-		navigationOptions: () => ({
-			headerStyle:{backgroundColor: XEO_BLUE},
+		navigationOptions: ({screenProps}) => ({
+			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
 			headerTintColor: BOOTSTRAP_COLOR_LIGHT,
 		})
 	},
 	pin_settings: {
 		screen: PinSettingsScreen,
-		navigationOptions: () => ({
+		navigationOptions: ({screenProps}) => ({
 			title: 'App PIN',
-			headerStyle:{backgroundColor: XEO_BLUE},
+			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
 			headerTintColor: BOOTSTRAP_COLOR_LIGHT,
 		})
 	},
 	pin: {
 		screen: PinScreen,
 		navigationOptions:{
-			header: null
+			header: () => null
 		}
 	},
 	sensor: {
 		screen: SensorScreen,
-		navigationOptions:{
-			headerStyle:{backgroundColor: XEO_BLUE},
-			headerTintColor: BOOTSTRAP_COLOR_LIGHT,
-		}
-	},
-	notifications_settings:{
-		screen: NotificationsSettingsScreen,
-		navigationOptions: () => ({
-			headerStyle:{backgroundColor: XEO_BLUE},
+		navigationOptions: ({screenProps}) => ({
+			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
 			headerTintColor: BOOTSTRAP_COLOR_LIGHT,
 		})
 	},
-	language_settings:{
+	notifications_settings: {
+		screen: NotificationsSettingsScreen,
+		navigationOptions: ({screenProps}) => ({
+			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
+			headerTintColor: BOOTSTRAP_COLOR_LIGHT,
+		})
+	},
+	language_settings: {
 		screen: LanguageSettingsScreen,
-		navigationOptions: () => ({
+		navigationOptions: ({screenProps}) => ({
 			title: 'Language',
-			headerStyle:{backgroundColor: XEO_BLUE},
+			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
 			headerTintColor: BOOTSTRAP_COLOR_LIGHT
 		})
+	},
+	theme_settings: {
+		screen: ThemeSettingsScreen,
+		navigationOptions: ({screenProps}) => ({
+			title: 'Theme',
+			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
+			headerTintColor: screenProps.theme.headerTextColor
+		})
+	},
+	help_center: {
+		screen: HelpCenterScreen,
+		navigationOptions: ({screenProps}) => ({
+			title: 'Help center',
+			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
+			headerTintColor: screenProps.theme.headerTextColor
+		})
+	},
+	report_a_bug: {
+		screen: ReportABug,
+		navigationOptions: ({screenProps}) => ({
+			title: 'Report a bug',
+			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
+			headerTintColor: screenProps.theme.headerTextColor
+		})
 	}
-});
+}, {initialRouteName: 'login'});
+
 
 const Container = createAppContainer(NavigationStack);
 
-export default Container;
+
+const App = () => (
+	<ThemeProvider>
+		<ThemeContext.Consumer>
+			{
+				(props) => (
+					<Container screenProps={props} />
+				)
+			}
+		</ThemeContext.Consumer>
+	</ThemeProvider>
+)
+
+
+export default App;
 
 

@@ -7,19 +7,26 @@ import {
 	Button,
 	Image,
 	TouchableOpacity,
-	AsyncStorage, SafeAreaView
+	SafeAreaView, ScrollView, StatusBar
 } from "react-native";
 import {
-	API_LOGIN_URL, API_LOGIN_WITH_FACEBOOK,
+	API_LOGIN_URL,
+	API_LOGIN_WITH_FACEBOOK,
 	API_LOGIN_WITH_GOOGLE,
 	BOOTSTRAP_COLOR_LIGHT,
 	BOOTSTRAP_COLOR_PRIMARY,
-	BOOTSTRAP_COLOR_SECONDARY, FACEBOOK_APP_ID, GOOGLE_OAUTH_CLIENT_ID, XEO_BLUE
+	BOOTSTRAP_COLOR_SECONDARY,
+	FACEBOOK_APP_ID,
+	GOOGLE_OAUTH_CLIENT_ID_EXPO,
+	GOOGLE_OAUTH_CLIENT_ID_STANDALONE,
+	XEO_BLUE
 } from "../constants";
 import * as Google from 'expo-google-app-auth';
 import {Icon} from "react-native-elements";
-import I18n from 'i18n-js';
+import I18n, {t} from 'i18n-js';
 import * as Facebook from 'expo-facebook';
+import AsyncStorage from "@react-native-community/async-storage";
+import ThemeProvider, {ThemeContext} from "../themes/ThemeProvider";
 
 
 export default class LoginScreen extends Component{
@@ -62,10 +69,17 @@ export default class LoginScreen extends Component{
 				return response.json();
 			}
 		).then(response => {
-			if(response.status === 'success') {
+			if(response.status === 200) {
 				this.go_to_main_page();
 			}else {
-				alert('bad credentials');
+				switch (response.error) {
+					case 'UserNotFound':
+						alert('User not found');
+						break;
+					case 'WrongPassword':
+						alert('Wrong password')
+						break;
+				}
 			}
 		}).catch((error) => {
 			alert(error)
@@ -84,7 +98,9 @@ export default class LoginScreen extends Component{
 
 	login_with_google(){
 		Google.logInAsync({
-			androidClientId: GOOGLE_OAUTH_CLIENT_ID
+			androidClientId: GOOGLE_OAUTH_CLIENT_ID_EXPO,
+			androidStandaloneAppClientId: GOOGLE_OAUTH_CLIENT_ID_STANDALONE,
+			redirectUrl: ''
 		}).then( ({idToken, type}) => {
 			if(type === 'cancel') {
 				return;
@@ -105,12 +121,16 @@ export default class LoginScreen extends Component{
 				if(response.status === 'success'){
 					this.go_to_main_page();
 				}
+			}).catch( (error) => {
+				alert(error);
 			})
+		}).catch( (error) => {
+			alert(error);
 		});
 	}
 
 	login_with_facebook(){
-		Facebook.initializeAsync(FACEBOOK_APP_ID, 'XeoApp').then( () => {
+		Facebook.initializeAsync({appId: FACEBOOK_APP_ID, appName: 'XeoApp'}).then( () => {
 			Facebook.logInWithReadPermissionsAsync(
 				{
 					permissions: ['public_profile', 'email']
@@ -148,25 +168,44 @@ export default class LoginScreen extends Component{
 	}
 
 	render(){
+		const {theme} = this.props.screenProps;
+		const login_button_enabled = this.state.email.length !== 0 && this.state.password.length !== 0;
 		return (
-			<SafeAreaView style={styles.screen}>
+			<ScrollView contentContainerStyle={[styles.screen, {
+				backgroundColor: theme.screenBackgroundColor
+			}]}>
+				<StatusBar hidden={true}/>
 				<Image
 					style={styles.logo}
 					source={require("../assets/images/logo_xeo_no_background.png")}
 				/>
 				<View style={styles.form}>
-					<Text style={styles.inputHint}>Email:</Text>
+					<Text style={[styles.inputHint, {
+						color: theme.textColor
+					}]}>
+						Email:
+					</Text>
 					<TextInput
-						style={styles.textInput}
+						style={[styles.textInput, {
+							color: theme.textColor,
+							borderColor: theme.textColor
+						}]}
 						placeholder="email"
 						autoCorrect={false}
 						autoCapitalize='none'
 						value={this.state.email}
 						onChangeText={text => this.setState({email: text})}
 					/>
-					<Text style={styles.inputHint}>Password:</Text>
+					<Text style={[styles.inputHint, {
+						color: theme.textColor
+					}]}>
+						Password:
+					</Text>
 					<TextInput
-						style={styles.textInput}
+						style={[styles.textInput, {
+							color: theme.textColor,
+							borderColor: theme.textColor
+						}]}
 						placeholder="password"
 						autoCorrect={false}
 						autoCapitalize='none'
@@ -176,11 +215,17 @@ export default class LoginScreen extends Component{
 					/>
 					<View style={{top: 20}}>
 						<TouchableOpacity
-							style={[styles.button, styles.loginButton]}
+							disabled={!login_button_enabled}
+							style={[
+								styles.button,
+								styles.loginButton,
+								{
+									opacity: login_button_enabled ? 1 : 0.6
+								}]}
 							onPress={this.login.bind(this)}
 						>
 							<Text style={styles.buttonText}>{
-								I18n.t("screens.login.sign_in")
+								I18n.t("login.login")
 							}</Text>
 						</TouchableOpacity>
 
@@ -189,12 +234,12 @@ export default class LoginScreen extends Component{
 							onPress={this.create_account.bind(this)}
 						>
 							<Text style={styles.buttonText}>{
-								I18n.t("screens.login.create_account")
+								I18n.t("login.create_account")
 							}</Text>
 						</TouchableOpacity>
 
 						<TouchableOpacity
-							style={[styles.button, {backgroundColor: 'red', flexDirection: 'row', justifyContent: 'center', alignItems:'center'}]}
+							style={[styles.button, {backgroundColor: '#DB4437', flexDirection: 'row', justifyContent: 'center', alignItems:'center'}]}
 							onPress={() => {
 								this.login_with_google()
 							}}
@@ -206,7 +251,7 @@ export default class LoginScreen extends Component{
 								type='antdesign'
 							/>
 							<Text style={[styles.buttonText, {}]}>
-								Login with google
+								{t('login.login_with_google')}
 							</Text>
 						</TouchableOpacity>
 
@@ -223,13 +268,13 @@ export default class LoginScreen extends Component{
 								type='entypo'
 							/>
 							<Text style={[styles.buttonText, {}]}>
-								Login with facebook
+								{t('login.login_with_facebook')}
 							</Text>
 						</TouchableOpacity>
 
 					</View>
 				</View>
-			</SafeAreaView>
+			</ScrollView>
 		)
 	}
 }
@@ -244,13 +289,13 @@ const styles = StyleSheet.create({
 	logo:{
 		width: 125,
 		height: 125,
-		margin: 10
+		margin: 10,
 	},
 	form:{
 		width: '80%',
 	},
 	inputHint:{
-		fontSize: 20,
+		fontSize: 18,
 		top: 10
 	},
 	textInput:{
@@ -259,16 +304,17 @@ const styles = StyleSheet.create({
 		borderBottomWidth: 2,
 	},
 	button:{
-		padding: 8,
-		marginVertical: 10,
+		padding: 6,
+		marginVertical: 8,
 		alignSelf: 'center',
 		borderRadius: 8,
-		width: '70%',
+		width: '80%',
 	},
 	buttonText:{
 		color: BOOTSTRAP_COLOR_LIGHT,
-		fontSize: 20,
-		alignSelf: 'center'
+		fontSize: 18,
+		alignSelf: 'center',
+		marginHorizontal: 6
 	},
 	loginButton:{
 		backgroundColor: BOOTSTRAP_COLOR_PRIMARY

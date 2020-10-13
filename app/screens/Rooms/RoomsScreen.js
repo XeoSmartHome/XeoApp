@@ -11,7 +11,7 @@ import {
 	SectionList,
 	TouchableOpacity,
 	TextInput,
-	BackHandler
+	BackHandler, StatusBar
 } from "react-native";
 import {
 	API_DEFAULT_IMAGES_URL,
@@ -52,16 +52,26 @@ export default class RoomsScreen extends Component {
 	 }
 
 	 render(){
+		 const {mode, theme, setTheme} = this.props.screenProps;
 		 return(
-			 <SafeAreaView style={{flex: 1}}>
+			 <SafeAreaView style={{
+			 	flex: 1,
+			 	backgroundColor: theme.screenBackgroundColor
+			 }}>
+				 <StatusBar hidden={true}/>
 				 <ScrollView>
-					 <View style={{borderBottomWidth: 2, width: '94%', marginHorizontal: '3%', marginTop: 30}}>
+					 <View style={{borderBottomWidth: 2, width: '94%', marginHorizontal: '3%', marginTop: 30, borderColor: theme.textColor}}>
 					 </View>
 					 {this.state.rooms.map(
 						 (room) => (
 							 <View
 								 key={'room_' + room.id}
-								 style={{borderBottomWidth: 2, width: '94%', alignSelf: 'center'}}
+								 style={{
+								 	borderBottomWidth: 2,
+									 width: '94%',
+									 alignSelf: 'center',
+									 borderColor: theme.textColor
+								 }}
 							 >
 								 <TouchableOpacity
 									 onPress={ () => {
@@ -72,7 +82,12 @@ export default class RoomsScreen extends Component {
 										 this.props.navigation.navigate('room_options', {house_id: this.state.house_id, room_id: room.id, room_name: room.name});
 									 }}
 								 >
-									 <Text style={{alignSelf: 'center', fontSize: 20, padding: 10}}>
+									 <Text style={{
+									 	alignSelf: 'center',
+										 fontSize: 20,
+										 padding: 10,
+										 color: theme.textColor
+									 }}>
 										 {room.name}
 									 </Text>
 								 </TouchableOpacity>
@@ -86,7 +101,7 @@ export default class RoomsScreen extends Component {
 						 }}
 					 >
 						 <Text style={{alignSelf: 'center', fontSize: 14, color: BOOTSTRAP_COLOR_LIGHT}}>
-							 ADD ROOM
+							 {t('dashboard.rooms.add_room')}
 						 </Text>
 					 </TouchableOpacity>
 				 </ScrollView>
