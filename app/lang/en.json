@@ -1,6 +1,8 @@
 {
     "name": "English",
     "login": {
+        "email": "Email",
+        "password": "Password",
         "login": "Sign in",
         "create_account": "Create account",
         "login_with_google": "Continue with google",
@@ -9,7 +11,8 @@
             "title": "Sign in"
         },
         "errors": {
-
+            "user_not_found": "User not found",
+            "wrong_password": "Wrong password"
         }
     },
     "settings": {
@@ -36,9 +39,31 @@
         "change_password": "Change password",
         "app_pin": "App PIN"
     },
+    "change_password": {
+        "current_password": "Current password",
+        "new_password": "New password",
+        "confirm_new_password": "Confirm new password",
+        "save_button": "Save",
+        "password_updated": "Password updated",
+        "errors": {
+            "wrong_password": "Wrong password",
+            "password_to_weak": "Password should have at least 8 characters",
+            "passwords_dont_match": "Passwords don't match"
+        },
+        "navigation": {
+            "title": "Change password"
+        }
+    },
     "pin_check": {
-        "title": "Enter PIN",
-        "wrong_pin": "The PIN entered is incorrect. Please try again."
+        "title": {
+            "enter_pin": "Enter PIN",
+            "enter_new_pin": "Enter new PIN",
+            "confirm_new_pin": "Confirm new PIN"
+        },
+        "error": {
+            "wrong_pin": "The PIN entered is incorrect. Please try again.",
+            "pin_not_matching": "Enter new pin again to confirm."
+        }
     },
     "theme_settings": {
         "light": "Light",
@@ -97,6 +122,7 @@
     "create_new_room": {
         "default_name": "New room",
         "confirm_button": "Add",
+        "name_input_placeholder": "Room name",
         "navigation": {
             "title": "Create new room"
         }
@@ -109,6 +135,13 @@
             "title": "Room settings"
         }
     },
+    "rename_room": {
+        "save": "Save",
+        "name_input_placeholder": "Room name",
+        "navigation": {
+            "title": "Rename room"
+        }
+    },
     "add_device_in_room": {
         "hint": "Select a device to add it in",
         "navigation": {
@@ -116,6 +149,7 @@
         }
     },
     "edit_alarm": {
-        "save": "SAVE"
+        "save": "SAVE",
+        "repeat": "Repeat"
     }
 }

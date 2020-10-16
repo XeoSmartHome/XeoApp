@@ -211,7 +211,7 @@ const NavigationStack = createStackNavigator({
 	change_password: {
 		screen: ChangePasswordScreen,
 		navigationOptions:({screenProps}) => ({
-			title: "Change password",
+			title: t('change_password.navigation.title'),
 			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
 			headerTintColor: 'white',
 		})
@@ -265,6 +265,7 @@ const NavigationStack = createStackNavigator({
 	rename_room:{
 		screen: RenameRoomScreen,
 		navigationOptions: ({screenProps}) => ({
+			title: t('rename_room.navigation.title'),
 			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
 			headerTintColor: BOOTSTRAP_COLOR_LIGHT,
 		})

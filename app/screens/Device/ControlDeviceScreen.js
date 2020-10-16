@@ -237,6 +237,7 @@ export default class ControlDeviceScreen extends Component{
 	}
 
 	renderActionButton(action_type, index){
+		const {theme} = this.props.screenProps;
 		return(
 			<View style={styleActions.buttonBox}>
 				<TouchableOpacity
@@ -258,7 +259,9 @@ export default class ControlDeviceScreen extends Component{
 					}
 				}}
 					style={{
+						opacity: this.state.device_connected ? 1 : theme.buttonDisabledOpacity
 					}}
+					disabled={!this.state.device_connected}
 				>
 					<Text
 						style={{

@@ -17,13 +17,13 @@ import {
 	API_LOAD_DEVICES,
 	API_URL, BOOTSTRAP_COLOR_LIGHT, BOOTSTRAP_COLOR_PRIMARY, XEO_BLUE,
 } from "../../constants";
+import I18n from 'i18n-js'
+
+
+const t = (key) => I18n.t('rename_room.' + key);
 
 
 export default class RenameRoomScreen extends Component {
-	static navigationOptions = ({navigation, screenProps}) => ({
-		title: 'Edit room name'
-	});
-
 	constructor() {
 		super();
 		this.state = {
@@ -45,18 +45,31 @@ export default class RenameRoomScreen extends Component {
 	}
 
 	render() {
+		const {theme} = this.props.screenProps;
+		const button_disabled = this.state.room_name === '';
 		return (
-			<SafeAreaView>
-				<Text
-					style={{alignSelf: 'center', margin: 10, fontSize: 20}}
-				>
-					Rename room
-				</Text>
+			<ScrollView
+				style={{
+					backgroundColor: theme.screenBackgroundColor
+				}}
+			>
 				<TextInput
-					style={{alignSelf: 'center', borderWidth: 2, borderRadius: 8, padding: 8, borderColor: XEO_BLUE, width: '70%', fontSize: 20}}
+					style={{
+						alignSelf: 'center',
+						borderWidth: 2,
+						borderRadius: 8,
+						padding: 8,
+						borderColor: XEO_BLUE,
+						width: '70%',
+						fontSize: 20,
+						marginTop: 50,
+						color: theme.textColor
+					}}
 					value={this.state.room_name}
 					autoFocus={true}
 					autoCapitalize='sentences'
+					placeholder={t('name_input_placeholder')}
+					placeholderTextColor={theme.placeholderTextColor}
 					onChangeText={ (value) => {
 						this.setState({
 							room_name: value
@@ -64,10 +77,20 @@ export default class RenameRoomScreen extends Component {
 					}}
 				/>
 				<TouchableOpacity
-					style={{width: '30%', backgroundColor: BOOTSTRAP_COLOR_PRIMARY, padding:8, borderRadius:6, marginRight: '10%', alignSelf: 'flex-end', marginTop: 20}}
+					style={{
+						width: '30%',
+						backgroundColor: BOOTSTRAP_COLOR_PRIMARY,
+						padding:8,
+						borderRadius:6,
+						marginRight: '10%',
+						alignSelf: 'flex-end',
+						marginTop: 20,
+						opacity: button_disabled ? theme.buttonDisabledOpacity : 1
+					}}
 					onPress={ () => {
 						this.renameRoom();
 					}}
+					disabled={button_disabled}
 				>
 					<Text
 						style={{fontSize: 20, color: BOOTSTRAP_COLOR_LIGHT, alignSelf: 'center'}}
@@ -75,7 +98,7 @@ export default class RenameRoomScreen extends Component {
 						Save
 					</Text>
 				</TouchableOpacity>
-			</SafeAreaView>
+			</ScrollView>
 		)
 	}
 
@@ -92,10 +115,15 @@ export default class RenameRoomScreen extends Component {
 		}).then(
 			(response) => response.json()
 		).then((response) => {
-				if (response.status === 'success') {
-					this.props.navigation.goBack();
-				} else {
-					alert(response.message);
+				switch (response.status) {
+					case 200:
+						this.props.navigation.goBack();
+						break
+					case 400:
+						// TODO: handle 400
+						alert(response.message);
+						break;
+
 				}
 			}
 		).catch((error) => {

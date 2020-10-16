@@ -11,7 +11,7 @@ import * as ImagePicker from "expo-image-picker";
 import I18n from 'i18n-js'
 
 
-const INPUT_MAX_LENGTH = 50;
+const INPUT_MAX_LENGTH = 500;
 
 export default class ReportABug extends React.Component {
 	constructor() {
@@ -78,6 +78,7 @@ export default class ReportABug extends React.Component {
 					value={this.state.bug_description}
 					maxLength={INPUT_MAX_LENGTH}
 					placeholder={I18n.t('report_a_bug.input_placeholder')}
+					placeholderTextColor={theme.placeholderTextColor}
 					onChangeText={ (value) =>
 						this.setState({
 							bug_description: value
@@ -86,9 +87,9 @@ export default class ReportABug extends React.Component {
 				/>
 
 				<Text
-					style={[
-						styles.character_limit
-					]}
+					style={[styles.character_limit, {
+						color: theme.textColor
+					}]}
 				>
 					{this.state.bug_description.length}/{INPUT_MAX_LENGTH}
 				</Text>
@@ -97,7 +98,9 @@ export default class ReportABug extends React.Component {
 					this.state.image_name !== null &&
 
 					<Text
-						style={styles.image_name}
+						style={[styles.image_name, {
+							color: theme.textColor
+						}]}
 					>
 						{
 							this.state.image_name

@@ -38,7 +38,7 @@ export default class AddDeviceScreen extends Component{
 			if(response.status === 400){
 				switch (response.error) {
 					case 'ValueError':
-						alert('val error')
+						alert('value error')
 						break;
 					case 'DeviceTypeNotFound':
 						alert('Serial invalid')
@@ -74,6 +74,7 @@ export default class AddDeviceScreen extends Component{
 						color: theme.textColor
 					}]}
 					placeholder="Device name"
+					placeholderTextColor={theme.placeholderTextColor}
 					autoCorrect={true}
 					autoCapitalize='sentences'
 					value={this.state.new_device_name}
@@ -89,6 +90,7 @@ export default class AddDeviceScreen extends Component{
 						color: theme.textColor
 					}]}
 					placeholder="Device serial"
+					placeholderTextColor={theme.placeholderTextColor}
 					autoCorrect={true}
 					autoCapitalize='none'
 					value={this.state.new_device_serial}
@@ -177,40 +179,3 @@ const styles = StyleSheet.create({
 	}
 });
 
-
-/*
-function A222() {
-	const [hasPermission, setHasPermission] = useState(null);
-	const [scanned, setScanned] = useState(false);
-
-	useEffect(() => {
-		(async () => {
-			const { status } = await BarCodeScanner.requestPermissionsAsync();
-			setHasPermission(status === 'granted');
-		})();
-	}, []);
-
-	const handleBarCodeScanned = ({ type, data }) => {
-		setScanned(true);
-		alert(`Bar code with type ${type} and data ${data} has been scanned!`);
-	};
-
-	if (hasPermission === null) {
-		return <Text style={{alignSelf: 'center'}}>Requesting for camera permission</Text>;
-	}
-	if (hasPermission === false) {
-		return <Text style={{alignSelf: 'center'}}>No access to camera</Text>;
-	}
-
-	return (
-		<View
-			style={{flex: 1, width: '75%', alignSelf:'center'}}>
-			<BarCodeScanner
-				onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-				style={StyleSheet.absoluteFillObject}
-			/>
-
-			{scanned && <Button title={'Tap to Scan Again'} onPress={() => setScanned(false)} />}
-		</View>
-	);
-}*/

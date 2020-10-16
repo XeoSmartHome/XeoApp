@@ -17,7 +17,7 @@ import {
 	BOOTSTRAP_COLOR_PRIMARY,
 	XEO_BLUE
 } from "../../../constants";
-import {t} from 'i18n-js'
+import I18n from 'i18n-js';
 
 
 function serializeCron(minute:string, hour:string, day_of_month:string, month: string, day_of_week:string, year:string) {
@@ -25,6 +25,8 @@ function serializeCron(minute:string, hour:string, day_of_month:string, month: s
 }
 
 let cronParser = new CronParser();
+const t = (key) => I18n.t('edit_alarm.' + key);
+
 
 export default class EditAlarmScreen extends Component{
 	constructor() {
@@ -148,12 +150,13 @@ export default class EditAlarmScreen extends Component{
 	}
 
 	renderParameterInput(parameter_type, index){
+		const {theme} = this.props.screenProps;
 		let parameter = this.state.parameters.find( (obj) => obj.name === parameter_type['name']);
 		//console.warn(parameter);
 		if(parameter_type['options'].length === 0){
 			return(
 				<View key={'parameter_input_' + index}>
-					<Text style={{fontSize: 20}}>
+					<Text style={{fontSize: 20, color: theme.textColor}}>
 						{parameter_type['name']}: {parameter['value']} {parameter_type['unit']}
 					</Text>
 					<Slider style={styles.slider}
@@ -174,7 +177,7 @@ export default class EditAlarmScreen extends Component{
 		}
 		return (
 			<View  key={'parameter_input_' + index}>
-				<Text style={{fontSize: 20}}>
+				<Text style={{fontSize: 20, color: theme.textColor}}>
 					{parameter_type['name']}: {parameter['value']} {parameter_type['unit']}
 				</Text>
 				<Picker
@@ -224,6 +227,7 @@ export default class EditAlarmScreen extends Component{
 	}
 
 	renderPossibleActionItem(action_type, index){
+		const {theme} = this.props.screenProps;
 		return(
 			<View style={styles.separator}>
 				<TouchableOpacity
@@ -240,7 +244,7 @@ export default class EditAlarmScreen extends Component{
 						this.showActionTypeDescription(action_type['description']);
 					}}
 				>
-					<Text style={{alignSelf: 'center', fontSize: 22}}>{action_type["name"]}</Text>
+					<Text style={{alignSelf: 'center', fontSize: 22, color: theme.textColor}}>{action_type["name"]}</Text>
 				</TouchableOpacity>
 			</View>
 
@@ -248,8 +252,11 @@ export default class EditAlarmScreen extends Component{
 	}
 
 	renderCreateAction(){
+		const {theme} = this.props.screenProps;
 		return(
-			<View style={styles.container}>
+			<View style={[styles.container, {
+				backgroundColor: theme.screenBackgroundColor
+			}]}>
 				<FlatList
 					style={{}}
 					data={this.state.actions_types}
@@ -267,7 +274,8 @@ export default class EditAlarmScreen extends Component{
 				>
 					<Text style={{
 						margin: 16,
-						fontSize: 18
+						fontSize: 18,
+						color: theme.textColor
 					}}>
 						{this.state.action_type_description === undefined ? 'No description available' : this.state.action_type_description}
 					</Text>
@@ -302,8 +310,13 @@ export default class EditAlarmScreen extends Component{
 						</Text>
 					</TouchableOpacity>
 				</View>
-				<View style={styles.repeatView}>
-					<Text style={styles.repeatTitle}>Repeat</Text>
+				<View style={[styles.repeatView]}>
+					<Text
+						style={[styles.repeatTitle,{
+							color: theme.textColor
+						}]}
+					>{t('repeat')}
+					</Text>
 					<View style={styles.repeatDays}>
 						{this.WeekDay(0)}
 						{this.WeekDay(1)}
@@ -323,9 +336,6 @@ export default class EditAlarmScreen extends Component{
 							null
 					}
 				</View>
-				{/*<Button title="save" onPress={() => {
-					this.requestActionUpdate(this.state.parameters);
-				}}/>*/}
 
 				{this.state.show_clock_input && (<DateTimePicker
 					testID="dateTimePicker"
@@ -361,7 +371,7 @@ export default class EditAlarmScreen extends Component{
 							alignSelf: 'center'
 						}}
 					>
-						{ t('edit_alarm.save') }
+						{ t('save') }
 					</Text>
 				</TouchableOpacity>
 			</ScrollView>

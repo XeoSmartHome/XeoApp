@@ -15,19 +15,21 @@ export default class PinScreen extends Component {
 	constructor() {
 		super();
 		this.state = {
-			pin_enable: null,
 			pin: '',
 			app_pin: '',
 			show_error_message: false,
 			error_message: '',
-			scope: '',
-			new_pin: ''
+			setting_pin: false,
+			verification_passed: false,
+			new_pin_set: false,
+			new_pin: '',
+			title: t('title.enter_pin')
 		}
 	}
 
 	componentDidMount() {
 		this.setState({
-			scope: this.props.navigation.state.params.scope !== undefined ? this.props.navigation.state.params.scope : 'checkPIN'
+			setting_pin: this.props.navigation.state.params.set_pin === true
 		});
 		this.loadPinFromAppStorage();
 	}
@@ -43,44 +45,77 @@ export default class PinScreen extends Component {
 	}
 
 	handleKeyPress(key){
-		if(this.state.pin.length === PIN_LENGTH - 1){
-			switch(this.state.scope){
-				case 'checkPIN':
-					if(this.state.pin + key === this.state.app_pin){
-						this.props.navigation.replace(
-							this.props.navigation.state.params.next,
-							this.props.navigation.state.params.params
-						);
+		let current_pin = this.state.pin + key;
+
+		if(current_pin.length === PIN_LENGTH){
+			if(this.state.setting_pin){
+				// User is in setting pin mode
+				if(this.state.verification_passed){
+					// User passed pin verification
+					if(this.state.new_pin_set){
+						// User entered new pin, now he must confirm it
+						if(current_pin === this.state.new_pin){
+							// If new pin match with confirm pin save pin in Storage and navigate back
+							this.savePinInAppStorage(current_pin);
+							this.props.navigation.goBack();
+						} else {
+							// If new pin don't match with confirm pin show an error message
+							this.setState({
+								pin: '',
+								show_error_message: true,
+								error_message: t('error.pin_not_matching')
+							});
+						}
 					} else {
+						// User is setting new pin
 						this.setState({
 							pin: '',
-							show_error_message: true,
-							error_message: 'pin gresit'
-						});
-						return;
-					}
-					break;
-				case 'setPIN':
-					if(this.state.new_pin.length === 0){
-						this.setState({
-							new_pin: this.state.pin + key,
-							pin: ''
+							new_pin: current_pin,
+							new_pin_set: true,
+							title: t('title.confirm_new_pin')
 						})
-					} else if(this.state.new_pin === this.state.pin + key) {
-						this.savePinInAppStorage(this.state.pin + key);
-						this.props.navigation.goBack();
+					}
+
+				} else {
+					// User not passed pin verification
+					if(current_pin === this.state.app_pin){
+						// If pin is correct go to next step (new pin input)
+						this.setState({
+							pin: '',
+							verification_passed: true,
+							title: t('title.enter_new_pin')
+						});
 					} else {
+						// If pin is in incorrect show an error message
 						this.setState({
 							pin: '',
 							show_error_message: true,
-							error_message: 'repeta pinul te rog'
+							error_message: t('error.wrong_pin')
 						});
 					}
-					break;
+				}
+
+			} else {
+				// User is not is setting pin mode
+				if(current_pin === this.state.app_pin){
+					// If entered pin is correct navigate to next screen
+					this.props.navigation.replace(
+						this.props.navigation.state.params.next,
+						this.props.navigation.state.params.params
+					);
+				} else {
+					// If entered pin is incorrect show an error message
+					this.setState({
+						pin: '',
+						show_error_message: true,
+						error_message: t('error.wrong_pin')
+					});
+				}
+
 			}
 		} else {
 			this.setState({
-				pin: this.state.pin + key,
+				pin: current_pin,
 				show_error_message: false
 			});
 		}
@@ -106,7 +141,7 @@ export default class PinScreen extends Component {
 					<Text style={[styles.title, {
 						color: theme.textColor
 					}]}>
-						{ t('title') }
+						{ this.state.title }
 					</Text>
 					<View style={styles.dot_row}>
 						{

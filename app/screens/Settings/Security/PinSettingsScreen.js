@@ -50,7 +50,7 @@ export default class PinSettingsScreen extends Component {
 				<TouchableOpacity
 					style={styles.row}
 					onPress={ () => {
-						this.props.navigation.navigate('pin', {next: 'pin', params: {scope: 'setPIN', next: 'pin_settings', params: {}}});
+						this.props.navigation.navigate('pin', {set_pin:true});
 					}}>
 					<Text
 						style={[styles.button_text, {

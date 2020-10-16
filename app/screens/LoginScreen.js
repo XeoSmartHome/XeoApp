@@ -12,7 +12,7 @@ import {
 import {
 	API_LOGIN_URL,
 	API_LOGIN_WITH_FACEBOOK,
-	API_LOGIN_WITH_GOOGLE,
+	API_LOGIN_WITH_GOOGLE, BOOTSTRAP_COLOR_DANGER,
 	BOOTSTRAP_COLOR_LIGHT,
 	BOOTSTRAP_COLOR_PRIMARY,
 	BOOTSTRAP_COLOR_SECONDARY,
@@ -23,10 +23,14 @@ import {
 } from "../constants";
 import * as Google from 'expo-google-app-auth';
 import {Icon} from "react-native-elements";
-import I18n, {t} from 'i18n-js';
+import I18n from 'i18n-js';
 import * as Facebook from 'expo-facebook';
 import AsyncStorage from "@react-native-community/async-storage";
 import ThemeProvider, {ThemeContext} from "../themes/ThemeProvider";
+import {color} from "react-native-reanimated";
+
+
+const t = (key) => I18n.t('login.' + key);
 
 
 export default class LoginScreen extends Component{
@@ -35,6 +39,8 @@ export default class LoginScreen extends Component{
 		this.state = {
 			email: "neco31@yahoo.com",
 			password: "12345678",
+			show_error_message: false,
+			error_message: ''
 		};
 		this.load_session();
 	}
@@ -48,6 +54,19 @@ export default class LoginScreen extends Component{
 
 	save_session(cookie){
 		AsyncStorage.setItem('session_cookie', cookie).then();
+	}
+
+	show_error_message(message){
+		this.setState({
+			show_error_message: true,
+			error_message: message
+		});
+	}
+
+	hide_error_message(){
+		this.setState({
+			show_error_message: false
+		});
 	}
 
 	login(){
@@ -74,10 +93,10 @@ export default class LoginScreen extends Component{
 			}else {
 				switch (response.error) {
 					case 'UserNotFound':
-						alert('User not found');
+						this.show_error_message(t('errors.user_not_found'));
 						break;
 					case 'WrongPassword':
-						alert('Wrong password')
+						this.show_error_message(t('errors.wrong_password'));
 						break;
 				}
 			}
@@ -183,36 +202,56 @@ export default class LoginScreen extends Component{
 					<Text style={[styles.inputHint, {
 						color: theme.textColor
 					}]}>
-						Email:
+						{ t('email') }:
 					</Text>
 					<TextInput
 						style={[styles.textInput, {
 							color: theme.textColor,
 							borderColor: theme.textColor
 						}]}
-						placeholder="email"
+						placeholder={t('email')}
 						autoCorrect={false}
 						autoCapitalize='none'
 						value={this.state.email}
-						onChangeText={text => this.setState({email: text})}
+						onChangeText={text => this.setState({email: text, show_error_message: false})}
 					/>
 					<Text style={[styles.inputHint, {
 						color: theme.textColor
 					}]}>
-						Password:
+						{ t('password') }:
 					</Text>
 					<TextInput
 						style={[styles.textInput, {
 							color: theme.textColor,
 							borderColor: theme.textColor
 						}]}
-						placeholder="password"
+						placeholder={t('password')}
 						autoCorrect={false}
 						autoCapitalize='none'
 						secureTextEntry={true}
 						value={this.state.password}
-						onChangeText={text => this.setState({password: text})}
+						onChangeText={text => this.setState({password: text, show_error_message: false})}
 					/>
+
+					{
+						this.state.show_error_message  && (
+							<View
+								style={{
+									marginTop: 20,
+								}}
+							>
+								<Text
+									style={{
+										color: BOOTSTRAP_COLOR_DANGER,
+										fontSize: 16
+									}}
+								>
+									{ this.state.error_message }
+								</Text>
+							</View>
+						)
+					}
+
 					<View style={{top: 20}}>
 						<TouchableOpacity
 							disabled={!login_button_enabled}
@@ -224,18 +263,18 @@ export default class LoginScreen extends Component{
 								}]}
 							onPress={this.login.bind(this)}
 						>
-							<Text style={styles.buttonText}>{
-								I18n.t("login.login")
-							}</Text>
+							<Text style={styles.buttonText}>
+								{ I18n.t("login.login") }
+							</Text>
 						</TouchableOpacity>
 
 						<TouchableOpacity
 							style={[styles.button, styles.newAccountButton]}
 							onPress={this.create_account.bind(this)}
 						>
-							<Text style={styles.buttonText}>{
-								I18n.t("login.create_account")
-							}</Text>
+							<Text style={styles.buttonText}>
+								{ I18n.t("login.create_account") }
+							</Text>
 						</TouchableOpacity>
 
 						<TouchableOpacity
@@ -251,7 +290,7 @@ export default class LoginScreen extends Component{
 								type='antdesign'
 							/>
 							<Text style={[styles.buttonText, {}]}>
-								{t('login.login_with_google')}
+								{ t('login_with_google') }
 							</Text>
 						</TouchableOpacity>
 
@@ -268,7 +307,7 @@ export default class LoginScreen extends Component{
 								type='entypo'
 							/>
 							<Text style={[styles.buttonText, {}]}>
-								{t('login.login_with_facebook')}
+								{ t('login_with_facebook') }
 							</Text>
 						</TouchableOpacity>
 

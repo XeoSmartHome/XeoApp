@@ -2,11 +2,14 @@ import React, {Component} from "react";
 
 import {
 	View,
-	ScreenRect, TouchableOpacity, Text, StyleSheet
+	ScreenRect, TouchableOpacity, Text, StyleSheet, ScrollView
 } from "react-native"
 import {API_URL, BOOTSTRAP_COLOR_DANGER, BOOTSTRAP_COLOR_SECONDARY, menu_style} from "../../constants";
-// noinspection ES6CheckImport
-import {t} from 'i18n-js'
+
+import I18n from 'i18n-js'
+
+
+const t = (key) => I18n.t('room_options.' + key);
 
 
 export default class RoomOptionsScreen extends Component{
@@ -14,15 +17,40 @@ export default class RoomOptionsScreen extends Component{
 		super();
 	}
 
-	componentDidMount(){
-	}
+	deleteRoom(){
+		const room_id = this.props.navigation.state.params.room_id;
+		fetch(API_URL + 'house/' + 1 + '/room/' + room_id + '/delete', {
+			method: 'POST',
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json',
+			},
+		}).then(
+			(response) => response.json()
+		).then((response) => {
+			switch (response.status) {
+				case 200:
+					this.props.navigation.goBack();
+					break;
+				case 400:
+					// TODO: handle 400
+					alert(response.message);
+					break;
+			}
 
-	componentWillUnmount(){
+		}).catch((error) => {
+			alert(error)
+		})
 	}
 
 	render(){
+		const {theme} = this.props.screenProps;
 		return(
-			<View>
+			<ScrollView
+				style={{
+					backgroundColor: theme.screenBackgroundColor
+				}}
+			>
 				<TouchableOpacity
 					style={menu_style.button}
 					onPress={ () => {
@@ -30,9 +58,11 @@ export default class RoomOptionsScreen extends Component{
 					}}
 				>
 					<Text
-						style={menu_style.button_text}
+						style={[menu_style.button_text, {
+							color: theme.textColor
+						}]}
 					>
-						{t('room_options.rename')}
+						{t('rename')}
 					</Text>
 				</TouchableOpacity>
 
@@ -45,9 +75,11 @@ export default class RoomOptionsScreen extends Component{
 					}}
 				>
 					<Text
-						style={menu_style.button_text}
+						style={[menu_style.button_text, {
+							color: theme.textColor
+						}]}
 					>
-						{t('room_options.access_settings')}
+						{t('access_settings')}
 					</Text>
 				</TouchableOpacity>
 
@@ -56,39 +88,19 @@ export default class RoomOptionsScreen extends Component{
 				<TouchableOpacity
 					style={menu_style.button}
 					onPress={ () => {
-						this.deleteRoom(this.props.navigation.state.params.room_id)
+						this.deleteRoom()
 					}}
 				>
 					<Text
 						style={[menu_style.button_text, {color: BOOTSTRAP_COLOR_DANGER}]}
 					>
-						{t('room_options.delete')}
+						{t('delete')}
 					</Text>
 				</TouchableOpacity>
 
 				<View style={menu_style.separator}/>
 
-			</View>
+			</ScrollView>
 		)
 	}
-
-	deleteRoom(room_id){
-		fetch(API_URL + 'house/' + 1 + '/room/' + room_id + '/delete', {
-			method: 'POST',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json',
-			},
-		}).then(
-			(response) => response.json()
-		).then((response) => {
-				if (response.status === 'success'){
-					this.props.navigation.goBack();
-				}
-			}
-		).catch((error) => {
-			alert(error)
-		})
-	}
-
 }

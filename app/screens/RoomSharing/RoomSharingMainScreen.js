@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {SafeAreaView, Text} from "react-native";
+import {SafeAreaView, ScrollView, Text} from "react-native";
 import {API_URL} from "../../constants";
 
 
@@ -29,10 +29,20 @@ export default class RoomSharingMainScreen extends Component{
 	}
 
 	render() {
+		const {theme} = this.props.screenProps;
 		return (
-			<SafeAreaView>
-				<Text>ok</Text>
-			</SafeAreaView>
+			<ScrollView
+				style={{
+					backgroundColor: theme.screenBackgroundColor
+				}}
+			>
+				<Text
+					style={{
+						color: theme.textColor
+					}}
+				>
+					ok</Text>
+			</ScrollView>
 		)
 	}
 }
