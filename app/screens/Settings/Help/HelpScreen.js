@@ -5,6 +5,10 @@ import {
 	StyleSheet,
 	ScrollView
 } from "react-native";
+import I18n from 'i18n-js';
+
+
+const t = (key) => I18n.t('help.' + key);
 
 
 export default class HelpScreen extends Component{
@@ -13,7 +17,7 @@ export default class HelpScreen extends Component{
 	}
 
 	render(){
-		const {mode, theme, setTheme} = this.props.screenProps;
+		const {theme} = this.props.screenProps;
 		return(
 			<ScrollView style={{
 				backgroundColor: theme.screenBackgroundColor
@@ -26,7 +30,7 @@ export default class HelpScreen extends Component{
 					<Text style={[styles.row_text, {
 						color: theme.textColor
 					}]}>
-						Report a bug
+						{t('report_a_bug')}
 					</Text>
 				</TouchableOpacity>
 
@@ -37,7 +41,7 @@ export default class HelpScreen extends Component{
 					<Text style={[styles.row_text, {
 						color: theme.textColor
 					}]}>
-						Help center
+						{t('help_center')}
 					</Text>
 				</TouchableOpacity>
 

@@ -96,7 +96,8 @@ export default class ChangePasswordScreen extends Component{
 
 	render(){
 		const {theme} = this.props.screenProps;
-		const button_disabled = this.state.wrong_password || this.state.empty_password || this.state.password_to_weak || this.state.password_dont_match;
+		const button_disabled = this.state.wrong_password || this.state.empty_password || this.state.password_to_weak ||
+			this.state.password_dont_match || this.state.new_password.length === 0;
 		return(
 			<ScrollView
 				style={{

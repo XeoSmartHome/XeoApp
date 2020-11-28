@@ -23,6 +23,10 @@ import {
 } from "../../constants";
 import {Notifications} from 'expo';
 import * as Permissions from 'expo-permissions';
+import I18n from 'i18n-js';
+
+
+const t = (key) => I18n.t('.' + key);
 
 
 export default class SensorScreen extends Component{
@@ -105,9 +109,21 @@ export default class SensorScreen extends Component{
 	}
 
 	render() {
+		const {theme} = this.props.screenProps;
 		return(
-			<SafeAreaView style={styles.container}>
-				<Text style={styles.title}>
+			<SafeAreaView
+				style={
+					[styles.container, {
+						backgroundColor: theme.screenBackgroundColor
+					}]
+				}>
+				<Text
+					style={
+						[styles.title, {
+							color: theme.textColor
+						}]
+					}
+				>
 					{this.state.sensor_value}
 					{this.state.sensor_unit}
 				</Text>

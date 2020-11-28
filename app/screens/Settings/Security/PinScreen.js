@@ -7,6 +7,7 @@ import AsyncStorage from "@react-native-community/async-storage";
 
 
 const PIN_LENGTH = 4;
+const DEFAULT_PIN = '0000';
 
 const t = (key) => I18n.t('pin_check.' + key);
 
@@ -40,7 +41,7 @@ export default class PinScreen extends Component {
 
 	loadPinFromAppStorage(){
 		AsyncStorage.getItem('app_pin').then( (value) => {
-			this.setState({app_pin: value});
+			this.setState({app_pin: value || DEFAULT_PIN});
 		});
 	}
 

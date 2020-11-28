@@ -15,6 +15,30 @@
             "wrong_password": "Wrong password"
         }
     },
+    "create_account": {
+        "first_name": "First name",
+        "last_name": "Last name",
+        "email": "Email",
+        "password": "Password",
+        "confirm_password": "Confirm password",
+        "agreement": "By signing up you agree to our",
+        "terms_and_conditions": "Terms and Conditions",
+        "create_account": "Create account",
+        "errors": {
+            "empty_field": "This field is required",
+            "invalid_email": "Invalid email",
+            "weak_password": "Password must contain at least 8 characters",
+            "not_matching_passwords": "Passwords don't match"
+        },
+        "navigation": {
+            "title": "Create account"
+        }
+    },
+    "terms_and_conditions": {
+        "navigation": {
+            "title": "Terms and conditions"
+        }
+    },
     "settings": {
         "account": "Account",
         "notifications": "Notifications",
@@ -37,7 +61,10 @@
     },
     "security": {
         "change_password": "Change password",
-        "app_pin": "App PIN"
+        "app_pin": "App PIN",
+        "navigation": {
+            "title": "Security"
+        }
     },
     "change_password": {
         "current_password": "Current password",
@@ -54,6 +81,13 @@
             "title": "Change password"
         }
     },
+    "pin_settings": {
+        "lock_app_with_pin": "Lock app with PIN",
+        "change_pin": "Change PIN",
+        "navigation": {
+            "title": "App PIN"
+        }
+    },
     "pin_check": {
         "title": {
             "enter_pin": "Enter PIN",
@@ -65,9 +99,24 @@
             "pin_not_matching": "Enter new pin again to confirm."
         }
     },
+    "language_settings": {
+        "navigation": {
+            "title": "Language"
+        }
+    },
     "theme_settings": {
         "light": "Light",
-        "dark": "Dark"
+        "dark": "Dark",
+        "navigation": {
+            "title": "Theme"
+        }
+    },
+    "help": {
+        "report_a_bug": "Report a bug",
+        "help_center": "Help center",
+        "navigation": {
+            "title": "Help"
+        }
     },
     "report_a_bug": {
         "input_placeholder": "Please describe your error",
@@ -75,6 +124,11 @@
         "send_button": "Send report",
         "navigation": {
             "title": "Report a bug"
+        }
+    },
+    "help_center": {
+        "navigation": {
+            "title": "Help center"
         }
     },
     "dashboard": {
@@ -100,7 +154,10 @@
         "serial_info": "Unique id written on device back",
         "scan_qr_code_button": "Scan QR code",
         "qr_code_info": "Use the phone's camera to scan the qr code of the device.",
-        "confirm_button": "Add device"
+        "confirm_button": "Add device",
+        "navigation": {
+            "title": "Register a new device"
+        }
     },
     "device_settings": {
         "name": "Name",
@@ -151,5 +208,14 @@
     "edit_alarm": {
         "save": "SAVE",
         "repeat": "Repeat"
+    },
+    "action_links_list": {
+        "generate_new_link": "Generate new link",
+        "copy_link": "Copy link",
+        "created_on": "Created on",
+        "last_request": "Last request",
+        "navigation": {
+            "title": "Action links"
+        }
     }
 }

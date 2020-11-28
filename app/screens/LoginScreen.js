@@ -10,6 +10,7 @@ import {
 	SafeAreaView, ScrollView, StatusBar
 } from "react-native";
 import {
+	API_IS_AUTHENTICATED,
 	API_LOGIN_URL,
 	API_LOGIN_WITH_FACEBOOK,
 	API_LOGIN_WITH_GOOGLE, BOOTSTRAP_COLOR_DANGER,
@@ -40,20 +41,40 @@ export default class LoginScreen extends Component{
 			email: "neco31@yahoo.com",
 			password: "12345678",
 			show_error_message: false,
-			error_message: ''
+			error_message: '',
+			loading: true
 		};
+	}
+
+	componentDidMount() {
 		this.load_session();
 	}
 
 	load_session(){
-		AsyncStorage.getItem('session_cookie').then(value => {
+		/*AsyncStorage.getItem('session_cookie').then(value => {
 			//if (value !== '')
 				//this.props.navigation.replace('main', {});
-		});
-	}
-
-	save_session(cookie){
-		AsyncStorage.setItem('session_cookie', cookie).then();
+		});*/
+		fetch(API_IS_AUTHENTICATED).then(
+			(response) => response.json()
+		).then(
+			(response) => {
+				if(response['authenticated'] === true){
+					AsyncStorage.getItem('lock_app_with_pin_enable').then((lock_app_with_pin_enable) => {
+						if(lock_app_with_pin_enable === 'true') {
+							this.props.navigation.replace('pin', {next: 'main', params: {}});
+						} else {
+							this.props.navigation.replace('main', {});
+						}
+					});
+				} else {
+					this.setState({loading: false})
+				}
+			}
+		).catch((error) => {
+			alert(error);
+			this.setState({loading: false})
+		})
 	}
 
 	show_error_message(message){
@@ -67,6 +88,10 @@ export default class LoginScreen extends Component{
 		this.setState({
 			show_error_message: false
 		});
+	}
+
+	go_to_main_page(){
+		this.props.navigation.replace('main', {});
 	}
 
 	login(){
@@ -85,9 +110,10 @@ export default class LoginScreen extends Component{
 			(response) => {
 				//const cookie = response.headers['map']['set-cookie'].split('=')[1].split(';')[0];
 				//this.save_session(cookie);
+				//console.warn(response.headers.get('set-cookie'));
 				return response.json();
 			}
-		).then(response => {
+		).then((response) => {
 			if(response.status === 200) {
 				this.go_to_main_page();
 			}else {
@@ -102,16 +128,6 @@ export default class LoginScreen extends Component{
 			}
 		}).catch((error) => {
 			alert(error)
-		});
-	}
-
-	go_to_main_page(){
-		AsyncStorage.getItem('lock_app_with_pin_enable').then((lock_app_with_pin_enable) => {
-			if(lock_app_with_pin_enable === 'true') {
-				this.props.navigation.replace('pin', {next: 'main', params: {}});
-			} else {
-				this.props.navigation.replace('main', {});
-			}
 		});
 	}
 
@@ -137,7 +153,7 @@ export default class LoginScreen extends Component{
 			}).then(
 				(response) => response.json()
 			).then( (response) => {
-				if(response.status === 'success'){
+				if(response.status === 200){
 					this.go_to_main_page();
 				}
 			}).catch( (error) => {
@@ -149,7 +165,8 @@ export default class LoginScreen extends Component{
 	}
 
 	login_with_facebook(){
-		Facebook.initializeAsync({appId: FACEBOOK_APP_ID, appName: 'XeoApp'}).then( () => {
+		Facebook.initializeAsync({appId: FACEBOOK_APP_ID, appName: 'XeoApp'
+		 }).then( () => {
 			Facebook.logInWithReadPermissionsAsync(
 				{
 					permissions: ['public_profile', 'email']
@@ -168,7 +185,7 @@ export default class LoginScreen extends Component{
 				}).then(
 					(response) => response.json()
 				).then( (response) => {
-					if(response.status === 'success'){
+					if(response.status === 200){
 						this.go_to_main_page();
 					}
 				}).catch( (error) => {
@@ -189,6 +206,20 @@ export default class LoginScreen extends Component{
 	render(){
 		const {theme} = this.props.screenProps;
 		const login_button_enabled = this.state.email.length !== 0 && this.state.password.length !== 0;
+
+		if(this.state.loading){
+			return (
+				<ScrollView
+					style={{
+						flex: 1,
+						backgroundColor: theme.screenBackgroundColor
+					}}
+				>
+
+				</ScrollView>
+			)
+		}
+
 		return (
 			<ScrollView contentContainerStyle={[styles.screen, {
 				backgroundColor: theme.screenBackgroundColor

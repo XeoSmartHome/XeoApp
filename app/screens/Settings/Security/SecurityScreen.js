@@ -1,7 +1,11 @@
 import React, {Component} from "react";
 import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 // noinspection ES6CheckImport
-import {t} from "i18n-js"
+import I18n from "i18n-js";
+
+
+const t = (key) => I18n.t('security.' + key)
+
 
 export default class SecurityScreen extends Component{
 	constructor() {
@@ -23,7 +27,7 @@ export default class SecurityScreen extends Component{
 					<Text style={[styles.button_text, {
 						color: theme.textColor
 					}]}>
-						{t('security.change_password')}
+						{t('change_password')}
 					</Text>
 				</TouchableOpacity>
 
@@ -34,7 +38,7 @@ export default class SecurityScreen extends Component{
 					<Text style={[styles.button_text, {
 						color: theme.textColor
 					}]}>
-						{t('security.app_pin')}
+						{t('app_pin')}
 					</Text>
 				</TouchableOpacity>
 

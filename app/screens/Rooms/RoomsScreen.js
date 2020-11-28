@@ -109,21 +109,6 @@ export default class RoomsScreen extends Component {
 		 )
 	 }
 
-	loadDevices(){
-		fetch(API_LOAD_DEVICES, {
-				method: 'GET'
-			}
-		).then(
-			(response) => response.json()
-		).then((response) => {
-				this.setState({ devices: response, refreshing: false})
-			}
-		).catch((error) => {
-			alert(error)
-		})
-	}
-
-
 	 loadRooms(){
 		 fetch(API_URL + 'house/' + 1 + '/rooms', {
 				 method: 'GET'
@@ -147,37 +132,3 @@ export default class RoomsScreen extends Component {
 		 })
 	 }
 }
-
-
-const styles = StyleSheet.create({
-	fab: {
-		position: 'absolute',
-		width: 60,
-		height: 60,
-		alignItems: 'center',
-		justifyContent: 'center',
-		right: 20,
-		bottom: 20,
-		backgroundColor: '#4267b2',
-		borderRadius: 30,
-		elevation: 8
-	},
-	fabIcon: {
-		top: -2,
-		fontSize: 50,
-		color: 'white'
-	},
-	optionButton:{
-		width: '100%',
-		flex: 1
-	},
-	optionButtonText:{
-		alignSelf: 'center',
-		fontSize: 20,
-		textAlignVertical: 'center',
-		flex: 1,
-	},
-	optionLine:{
-		borderWidth: 1
-	}
-});

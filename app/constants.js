@@ -7,6 +7,9 @@ export const FACEBOOK_APP_ID = '248947746417873';
 export const API_URL = 'https://dashboard.xeosmarthome.com/api/';
 export const API_STATUS_URL = API_URL + 'status';
 export const API_LOGIN_URL = API_URL + 'login';
+export const API_LOGOUT = API_URL + 'logout';
+export const API_IS_AUTHENTICATED = API_URL + 'is_authenticated';
+export const API_CREATE_ACCOUNT = API_URL + 'create_account';
 export const API_LOAD_DEVICES = API_URL + 'devices';
 export const API_ADD_DEVICE = API_URL + 'add_device';
 export const API_DELETE_DEVICE = API_URL + 'delete_device';
@@ -22,7 +25,13 @@ export const API_UPDATE_DEVICE_IMAGE = API_URL + 'update_device_image';
 export const API_UPDATE_PASSWORD = API_URL + 'update_password';
 export const API_LOAD_SENSORS = API_URL + 'sensors';
 export const API_LOGIN_WITH_GOOGLE = API_URL + 'login_with_google';
-export const API_LOGIN_WITH_FACEBOOK = API_URL + 'login_with_facebook'
+export const API_LOGIN_WITH_FACEBOOK = API_URL + 'login_with_facebook';
+export const API_GET_USER_PROFILE = API_URL + 'user_profile';
+export const API_GET_ACTION_LINKS = API_URL + 'action_link/device/';
+export const API_GENERATE_ACTION_LINK = API_URL + 'action_link/generate';
+export const API_DELETE_ACTION_LINK = API_URL + 'action_link/delete';
+
+export const TERMS_AND_CONDITIONS_URL = 'https://xeosmarthome.com/xeoapp_terms_and_conditions';
 
 export const XEO_BLUE = '#4267b2';
 export const BOOTSTRAP_COLOR_PRIMARY = '#0275d8';

@@ -8,10 +8,6 @@ import {API_URL, BOOTSTRAP_COLOR_DANGER, BOOTSTRAP_COLOR_SECONDARY, menu_style} 
 
 
 export default class RoomDeviceOptionsScreen extends Component{
-	static navigationOptions = ({navigation, screenProps}) => ({
-		title: ''
-	});
-
 	constructor() {
 		super();
 		this.state = {

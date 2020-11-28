@@ -1,6 +1,10 @@
 import React, {Component} from "react";
 import {ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View} from "react-native";
 import AsyncStorage from "@react-native-community/async-storage";
+import I18n from 'i18n-js';
+
+
+const t = (key) => I18n.t('pin_settings.' + key);
 
 
 export default class PinSettingsScreen extends Component {
@@ -14,6 +18,14 @@ export default class PinSettingsScreen extends Component {
 				pin_enable: value === 'true'
 			})
 		})
+		this.setPinToDefaultIfNoPinIsSavedInAppStorage();
+	}
+
+	setPinToDefaultIfNoPinIsSavedInAppStorage(){
+		AsyncStorage.getItem('app_pin').then((value => {
+			if(value === undefined)
+				AsyncStorage.setItem('app_pin', '0000');
+		}))
 	}
 
 	render() {
@@ -33,7 +45,7 @@ export default class PinSettingsScreen extends Component {
 							flex: 1,
 							color: theme.textColor
 						}]}>
-						Lock app with PIN
+						{t('lock_app_with_pin')}
 					</Text>
 					<Switch
 						style={{flex: 1}}
@@ -57,7 +69,7 @@ export default class PinSettingsScreen extends Component {
 							color: theme.textColor
 						}]}
 					>
-						Change PIN
+						{t('change_pin')}
 					</Text>
 				</TouchableOpacity>
 			</ScrollView>

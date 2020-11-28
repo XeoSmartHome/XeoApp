@@ -1,18 +1,221 @@
 {
-    "name": "Română (România)",
-    "navigation": {
-        "devices": "Dispozitive",
-        "rooms": "Camere",
-        "sensors": "Senzori",
-        "login": "Conectează-te"
-    },
-    "screens": {
-        "dashboard": {
-            "add_device": "Adaugă"
+    "name": "Română",
+    "login": {
+        "email": "Email",
+        "password": "Parolă",
+        "login": "Autentificare",
+        "create_account": "Creează cont",
+        "login_with_google": "Conectare cu google",
+        "login_with_facebook": "Conectare cu facebook",
+        "navigation": {
+            "title": "Autentificare"
         },
-        "login": {
-            "sign_in": "Conectează-te",
-            "create_account": "Creează cont"
+        "errors": {
+            "user_not_found": "Utilizatorul nu a fost găsit",
+            "wrong_password": "Parolă greșita"
+        }
+    },
+    "create_account": {
+        "first_name": "Prenume",
+        "last_name": "Nume",
+        "email": "Email",
+        "password": "Parolă",
+        "confirm_password": "Confirmă parola",
+        "agreement": "Sunt deacord cu",
+        "terms_and_conditions": "Termenii și Condițiile",
+        "create_account": "Creează cont",
+        "errors": {
+            "empty_field": "This field is required",
+            "invalid_email": "Invalid email",
+            "weak_password": "Password must contain at least 8 characters",
+            "not_matching_passwords": "Passwords don't match"
+        },
+        "navigation": {
+            "title": "Creează cont"
+        }
+    },
+    "terms_and_conditions": {
+        "navigation": {
+            "title": "Terms and conditions"
+        }
+    },
+    "settings": {
+        "account": "Cont",
+        "notifications": "Notificații",
+        "security": "Securitate",
+        "language": "Limbă",
+        "help": "Ajutor",
+        "theme": "Temă culori",
+        "navigation": {
+            "title": "Setări"
+        }
+    },
+    "account_settings": {
+        "user": "Utilizator",
+        "email": "Email",
+        "sign_out": "Deconectare",
+        "switch_account": "Schimbă contul",
+        "navigation": {
+            "title": "Cont"
+        }
+    },
+    "security": {
+        "change_password": "Schimbă parola",
+        "app_pin": "PIN aplicație",
+        "navigation": {
+            "title": "Securitate"
+        }
+    },
+    "change_password": {
+        "current_password": "Parolă curentă",
+        "new_password": "Parolă nouă",
+        "confirm_new_password": "Confirma noua parolă",
+        "save_button": "Salvare",
+        "password_updated": "Parolă actualizatp",
+        "errors": {
+            "wrong_password": "Wrong password",
+            "password_to_weak": "Password should have at least 8 characters",
+            "passwords_dont_match": "Passwords don't match"
+        },
+        "navigation": {
+            "title": "Schimbă parola"
+        }
+    },
+    "pin_settings": {
+        "lock_app_with_pin": "Securizează aplicația cu PIN de acces",
+        "change_pin": "Schimbă PIN",
+        "navigation": {
+            "title": "PIN aplicție"
+        }
+    },
+    "pin_check": {
+        "title": {
+            "enter_pin": "Enter PIN",
+            "enter_new_pin": "Enter new PIN",
+            "confirm_new_pin": "Confirm new PIN"
+        },
+        "error": {
+            "wrong_pin": "The PIN entered is incorrect. Please try again.",
+            "pin_not_matching": "Enter new pin again to confirm."
+        }
+    },
+    "language_settings": {
+        "navigation": {
+            "title": "Limbă"
+        }
+    },
+    "theme_settings": {
+        "light": "Luminoasă",
+        "dark": "Întunecată",
+        "navigation": {
+            "title": "Temă culori"
+        }
+    },
+    "help": {
+        "report_a_bug": "Report a bug",
+        "help_center": "Help center",
+        "navigation": {
+            "title": "Help"
+        }
+    },
+    "report_a_bug": {
+        "input_placeholder": "Please describe your error",
+        "upload_screenshot_button": "Upload a screenshot",
+        "send_button": "Send report",
+        "navigation": {
+            "title": "Report a bug"
+        }
+    },
+    "help_center": {
+        "navigation": {
+            "title": "Centru ajutor"
+        }
+    },
+    "dashboard": {
+        "devices": {
+            "add_device": "Adaugă dispozitiv"
+        },
+        "rooms": {
+            "add_room": "Adauga cameră"
+        },
+        "sensors": {
+
+        },
+        "navigation": {
+            "devices": "DISPOZITIVE",
+            "rooms": "CAMERE",
+            "sensors": "SENZORI"
+        }
+    },
+    "add_device":  {
+        "name": "Nume",
+        "name_info": "Nume dispozitiv",
+        "serial": "Cod serial",
+        "serial_info": "Cod unic inscriptionat pe dispozitiv",
+        "scan_qr_code_button": "Scanează cod QR",
+        "qr_code_info": "Folosește camera telefonului pentru a scana codul QR",
+        "confirm_button": "Adaugă dispozitiv",
+        "navigation": {
+            "title": "Înregistrare dispozitiv nou"
+        }
+    },
+    "device_settings": {
+        "name": "Nume",
+        "edit_name": "Editează",
+        "cancel_edit_name": "Anulează",
+        "confirm_name_editing": "Salvează",
+        "serial": "Serial",
+        "show_serial": "Afișeaza",
+        "hide_serial": "Ascunde",
+        "status": "Status",
+        "connected": "conectat",
+        "disconnected": "deconectat",
+        "last_connection": "Ultima conexiune",
+        "logs": "Istoric",
+        "navigation": {
+            "title": "Setări dispozitiv"
+        }
+    },
+    "create_new_room": {
+        "default_name": "New room",
+        "confirm_button": "Add",
+        "name_input_placeholder": "Room name",
+        "navigation": {
+            "title": "Create new room"
+        }
+    },
+    "room_options": {
+        "rename": "Change name",
+        "access_settings": "Manage access",
+        "delete": "Delete",
+        "navigation": {
+            "title": "Room settings"
+        }
+    },
+    "rename_room": {
+        "save": "Save",
+        "name_input_placeholder": "Room name",
+        "navigation": {
+            "title": "Rename room"
+        }
+    },
+    "add_device_in_room": {
+        "hint": "Select a device to add it in",
+        "navigation": {
+            "title": "Add device in"
+        }
+    },
+    "edit_alarm": {
+        "save": "SAVE",
+        "repeat": "Repeat"
+    },
+    "action_links_list": {
+        "generate_new_link": "Generate new link",
+        "copy_link": "Copy link",
+        "created_on": "Created on",
+        "last_request": "Last request",
+        "navigation": {
+            "title": "Action links"
         }
     }
 }

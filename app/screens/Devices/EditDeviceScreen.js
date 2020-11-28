@@ -98,7 +98,7 @@ export default class DeviceSettingsScreen extends Component{
 		).then(
 			(response) => {
 				if(response.status === 'success'){
-					alert('Device deleted');
+					alert('Devices deleted');
 					this.props.navigation.goBack();
 				}else {
 					alert('An error occurred')

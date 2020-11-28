@@ -19,7 +19,10 @@ import {
 import { FontAwesome } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
 // noinspection ES6CheckImport
-import  {t} from "i18n-js"
+import  I18n from "i18n-js";
+
+
+const t = (key) => I18n.t('device_settings.' + key);
 
 
 export default class DeviceSettingsScreen2 extends Component{
@@ -101,6 +104,7 @@ export default class DeviceSettingsScreen2 extends Component{
 	}
 
 	removeDevice(){
+		// TODO: implement device delete
 		fetch('https://dashboard.xeosmarthome.com/api/delete_device', {
 			method: 'POST',
 			headers: {
@@ -115,7 +119,7 @@ export default class DeviceSettingsScreen2 extends Component{
 		).then(
 			(response) => {
 				if(response.status === 'success'){
-					alert('Device deleted');
+					alert('Devices deleted');
 					this.props.navigation.goBack();
 				}else {
 					alert('An error occurred')
@@ -158,18 +162,16 @@ export default class DeviceSettingsScreen2 extends Component{
 				},
 			}).then(
 				(response) => response.json()
-			).then(
-				(response) => {
-					if(response.status === 'success'){
-						this.loadDevice();
-					}else {
+			).then((response) => {
+				switch (response.status) {
+					case 200:
+						this.loadDevice()
+						break;
+					case 400:
 						alert(response.message)
+						break;
 					}
-					/*this.setState({
-						image_uploading: false
-					});*/
-				}
-			).catch(
+			}).catch(
 				(error) => {
 					alert(error);
 				}
@@ -210,7 +212,7 @@ export default class DeviceSettingsScreen2 extends Component{
 						<Text style={[styles.row_text, {
 							color: theme.textColor
 						}]}>
-							{ t('device_settings.name') }: { this.state.device_name }
+							{ t('name') }: { this.state.device_name }
 						</Text>
 						<TouchableOpacity
 							style={{ alignSelf: 'flex-end', flex: 2, color: BOOTSTRAP_COLOR_DARK}}
@@ -229,9 +231,9 @@ export default class DeviceSettingsScreen2 extends Component{
 								{
 									this.state.editing_device_name
 										?
-										t('device_settings.cancel_edit_name')
+										t('cancel_edit_name')
 										:
-										t('device_settings.edit_name')
+										t('edit_name')
 								}
 							</Text>
 						</TouchableOpacity>
@@ -277,7 +279,7 @@ export default class DeviceSettingsScreen2 extends Component{
 										color: BOOTSTRAP_COLOR_LIGHT
 									}}
 								>
-									{ t('device_settings.confirm_name_editing') }
+									{ t('confirm_name_editing') }
 								</Text>
 							</TouchableOpacity>
 						</View>
@@ -295,7 +297,7 @@ export default class DeviceSettingsScreen2 extends Component{
 							color: theme.textColor
 						}]}
 					>
-						{ t('device_settings.serial') }: {
+						{ t('serial') }: {
 						this.state.hide_serial
 							?
 							this.hideString(this.state.device_serial)
@@ -331,7 +333,7 @@ export default class DeviceSettingsScreen2 extends Component{
 							color: theme.textColor
 						}}
 					>
-						{ t('device_settings.status') }: <Text
+						{ t('status') }: <Text
 							style={{
 								color: this.state.device_connected ? 'green' : 'red'
 							}}
@@ -339,9 +341,9 @@ export default class DeviceSettingsScreen2 extends Component{
 							{
 								this.state.device_connected
 									?
-									t('device_settings.connected')
+									t('connected')
 									:
-									t('device_settings.disconnected')
+									t('disconnected')
 							}
 						</Text>
 					</Text>
@@ -393,6 +395,37 @@ export default class DeviceSettingsScreen2 extends Component{
 
 				<View
 					style={{
+						padding: 10,
+						borderBottomWidth: 2,
+						borderColor: theme.textColor
+					}}
+				>
+					<TouchableOpacity
+						onPress={() => {
+							this.props.navigation.navigate('action_links', {device_id: this.props.navigation.state.params.device_id});
+						}}
+					>
+						<Text
+							style={{
+								color: theme.textColor,
+								fontSize: 20
+							}}
+						>
+							Action links
+						</Text>
+						<Text
+							style={{
+								color: theme.textColor,
+								fontSize: 16
+							}}
+						>
+							You can generate Action links (with or without parameters) directly to a specific intent of your action.
+						</Text>
+					</TouchableOpacity>
+				</View>
+
+				<View
+					style={{
 						padding: 10
 					}}
 				>
@@ -402,7 +435,7 @@ export default class DeviceSettingsScreen2 extends Component{
 							color: theme.textColor,
 						}}
 					>
-						{ t('device_settings.logs')}
+						{ t('logs')}
 					</Text>
 				</View>
 

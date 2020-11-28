@@ -10,7 +10,7 @@ import {
 	Modal,
 	Slider,
 	TouchableOpacity,
-	Picker,
+	Picker, ScrollView,
 } from "react-native";
 
 import {
@@ -37,7 +37,7 @@ import {socket_io} from "../DashboardScreen/DashboardScreen";
 
 export default class ControlDeviceScreen extends Component{
 	static navigationOptions = ({ navigation, screenProps }) => ({
-		title: 'Device: ' + ( navigation.state.params.device_name === undefined ? '' : navigation.state.params.device_name ),
+		title: 'Devices: ' + ( navigation.state.params.device_name === undefined ? '' : navigation.state.params.device_name ),
 		headerRight: () => (
 			<TouchableOpacity onPress={ () => {
 				navigation.navigate('device_alarms', {device_id: navigation.state.params.device_id})
@@ -88,6 +88,7 @@ export default class ControlDeviceScreen extends Component{
 		).then(
 			(response) => response.json()
 		).then((response) => {
+			console.warn(response);
 			this.setState({
 				device_id: response['id'],
 				device_name: response['name'],
@@ -259,9 +260,9 @@ export default class ControlDeviceScreen extends Component{
 					}
 				}}
 					style={{
-						opacity: this.state.device_connected ? 1 : theme.buttonDisabledOpacity
+						//opacity: this.state.device_connected ? 1 : theme.buttonDisabledOpacity
 					}}
-					disabled={!this.state.device_connected}
+					//disabled={!this.state.device_connected}
 				>
 					<Text
 						style={{
@@ -343,7 +344,7 @@ export default class ControlDeviceScreen extends Component{
 	render(){
 		const {theme} = this.props.screenProps;
 		return (
-			<SafeAreaView style={[styles.container, {
+			<ScrollView style={[styles.container, {
 				backgroundColor: theme.screenBackgroundColor
 			}]}>
 				<Text
@@ -378,7 +379,7 @@ export default class ControlDeviceScreen extends Component{
 					</View>
 				</View>
 				{this.renderParametersModal()}
-			</SafeAreaView>
+			</ScrollView>
 		)
 	}
 

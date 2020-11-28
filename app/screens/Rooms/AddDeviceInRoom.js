@@ -10,12 +10,15 @@ import {
 	API_URL,
 } from "../../constants";
 // noinspection ES6CheckImport
-import {t} from 'i18n-js';
+import I18n from 'i18n-js';
+
+
+const t = (key) => I18n.t('add_device_in_room.' + key);
 
 
 export default class AddDeviceInRoomScreen extends Component {
 	static navigationOptions = ({navigation, screenProps}) => ({
-		title: t('add_device_in_room.navigation.title') + ' ' + (navigation.state.params.room_name === undefined ? '' : navigation.state.params.room_name)
+		title: t('navigation.title') + ' ' + (navigation.state.params.room_name === undefined ? '' : navigation.state.params.room_name)
 	});
 
 	constructor() {
@@ -40,25 +43,48 @@ export default class AddDeviceInRoomScreen extends Component {
 	}
 
 	render() {
+		const {theme} = this.props.screenProps;
 		return (
-			<ScrollView style={{padding: '2%', flex: 1}}>
+			<ScrollView
+				style={{
+					padding: '2%',
+					backgroundColor: theme.screenBackgroundColor
+				}}>
 				<Text
-					style={{alignSelf: 'center', fontSize: 18, padding: 14, textAlign: 'center'}}
+					style={{
+						alignSelf: 'center',
+						fontSize: 18,
+						padding: 14,
+						textAlign: 'center',
+						color: theme.textColor
+					}}
 				>
-					{t('add_device_in_room.hint')} { this.state.room_name }
+					{t('hint')} { this.state.room_name }
 				</Text>
-				<View style={{alignSelf: 'center', borderBottomWidth: 2, width: '90%', marginTop: 10}}/>
+				<View style={{alignSelf: 'center', borderBottomWidth: 2, borderColor: theme.textColor, width: '90%', marginTop: 10}}/>
 				{
 					this.state.devices.map( (device) => (
 						<TouchableOpacity
-							style={{height: 50, alignSelf: 'center', borderBottomWidth: 2, width: '90%'}}
+							style={{
+								height: 50,
+								alignSelf: 'center',
+								borderBottomWidth: 2,
+								borderColor: theme.textColor,
+								width: '90%'
+							}}
 							key={'device_' + device.id}
 							onPress={ () => {
 								this.addDeviceInRoom(device.id);
 							}}
 						>
 							<Text
-								style={{fontSize: 20, alignSelf: 'center', flex: 1, textAlignVertical: 'center'}}
+								style={{
+									fontSize: 20,
+									alignSelf: 'center',
+									flex: 1,
+									textAlignVertical: 'center',
+									color: theme.textColor
+								}}
 							>
 								{device['name']}
 							</Text>

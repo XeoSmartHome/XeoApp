@@ -10,7 +10,7 @@ import {
 	View,
 	ScrollView
 } from "react-native";
-import {BOOTSTRAP_COLOR_DARK} from "../../../constants";
+import {API_LOGOUT, BOOTSTRAP_COLOR_DARK} from "../../../constants";
 import { NavigationActions, StackActions } from 'react-navigation';
 import I18n from 'i18n-js'
 
@@ -31,11 +31,29 @@ export default class AccountSettingsScreen extends Component{
 	}
 
 	signOut(){
-		const resetAction = StackActions.reset({
-			index: 0,
-			actions: [NavigationActions.navigate({ routeName: 'login' })],
-		});
-		this.props.navigation.dispatch(resetAction);
+		fetch(API_LOGOUT, {
+			mode: 'cors',
+				method: 'POST',
+			headers: {
+			Accept: 'application/json',
+				'Content-Type': 'application/json',
+			}
+		}).then(
+			(response) => response.json()
+		).then(
+			(response) => {
+				if(response.status === 200){
+					const resetAction = StackActions.reset({
+						index: 0,
+						actions: [NavigationActions.navigate({ routeName: 'login' })],
+					});
+					this.props.navigation.dispatch(resetAction);
+				}
+			}
+		).catch(
+			(error) => {
+
+		})
 	}
 
 	render(){
@@ -93,7 +111,7 @@ export default class AccountSettingsScreen extends Component{
 						</Text>
 					</TouchableOpacity>
 
-					<TouchableOpacity
+					{/*<TouchableOpacity
 						style={{
 							marginVertical: 8
 						}}
@@ -107,7 +125,7 @@ export default class AccountSettingsScreen extends Component{
 						>
 							{ t('switch_account') }
 						</Text>
-					</TouchableOpacity>
+					</TouchableOpacity>*/}
 
 				</View>
 			</ScrollView>

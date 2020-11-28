@@ -2,10 +2,11 @@ import React, {Component} from "react";
 
 import {
 	View,
-	ScreenRect, TouchableOpacity, Text, StyleSheet, ScrollView
+	TouchableOpacity,
+	Text,
+	ScrollView, Modal,
 } from "react-native"
-import {API_URL, BOOTSTRAP_COLOR_DANGER, BOOTSTRAP_COLOR_SECONDARY, menu_style} from "../../constants";
-
+import {API_URL, BOOTSTRAP_COLOR_DANGER, menu_style} from "../../constants";
 import I18n from 'i18n-js'
 
 
@@ -15,6 +16,9 @@ const t = (key) => I18n.t('room_options.' + key);
 export default class RoomOptionsScreen extends Component{
 	constructor() {
 		super();
+		this.state = {
+			delete_room_popup_visible: false
+		}
 	}
 
 	deleteRoom(){
@@ -41,6 +45,12 @@ export default class RoomOptionsScreen extends Component{
 		}).catch((error) => {
 			alert(error)
 		})
+	}
+
+	onDeleteRoomButtonPress(){
+		this.setState({
+			delete_room_popup_visible: true
+		});
 	}
 
 	render(){
@@ -87,9 +97,7 @@ export default class RoomOptionsScreen extends Component{
 
 				<TouchableOpacity
 					style={menu_style.button}
-					onPress={ () => {
-						this.deleteRoom()
-					}}
+					onPress={this.onDeleteRoomButtonPress.bind(this)}
 				>
 					<Text
 						style={[menu_style.button_text, {color: BOOTSTRAP_COLOR_DANGER}]}
@@ -99,6 +107,23 @@ export default class RoomOptionsScreen extends Component{
 				</TouchableOpacity>
 
 				<View style={menu_style.separator}/>
+
+				<Modal
+					visible={this.state.delete_room_popup_visible}
+					onRequestClose={ () => {
+						this.setState({delete_room_popup_visible: false})
+					}}
+					transparent={true}
+				>
+					<View
+						style={{
+							width: 200,
+							backgroundColor: theme.textColor
+						}}
+					>
+						<Text>ok</Text>
+					</View>
+				</Modal>
 
 			</ScrollView>
 		)
