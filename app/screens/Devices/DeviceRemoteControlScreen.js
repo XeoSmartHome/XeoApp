@@ -1,11 +1,11 @@
 import React from "react";
 import I18n from 'i18n-js';
 import {
-	Image,
-	ScrollView, Text, TouchableOpacity, View
+	Image, Modal, Picker,
+	ScrollView, Slider, Text, TouchableOpacity, View
 
 } from 'react-native';
-import {API_CONTROL_DEVICE, API_LOAD_DEVICE, BOOTSTRAP_COLOR_LIGHT} from "../../constants";
+import {API_CONTROL_DEVICE, API_LOAD_DEVICE, BOOTSTRAP_COLOR_LIGHT, XEO_BLUE} from "../../constants";
 import {socket_io} from "../DashboardScreen/DashboardScreen";
 
 
@@ -35,7 +35,12 @@ export default class DeviceRemoteControlScreen extends React.Component{
 			device_connected: null,
 			device_active: null,
 			device_actions_types: [],
-			device_statuses: []
+			device_statuses: [],
+
+			modal_visible: false,
+			selected_action_type_id: -1,
+
+			action_parameters: []
 		}
 	}
 
@@ -49,16 +54,10 @@ export default class DeviceRemoteControlScreen extends React.Component{
 			this.setState({
 				device_id: response['id'],
 				device_name: response['name'],
-				//device_serial: response['serial'],
-				//device_image: response['image'],
 				device_connected: response['connected'],
 				device_active: response['active'],
-				//device_schedule_active: response['schedule_active'],
 				//device_last_connection: response['last_connection'],
-				//device_actions: response['actions'],
 				device_actions_types: response['actions_types'],
-				//device_status_types: response['status_types'],
-				//device_status_list: response['statuses']
 				device_statuses: response['statuses_2']
 			});
 			this.props.navigation.setParams({
@@ -92,8 +91,7 @@ export default class DeviceRemoteControlScreen extends React.Component{
 		this.setWebSocketHandler();
 	}
 
-	executeAction(action_type_id: number){
-		//parameters = parameters ? parameters : [];
+	executeAction(action_type_id: number, parameters=[]){
 		fetch(API_CONTROL_DEVICE, {
 			method: 'POST',
 			headers: {
@@ -103,7 +101,7 @@ export default class DeviceRemoteControlScreen extends React.Component{
 			body: JSON.stringify({
 				device_id: this.state.device_id,
 				action_type_id: action_type_id,
-				parameters: []
+				parameters: parameters
 			})
 		}).then(
 			(response) => response.json()
@@ -122,7 +120,17 @@ export default class DeviceRemoteControlScreen extends React.Component{
 		if(action_type['parameters_types'].length === 0){
 			this.executeAction(action_type['id'])
 		} else {
-			console.warn(action_type.style)
+			let parameters = action_type['parameters_types'].map( (item) => (
+				{
+					value: item.default,
+					parameter_type_id: item.id
+				})
+			);
+			this.setState({
+				modal_visible: true,
+				selected_action_type_id: action_type['id'],
+				action_parameters: parameters
+			});
 		}
 	}
 
@@ -220,6 +228,145 @@ export default class DeviceRemoteControlScreen extends React.Component{
 		)
 	}
 
+	renderParameterInput(parameter_type, index){
+		const {theme} = this.props.screenProps;
+		const slider_or_picker = parameter_type['options'].length === 0 ? 'slider' : 'picker';
+		const current_value = this.state.action_parameters[index].value;
+		return (
+			<View
+				key={'parameter_input_' + index}
+				style={{
+					marginBottom: '10%',
+				}}
+			>
+				{
+					slider_or_picker === 'slider' ? (
+						<View>
+							<Text
+								style={{
+									color: theme.textColor,
+									fontSize: 18,
+									marginBottom: 20,
+									marginHorizontal: 20
+								}}
+							>
+								{ parameter_type['name'] }: { current_value }{ parameter_type['unit'] }
+							</Text>
+							<Slider
+								style={{width: 300, height: 30, borderRadius: 50}}
+								thumbTintColor={XEO_BLUE}
+								minimumTrackTintColor={theme.textColor}
+								maximumTrackTintColor={theme.textColor}
+								minimumValue={parameter_type.min}
+								maximumValue={parameter_type.max}
+								step={parameter_type.step}
+								value={current_value}
+								onValueChange={ (value)=> {
+									let aux = this.state.action_parameters;
+									aux[index].value = value;
+									this.setState({action_parameters: aux});
+								}}
+							/>
+						</View>
+					) : (
+						<View>
+							<Text
+								style={{
+									color: theme.textColor,
+									fontSize: 18,
+									marginHorizontal: 20
+								}}
+							>
+								{ parameter_type['name'] }
+							</Text>
+							<Picker
+								mode='dialog'
+								selectedValue={current_value}
+								style={{
+									color: theme.textColor,
+									borderWidth: 1
+								}}
+								onValueChange={(itemValue, itemIndex) => {
+									let aux = this.state.action_parameters;
+									aux[index].value = itemValue;
+									this.setState({action_parameters: aux});
+								}}>
+								{
+									parameter_type['options'].map((item) =>{
+										return(
+											<Picker.Item label={item.label} value={item.value} key={item.id}/>
+										);
+									})
+								}
+							</Picker>
+						</View>
+					)
+				}
+			</View>
+		)
+	}
+
+	renderParametersInput(){
+		const {theme} = this.props.screenProps;
+		const  action_type = this.state.device_actions_types.find((e) => e['id'] === this.state.selected_action_type_id)
+		return (
+			<Modal
+				visible={this.state.modal_visible}
+				onRequestClose={ () => {
+					this.setState({modal_visible: false} );
+				} }
+				animationType="fade"
+			>
+				{
+					this.state.modal_visible &&
+					<ScrollView
+						style={{
+							backgroundColor: theme.screenBackgroundColor,
+							padding: '3%',
+						}}
+						contentContainerStyle={{
+							flexGrow: 1,
+							justifyContent: 'center'
+						}}
+					>
+						{
+							action_type['parameters_types'].map(this.renderParameterInput.bind(this))
+						}
+						<TouchableOpacity
+							style={{
+								backgroundColor: theme.primaryColor,
+								padding: 6,
+								alignSelf: "center",
+								borderRadius: 6,
+								width: '75%'
+							}}
+							onPress={()=>{
+								// call server api to send an action to device
+								this.executeAction(action_type['id'], this.state.action_parameters);
+								// close modal after action in send to server
+								this.setState({
+									modal_visible: false
+								});
+							}}
+						>
+							<Text
+								style={{
+									color: theme.textColor,
+									fontSize: 18,
+									alignSelf: "center"
+								}}
+							>
+								{
+									action_type['name']
+								}
+							</Text>
+						</TouchableOpacity>
+					</ScrollView>
+				}
+			</Modal>
+		)
+	}
+
 	render() {
 		const {theme} = this.props.screenProps;
 		return (
@@ -240,6 +387,9 @@ export default class DeviceRemoteControlScreen extends React.Component{
 				}
 				{
 					this.state.device_actions_types.map(this.renderActionButton.bind(this))
+				}
+				{
+					this.renderParametersInput()
 				}
 			</ScrollView>
 		)

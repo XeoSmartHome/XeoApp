@@ -47,6 +47,7 @@ import SensorsDashboardScreenV2 from "./app/screens/Sensors/SensorsDashboardScre
 import ActionLinksListScreen from "./app/screens/Devices/ActionLinks/ActionLinksListScreen";
 import CreateActionLink from "./app/screens/Devices/ActionLinks/CreateActionLink";
 import CustomizableDashboardScreen from "./app/screens/CustomizableDashboard/CustomizableDashboardScreen";
+import TimedActionsListScreen from "./app/screens/Devices/TimedActions/TimedActionsListScreen";
 
 
 I18n.fallbacks = true;
@@ -113,7 +114,7 @@ const BottomNavigator = createBottomTabNavigator(
 			borderStyle: 'solid',
 			borderColor: '#d0cfd0',
 			paddingBottom: 5,
-		},
+		}, 
 	}*/
 	{
 		defaultNavigationOptions: ({ navigation, screenProps }) => ({
@@ -184,7 +185,8 @@ const NavigationStack = createStackNavigator({
 		})
 	},
 	device_alarms: {
-		screen: AlarmsScreen,
+		//screen: AlarmsScreen,
+		screen: TimedActionsListScreen,
 		navigationOptions: ({screenProps}) => ({
 			title: "Programmed actions",
 			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},

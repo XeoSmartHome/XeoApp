@@ -10,7 +10,8 @@ import {
 	Modal,
 	Slider,
 	TouchableOpacity,
-	Picker, ScrollView,
+	Picker,
+	ScrollView,
 } from "react-native";
 
 import {
