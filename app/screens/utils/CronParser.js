@@ -63,7 +63,7 @@ export default class CronParser {
 	}
 
 	serializeCron(){
-		return ''
+		return '';
 	}
 
 }

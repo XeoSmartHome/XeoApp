@@ -48,6 +48,7 @@ import ActionLinksListScreen from "./app/screens/Devices/ActionLinks/ActionLinks
 import CreateActionLink from "./app/screens/Devices/ActionLinks/CreateActionLink";
 import CustomizableDashboardScreen from "./app/screens/CustomizableDashboard/CustomizableDashboardScreen";
 import TimedActionsListScreen from "./app/screens/Devices/TimedActions/TimedActionsListScreen";
+import EditTimedActionScreen from "./app/screens/Devices/TimedActions/EditTimedActionScreen";
 
 
 I18n.fallbacks = true;
@@ -114,7 +115,7 @@ const BottomNavigator = createBottomTabNavigator(
 			borderStyle: 'solid',
 			borderColor: '#d0cfd0',
 			paddingBottom: 5,
-		}, 
+		},
 	}*/
 	{
 		defaultNavigationOptions: ({ navigation, screenProps }) => ({
@@ -193,15 +194,23 @@ const NavigationStack = createStackNavigator({
 			headerTintColor: 'white',
 		})
 	},
-	device_edit_alarm:{
+	edit_timed_action: {
+		screen: EditTimedActionScreen,
+		navigationOptions: ({screenProps}) => ({
+			//title: t('settings.navigation.title'),
+			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
+			headerTintColor: 'white',
+		})
+	},
+	/*device_edit_alarm:{
 		screen: EditAlarmScreen,
 		navigationOptions: ({screenProps}) => ({
 			title: "",
 			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
 			headerTintColor: 'white',
 		})
-	},
-	settings_screen:{
+	},*/
+	settings_screen: {
 		screen: SettingsScreen,
 		navigationOptions: ({screenProps}) => ({
 			title: t('settings.navigation.title'),

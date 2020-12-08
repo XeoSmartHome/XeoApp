@@ -1,6 +1,6 @@
 import React from "react";
-import {BackHandler, ScrollView, Switch, Text, TouchableOpacity, View} from "react-native";
-import {API_LOAD_DEVICE} from "../../../constants";
+import {BackHandler, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View} from "react-native";
+import {API_DELETE_TIMED_ACTIONS_MULTIPLE, API_GET_DEVICE_TIMED_ACTIONS, API_LOAD_DEVICE} from "../../../constants";
 import I18n from "i18n-js";
 import CronParser from "../../utils/CronParser";
 import {RadioButton} from "react-native-paper";
@@ -10,8 +10,9 @@ const t = (key) => I18n.t('device_settings.' + key);
 
 
 export default class TimedActionsListScreen extends React.Component {
+
 	static navigationOptions = ({ navigation, screenProps }) => ({
-		//title: "Programed actions",
+		title: "Programed actions",
 		headerTitle: () => (
 			navigation.state.params.multi_select_active &&
 			<TouchableOpacity
@@ -34,9 +35,7 @@ export default class TimedActionsListScreen extends React.Component {
 						style={{
 							marginRight: 20,
 						}}
-						onPress={ () => {
-
-						}}
+						onPress={ navigation.state.params.on_delete_actions_press }
 					>
 						<Text
 							style={{
@@ -76,19 +75,53 @@ export default class TimedActionsListScreen extends React.Component {
 		};
 	}
 
+	componentDidMount() {
+		this.props.navigation.setParams({
+			on_cancel_delete_press: this.onCancelDeletePress.bind(this),
+			on_delete_actions_press: this.onDeleteActionsPress.bind(this),
+		});
+		this.willFocusSubscription = this.props.navigation.addListener(
+			'willFocus', () => {
+				this.loadTimedActions();
+			}
+		);
+		//BackHandler.addEventListener('hardwareBackPress', this.onHardwareBackPress.bind(this));
+	}
+
+	componentWillUnmount() {
+		//BackHandler.removeEventListener('hardwareBackPress', this.onHardwareBackPress.bind(this));
+		//console.warn('unmounted')
+	}
+
+	getTimeFromCron(cron_string){
+		const cron_parser = new CronParser();
+		cron_parser.deserializeCron(cron_string);
+		return cron_parser.hours[0] * 60 + Number(cron_parser.minutes[0]);
+	}
+
+	sortActionsByTime(actions) {
+		return actions.sort( (action_a, action_b) => this.getTimeFromCron(action_a.cron) > this.getTimeFromCron(action_b.cron))
+	}
+
 	loadTimedActions() {
-		fetch(API_LOAD_DEVICE + this.props.navigation.state.params.device_id,{
+		let request_args = new URLSearchParams({
+			device_id: this.props.navigation.state.params.device_id
+		}).toString();
+
+		fetch(`${API_GET_DEVICE_TIMED_ACTIONS}?${request_args}`,{
 				method: 'GET'
 			}
 		).then(
 			(response) => response.json()
 		).then((response) => {
+			let timed_actions = response['timed_actions'];
+
 			this.setState({
-				timed_actions: response['actions'],
-				selected_timed_actions: response['actions'].map( () => false)
-			})
+				timed_actions: this.sortActionsByTime(timed_actions),
+				selected_timed_actions: timed_actions.map( () => false )
+			});
 		}).catch((error) => {
-			alert(error)
+			alert(error);
 		});
 	}
 
@@ -105,6 +138,58 @@ export default class TimedActionsListScreen extends React.Component {
 		//return true;
 	}*/
 
+	onNewTimedActionPress() {
+		this.props.navigation.navigate('device_edit_alarm', {
+			device_id: this.props.navigation.state.params.device_id,
+			create_new: true
+		});
+	}
+
+	onDeleteActionsPress(){
+		let actions_ids = [];
+		this.state.selected_timed_actions.forEach(
+			(value, index) => {
+				if (value === true) {
+					actions_ids.push(this.state.timed_actions[index]['id']);
+				}
+			});
+
+		fetch(API_DELETE_TIMED_ACTIONS_MULTIPLE, {
+			method: 'POST',
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				device_id: this.props.navigation.state.params.device_id,
+				actions_ids: actions_ids
+			}),
+		}).then(
+			(response) => response.json()
+		).then(
+			(response) => {
+				switch (response.status) {
+					case 200:
+						this.loadTimedActions();
+						this.setState({
+							multi_select_active: false
+						});
+						this.props.navigation.setParams({
+							multi_select_active: false
+						});
+						break;
+					case 400:
+						break;
+				}
+			}
+		).catch(
+			(error) => {
+				console.warn(error);
+			}
+		)
+
+	}
+
 	onCancelDeletePress() {
 		this.props.navigation.setParams({
 			multi_select_active: false
@@ -112,19 +197,6 @@ export default class TimedActionsListScreen extends React.Component {
 		this.setState({
 			multi_select_active: false
 		});
-	}
-
-	componentDidMount() {
-		this.loadTimedActions();
-		this.props.navigation.setParams({
-			on_cancel_delete_press: this.onCancelDeletePress.bind(this)
-		});
-		//BackHandler.addEventListener('hardwareBackPress', this.onHardwareBackPress.bind(this));
-	}
-
-	componentWillUnmount() {
-		//BackHandler.removeEventListener('hardwareBackPress', this.onHardwareBackPress.bind(this));
-		//console.warn('unmounted')
 	}
 
 	onSelectAllPress() {
@@ -143,15 +215,15 @@ export default class TimedActionsListScreen extends React.Component {
 		})
 	}
 
-	onTimedActionPress(action, index) {
-		if(this.state.multi_select_active) {
-			this.onTimedActionLongPress(action, index);
-		}
-	}
-
 	onTimedActionLongPress(action, index) {
+		// Toggle a timed action's select property
 		let selected_timed_actions = this.state.selected_timed_actions;
 		selected_timed_actions[index] = ! selected_timed_actions[index];
+
+		this.setState({
+			selected_timed_action: selected_timed_actions, // update state of the timed action
+			multi_select_active: true // enable multi select
+		});
 
 		let at_least_one_selected = false;
 		selected_timed_actions.forEach((element) => {
@@ -159,16 +231,22 @@ export default class TimedActionsListScreen extends React.Component {
 				at_least_one_selected = true;
 		})
 
-		this.setState({
-			selected_timed_action: selected_timed_actions,
-			multi_select_active: true
-		});
-
 		this.props.navigation.setParams({
 			multi_select_active: true,
 			onSelectAllPress: this.onSelectAllPress.bind(this),
 			show_delete: at_least_one_selected
 		});
+	}
+
+	onTimedActionPress(action, index) {
+		if(this.state.multi_select_active) {
+			this.onTimedActionLongPress(action, index);
+		} else {
+			this.props.navigation.navigate('edit_timed_action', {
+				device_id: this.props.navigation.state.params.device_id,
+				action_id: action.id
+			});
+		}
 	}
 
 	renderTimedAction(action, index) {
@@ -180,7 +258,6 @@ export default class TimedActionsListScreen extends React.Component {
 		const minute = cronParser.minutes[0];
 		const hour = cronParser.hours[0];
 		const days = cronParser.days_of_week;
-
 		const alarmDaysTextOn = {
 			color: theme.textColor,
 		};
@@ -195,13 +272,13 @@ export default class TimedActionsListScreen extends React.Component {
 				style={{
 					borderBottomWidth: 2,
 					borderBottomColor: theme.textColor,
-					paddingVertical: 8,
 					paddingHorizontal: '3%'
 				}}
 			>
 				<TouchableOpacity
 					style={{
-						flexDirection: "row"
+						flexDirection: "row",
+						paddingVertical: 8,
 					}}
 					onPress={ () => {
 						this.onTimedActionPress(action, index)
@@ -214,7 +291,6 @@ export default class TimedActionsListScreen extends React.Component {
 						this.state.multi_select_active &&
 						<View
 							style={{
-								//flex: 1,
 								justifyContent: "center"
 							}}
 						>
@@ -233,7 +309,7 @@ export default class TimedActionsListScreen extends React.Component {
 						<Text
 							style={{
 								color: theme.textColor,
-								fontSize: 24
+								fontSize: 26
 							}}
 						>
 							{hour > 9 ? String(hour) : '0' + String(hour)}
@@ -298,18 +374,59 @@ export default class TimedActionsListScreen extends React.Component {
 	render() {
 		const {theme} = this.props.screenProps;
 		return (
-			<ScrollView
+			<View
 				style={{
-					backgroundColor: theme.screenBackgroundColor
-				}}
-				contentContainerStyle={{
-					padding: '3%'
+					flex: 1,
 				}}
 			>
-				{
-					this.state.timed_actions.map(this.renderTimedAction.bind(this))
-				}
-			</ScrollView>
+				<ScrollView
+					style={{
+						backgroundColor: theme.screenBackgroundColor,
+					}}
+					contentContainerStyle={{
+						padding: '3%',
+						paddingBottom: 100
+					}}
+				>
+					{
+						this.state.timed_actions.map(this.renderTimedAction.bind(this))
+					}
+				</ScrollView>
+				<TouchableOpacity
+					onPress={this.onNewTimedActionPress.bind(this)}
+					style={[styles.fab, {
+						backgroundColor: theme.primaryColor
+					}]}
+				>
+					<Text
+						style={[styles.fabIcon, {
+							color: theme.lightColor
+						}]}
+					>
+						+
+					</Text>
+				</TouchableOpacity>
+			</View>
+
 		)
 	}
 }
+
+
+const styles = StyleSheet.create({
+	fab: {
+		position: 'absolute',
+		width: 60,
+		height: 60,
+		alignItems: 'center',
+		justifyContent: 'center',
+		right: 20,
+		bottom: 20,
+		borderRadius: 30,
+		elevation: 8
+	},
+	fabIcon: {
+		top: -2,
+		fontSize: 50,
+	}
+});

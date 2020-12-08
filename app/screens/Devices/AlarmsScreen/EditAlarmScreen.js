@@ -13,7 +13,7 @@ import CronParser from "../../utils/CronParser";
 import {
 	API_ADD_ACTION,
 	API_LOAD_DEVICE,
-	API_UPDATE_ACTION, BOOTSTRAP_COLOR_LIGHT,
+	API_UPDATE_DEVICE_TIMED_ACTION, BOOTSTRAP_COLOR_LIGHT,
 	BOOTSTRAP_COLOR_PRIMARY,
 	XEO_BLUE
 } from "../../../constants";
@@ -105,7 +105,7 @@ export default class EditAlarmScreen extends Component{
 			repeat_days,
 			'*'
 		);
-		fetch(API_UPDATE_ACTION, {
+		fetch(API_UPDATE_DEVICE_TIMED_ACTION, {
 			method: 'POST',
 			headers: {
 				Accept: 'application/json',

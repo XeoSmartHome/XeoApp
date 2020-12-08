@@ -53,6 +53,10 @@ export const ThemeConstants = {
 	warningColor: {
 		light: BOOTSTRAP_COLOR_WARNING,
 		dark: BOOTSTRAP_COLOR_WARNING
+	},
+	lightColor: {
+		light: BOOTSTRAP_COLOR_LIGHT,
+		dark: BOOTSTRAP_COLOR_LIGHT
 	}
 
 };
