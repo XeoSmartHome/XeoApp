@@ -110,7 +110,7 @@ export default class DashboardScreen extends Component{
 					refreshing={this.state.refreshing}
 					data={this.state.devices}
 					renderItem={({ item}) => this.DeviceBox(item)}
-					keyExtractor={item => String(item.id)}
+					keyExtractor={item => String('123_' + item.id)}
 					onRefresh={()=>{this.loadDevices()}}
 				/>
 			</SafeAreaView>

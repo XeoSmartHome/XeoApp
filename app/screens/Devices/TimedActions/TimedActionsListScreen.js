@@ -2,8 +2,8 @@ import React from "react";
 import {BackHandler, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View} from "react-native";
 import {API_DELETE_TIMED_ACTIONS_MULTIPLE, API_GET_DEVICE_TIMED_ACTIONS, API_LOAD_DEVICE} from "../../../constants";
 import I18n from "i18n-js";
-import CronParser from "../../utils/CronParser";
 import {RadioButton} from "react-native-paper";
+import Cron from "../../utils/new_cron_class";
 
 
 const t = (key) => I18n.t('device_settings.' + key);
@@ -11,7 +11,7 @@ const t = (key) => I18n.t('device_settings.' + key);
 
 export default class TimedActionsListScreen extends React.Component {
 
-	static navigationOptions = ({ navigation, screenProps }) => ({
+	static navigationOptions = ({navigation, screenProps}) => ({
 		title: "Programed actions",
 		headerTitle: () => (
 			navigation.state.params.multi_select_active &&
@@ -35,7 +35,7 @@ export default class TimedActionsListScreen extends React.Component {
 						style={{
 							marginRight: 20,
 						}}
-						onPress={ navigation.state.params.on_delete_actions_press }
+						onPress={navigation.state.params.on_delete_actions_press}
 					>
 						<Text
 							style={{
@@ -51,7 +51,7 @@ export default class TimedActionsListScreen extends React.Component {
 						style={{
 							marginRight: 20,
 						}}
-						onPress={ navigation.state.params.on_cancel_delete_press}
+						onPress={navigation.state.params.on_cancel_delete_press}
 					>
 						<Text
 							style={{
@@ -93,14 +93,14 @@ export default class TimedActionsListScreen extends React.Component {
 		//console.warn('unmounted')
 	}
 
-	getTimeFromCron(cron_string){
-		const cron_parser = new CronParser();
-		cron_parser.deserializeCron(cron_string);
-		return cron_parser.hours[0] * 60 + Number(cron_parser.minutes[0]);
+	getTimeFromCron(cron_string) {
+		const cron = new Cron();
+		cron.parseCronExpression(cron_string);
+		return cron.getHours() * 60 + Number(cron.getMinutes());
 	}
 
 	sortActionsByTime(actions) {
-		return actions.sort( (action_a, action_b) => this.getTimeFromCron(action_a.cron) > this.getTimeFromCron(action_b.cron))
+		return actions.sort((action_a, action_b) => this.getTimeFromCron(action_a.cron) > this.getTimeFromCron(action_b.cron))
 	}
 
 	loadTimedActions() {
@@ -108,7 +108,7 @@ export default class TimedActionsListScreen extends React.Component {
 			device_id: this.props.navigation.state.params.device_id
 		}).toString();
 
-		fetch(`${API_GET_DEVICE_TIMED_ACTIONS}?${request_args}`,{
+		fetch(`${API_GET_DEVICE_TIMED_ACTIONS}?${request_args}`, {
 				method: 'GET'
 			}
 		).then(
@@ -118,7 +118,7 @@ export default class TimedActionsListScreen extends React.Component {
 
 			this.setState({
 				timed_actions: this.sortActionsByTime(timed_actions),
-				selected_timed_actions: timed_actions.map( () => false )
+				selected_timed_actions: timed_actions.map(() => false)
 			});
 		}).catch((error) => {
 			alert(error);
@@ -145,7 +145,7 @@ export default class TimedActionsListScreen extends React.Component {
 		});
 	}
 
-	onDeleteActionsPress(){
+	onDeleteActionsPress() {
 		let actions_ids = [];
 		this.state.selected_timed_actions.forEach(
 			(value, index) => {
@@ -201,13 +201,13 @@ export default class TimedActionsListScreen extends React.Component {
 
 	onSelectAllPress() {
 		let all_selected = true;
-		this.state.selected_timed_actions.forEach( (action_selected) => {
-			if(action_selected === false)
+		this.state.selected_timed_actions.forEach((action_selected) => {
+			if (action_selected === false)
 				all_selected = false;
 		});
 
 		this.setState({
-			selected_timed_actions: this.state.selected_timed_actions.map( (action_selected) => !all_selected)
+			selected_timed_actions: this.state.selected_timed_actions.map((action_selected) => !all_selected)
 		});
 
 		this.props.navigation.setParams({
@@ -218,7 +218,7 @@ export default class TimedActionsListScreen extends React.Component {
 	onTimedActionLongPress(action, index) {
 		// Toggle a timed action's select property
 		let selected_timed_actions = this.state.selected_timed_actions;
-		selected_timed_actions[index] = ! selected_timed_actions[index];
+		selected_timed_actions[index] = !selected_timed_actions[index];
 
 		this.setState({
 			selected_timed_action: selected_timed_actions, // update state of the timed action
@@ -239,7 +239,7 @@ export default class TimedActionsListScreen extends React.Component {
 	}
 
 	onTimedActionPress(action, index) {
-		if(this.state.multi_select_active) {
+		if (this.state.multi_select_active) {
 			this.onTimedActionLongPress(action, index);
 		} else {
 			this.props.navigation.navigate('edit_timed_action', {
@@ -253,11 +253,11 @@ export default class TimedActionsListScreen extends React.Component {
 		const {theme} = this.props.screenProps;
 		const is_selected = this.state.selected_timed_actions[index];
 
-		const cronParser = new CronParser();
-		cronParser.deserializeCron(action.cron);
-		const minute = cronParser.minutes[0];
-		const hour = cronParser.hours[0];
-		const days = cronParser.days_of_week;
+		const cronParser = new Cron();
+		cronParser.parseCronExpression(action.cron);
+		const minute = cronParser.getMinutes();
+		const hour = cronParser.getHours();
+		const days = cronParser.getDaysOfWeek();
 		const alarmDaysTextOn = {
 			color: theme.textColor,
 		};
@@ -280,10 +280,10 @@ export default class TimedActionsListScreen extends React.Component {
 						flexDirection: "row",
 						paddingVertical: 8,
 					}}
-					onPress={ () => {
+					onPress={() => {
 						this.onTimedActionPress(action, index)
 					}}
-					onLongPress={ () => {
+					onLongPress={() => {
 						this.onTimedActionLongPress(action, index)
 					}}
 				>
@@ -295,7 +295,7 @@ export default class TimedActionsListScreen extends React.Component {
 							}}
 						>
 							<RadioButton
-								status={ is_selected ? 'checked' : 'unchecked' }
+								status={is_selected ? 'checked' : 'unchecked'}
 								color={theme.primaryColor}
 								uncheckedColor={theme.secondaryColor}
 							/>
@@ -322,7 +322,7 @@ export default class TimedActionsListScreen extends React.Component {
 								fontSize: 16
 							}}
 						>
-							{ action['name'] }
+							{action['name']}
 						</Text>
 					</View>
 					<View
@@ -355,14 +355,14 @@ export default class TimedActionsListScreen extends React.Component {
 							}}
 						>
 							<Switch
-								value={ action['active'] }
-								onValueChange={ (value) => {
+								value={action['active']}
+								onValueChange={(value) => {
 									let actions = this.state.timed_actions;
 									actions[index].active = value;
 									this.setState({timed_actions: actions});
-								} }
+								}}
 								thumbColor="#4267b2"
-								trackColor={{false: '#acacac', true: '#abcaff' }}
+								trackColor={{false: '#acacac', true: '#abcaff'}}
 							/>
 						</View>
 					}

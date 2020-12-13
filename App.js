@@ -1,10 +1,7 @@
 import React from 'react';
-import {createAppContainer } from 'react-navigation';
+import {createAppContainer} from 'react-navigation';
 import DashboardScreen from "./app/screens/DashboardScreen/DashboardScreen";
-import ControlDeviceScreen from "./app/screens/Devices/ControlDeviceScreen";
 import AddDeviceScreen from "./app/screens/Devices/AddDeviceScreen";
-import AlarmsScreen from "./app/screens/Devices/AlarmsScreen";
-import EditAlarmScreen from "./app/screens/Devices/AlarmsScreen/EditAlarmScreen";
 import LoginScreen from "./app/screens/LoginScreen";
 import SettingsScreen from "./app/screens/Settings/SettingsScreen";
 import {BOOTSTRAP_COLOR_LIGHT, XEO_BLUE} from "./app/constants";
@@ -19,11 +16,9 @@ import RenameRoomScreen from "./app/screens/Rooms/RenameRoom";
 import RoomOptionsScreen from "./app/screens/Rooms/RoomOptionsScreen";
 import RoomDeviceOptionsScreen from "./app/screens/Rooms/RoomDeviceOptionsScreen";
 import RoomScreen from "./app/screens/Rooms/RoomScreen";
-import RoomsScreen from "./app/screens/Rooms/RoomsScreen";
 import HelpScreen from "./app/screens/Settings/Help/HelpScreen";
 import SecurityScreen from "./app/screens/Settings/Security/SecurityScreen";
 import ChangePasswordScreen from "./app/screens/Settings/Security/ChangePasswordScreen";
-import SensorsDashboardScreen from "./app/screens/Sensors/SensorsDashboardScreeen";
 import PinSettingsScreen from "./app/screens/Settings/Security/PinSettingsScreen";
 import PinScreen from "./app/screens/Settings/Security/PinScreen";
 import SensorScreen from "./app/screens/Sensors/SensorScreen";
@@ -39,16 +34,17 @@ import HelpCenterScreen from "./app/screens/Settings/Help/HelpCenterScreen";
 import ReportABug from "./app/screens/Settings/Help/ReportABug";
 // noinspection ES6CheckImport
 import I18n, {t} from 'i18n-js';
-import CreateAccountScreen from "./app/screens/CreateAccountScreen";
 import CreateAccountScreen_v2 from "./app/screens/AccountManagement/CreateAccountScreen_v2";
 import TermsAndConditionsScreen from "./app/screens/AccountManagement/TermsAndConditionsScreen";
 import DeviceRemoteControlScreen from "./app/screens/Devices/DeviceRemoteControlScreen";
 import SensorsDashboardScreenV2 from "./app/screens/Sensors/SensorsDashboardScreenV2";
 import ActionLinksListScreen from "./app/screens/Devices/ActionLinks/ActionLinksListScreen";
 import CreateActionLink from "./app/screens/Devices/ActionLinks/CreateActionLink";
-import CustomizableDashboardScreen from "./app/screens/CustomizableDashboard/CustomizableDashboardScreen";
 import TimedActionsListScreen from "./app/screens/Devices/TimedActions/TimedActionsListScreen";
 import EditTimedActionScreen from "./app/screens/Devices/TimedActions/EditTimedActionScreen";
+import DynamicTabComponent from "./app/screens/Rooms/RoomsScreenV3";
+import RoomsScreen from "./app/screens/Rooms/RoomsScreen";
+import RoomsScreenV4 from "./app/screens/Rooms/RoomsScreenV4";
 
 
 I18n.fallbacks = true;
@@ -58,8 +54,8 @@ I18n.translations = {
 };
 
 
-AsyncStorage.getItem('locale').then( (item) => {
-	if(item !== null)
+AsyncStorage.getItem('locale').then((item) => {
+	if (item !== null)
 		I18n.locale = item;
 	else
 		I18n.locale = Localization.locale;
@@ -68,31 +64,32 @@ AsyncStorage.getItem('locale').then( (item) => {
 
 const BottomNavigator = createBottomTabNavigator(
 	{
-		sensors:{
+		sensors: {
 			//screen: SensorsDashboardScreen,
 			screen: SensorsDashboardScreenV2,
 			navigationOptions: ({screenProps}) => ({
 				tabBarLabel: t('dashboard.navigation.sensors'),
 				tabBarIcon: ({tintColor}) => (
-					<Icon name="show-chart" color={tintColor} size={24} />
+					<Icon name="show-chart" color={tintColor} size={24}/>
 				)
 			})
 		},
-		dashboard:{
+		dashboard: {
 			screen: DashboardScreen,
 			navigationOptions: ({screenProps}) => ({
 				tabBarLabel: t('dashboard.navigation.devices'),
 				tabBarIcon: ({tintColor}) => (
-					<Icon name="device-hub" color={tintColor} size={24} />
+					<Icon name="device-hub" color={tintColor} size={24}/>
 				)
 			})
 		},
-		rooms:{
-			screen: RoomsScreen,
+		rooms: {
+			screen: RoomsScreenV4,
+			//screen: RoomsScreen,
 			navigationOptions: ({screenProps}) => ({
 				tabBarLabel: t('dashboard.navigation.rooms'),
 				tabBarIcon: ({tintColor}) => (
-					<Icon name="home" color={tintColor} size={24} />
+					<Icon name="home" color={tintColor} size={24}/>
 				)
 			})
 		},
@@ -118,7 +115,7 @@ const BottomNavigator = createBottomTabNavigator(
 		},
 	}*/
 	{
-		defaultNavigationOptions: ({ navigation, screenProps }) => ({
+		defaultNavigationOptions: ({navigation, screenProps}) => ({
 			tabBarOptions: {
 				keyboardHidesTabBar: true,
 				activeTintColor: screenProps.theme.headerTextColor,
@@ -155,13 +152,13 @@ const NavigationStack = createStackNavigator({
 			headerTintColor: 'white',
 			headerRight: () => (<TouchableOpacity
 				style={{marginRight: 15}}
-				onPress={ () => navigation.navigate('settings_screen')}
+				onPress={() => navigation.navigate('settings_screen')}
 			>
-				<Icon name="more-horiz" color={BOOTSTRAP_COLOR_LIGHT} size={40} />
+				<Icon name="more-horiz" color={BOOTSTRAP_COLOR_LIGHT} size={40}/>
 			</TouchableOpacity>)
 		})
 	},
-	add_device:{
+	add_device: {
 		screen: AddDeviceScreen,
 		navigationOptions: ({screenProps}) => ({
 			title: t('add_device.navigation.title'),
@@ -237,7 +234,7 @@ const NavigationStack = createStackNavigator({
 	},
 	change_password: {
 		screen: ChangePasswordScreen,
-		navigationOptions:({screenProps}) => ({
+		navigationOptions: ({screenProps}) => ({
 			title: t('change_password.navigation.title'),
 			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
 			headerTintColor: 'white',
@@ -251,7 +248,7 @@ const NavigationStack = createStackNavigator({
 			headerTintColor: 'white',
 		})
 	},
-	create_account:{
+	create_account: {
 		screen: CreateAccountScreen_v2,
 		navigationOptions: ({screenProps}) => ({
 			title: t('create_account.navigation.title'),
@@ -259,7 +256,7 @@ const NavigationStack = createStackNavigator({
 			headerTintColor: BOOTSTRAP_COLOR_LIGHT,
 		})
 	},
-	terms_and_conditions:{
+	terms_and_conditions: {
 		screen: TermsAndConditionsScreen,
 		navigationOptions: ({screenProps}) => ({
 			title: t('terms_and_conditions.navigation.title'),
@@ -289,7 +286,7 @@ const NavigationStack = createStackNavigator({
 			headerTintColor: BOOTSTRAP_COLOR_LIGHT,
 		})
 	},
-	rename_room:{
+	rename_room: {
 		screen: RenameRoomScreen,
 		navigationOptions: ({screenProps}) => ({
 			title: t('rename_room.navigation.title'),
@@ -312,7 +309,7 @@ const NavigationStack = createStackNavigator({
 			headerTintColor: BOOTSTRAP_COLOR_LIGHT,
 		})
 	},
-	room_sharing:{
+	room_sharing: {
 		screen: RoomSharingMainScreen,
 		navigationOptions: ({screenProps}) => ({
 			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
@@ -329,7 +326,7 @@ const NavigationStack = createStackNavigator({
 	},
 	pin: {
 		screen: PinScreen,
-		navigationOptions:{
+		navigationOptions: {
 			header: () => null
 		}
 	},
@@ -406,7 +403,7 @@ const App = () => (
 		<ThemeContext.Consumer>
 			{
 				(props) => (
-					<Container screenProps={props} />
+					<Container screenProps={props}/>
 				)
 			}
 		</ThemeContext.Consumer>

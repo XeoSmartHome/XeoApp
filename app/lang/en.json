@@ -209,6 +209,34 @@
         "save": "SAVE",
         "repeat": "Repeat"
     },
+    "edit_timed_action": {
+        "week_days_long_abbreviation": [
+            "Mon",
+            "Tue",
+            "Wed",
+            "Thu",
+            "Thu",
+            "Sat",
+            "Sun"
+        ],
+        "months_abbreviation": [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec"
+        ],
+        "navigation": {
+            "title": "Edit timed action"
+        }
+    },
     "action_links_list": {
         "generate_new_link": "Generate new link",
         "copy_link": "Copy link",
