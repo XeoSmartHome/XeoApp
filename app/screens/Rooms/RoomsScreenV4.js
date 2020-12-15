@@ -136,9 +136,7 @@ export default class RoomsScreenV4 extends React.Component {
 	}
 
 	fetchDeleteRoomSetStateCallback(response) {
-		this.setState({
-
-		});
+		this.setState({});
 	}
 
 	deleteRoom() {
@@ -368,19 +366,32 @@ export default class RoomsScreenV4 extends React.Component {
 		);
 	}
 
+	renderAllDevices() {
+		return (
+			this.renderDevices({id: -1}, this.state.devices)
+		)
+	}
+
 	render() {
 		const {theme} = this.props.screenProps;
+
+		let tabs = [];
+		tabs.push(this.renderAllDevices());
+		tabs = tabs.concat(this.state.rooms.map(this.renderRoom.bind(this)));
+		tabs.push(this.renderTabCreateRoom());
+
 		return (
 			<Swiper
-				style={styles.wrapper}
 				showsPagination={true}
 				showsButtons={false}
 				loop={false}
 				activeDotColor={theme.primaryColor}
+				style={{
+					backgroundColor: theme.screenBackgroundColor,
+				}}
 			>
 				{
-					//this.state.rooms.map(this.renderRoom.bind(this)).concat(this.renderTabCreateRoom())
-					this.renderTabCreateRoom()
+					tabs
 				}
 			</Swiper>
 		)
