@@ -2,13 +2,11 @@ import React, {Component} from "react";
 import {SafeAreaView, StyleSheet, Text, TouchableOpacity, View, TextInput, ScrollView} from "react-native";
 import {Icon} from "react-native-elements";
 import {
-	API_UPDATE_PASSWORD,
-	BOOTSTRAP_COLOR_DANGER,
 	BOOTSTRAP_COLOR_LIGHT,
 	BOOTSTRAP_COLOR_PRIMARY,
-	XEO_BLUE
-} from "../../../constants";
+} from "../../../themes/bootstrap_colors";
 import I18n from 'i18n-js';
+import {API_UPDATE_PASSWORD} from "../../../api/api_routes_v_1.0.0.0";
 
 
 const t = (key) => I18n.t('change_password.' + key);

@@ -1,12 +1,14 @@
+import {t} from 'i18n-js'
+import {XEO_BLUE} from "../constants";
 import {
 	BOOTSTRAP_COLOR_DANGER,
 	BOOTSTRAP_COLOR_DARK,
 	BOOTSTRAP_COLOR_LIGHT,
 	BOOTSTRAP_COLOR_PRIMARY,
-	BOOTSTRAP_COLOR_SECONDARY, BOOTSTRAP_COLOR_SUCCESS, BOOTSTRAP_COLOR_WARNING,
-	XEO_BLUE
-} from "../constants";
-import {t} from 'i18n-js'
+	BOOTSTRAP_COLOR_SECONDARY,
+	BOOTSTRAP_COLOR_SUCCESS,
+	BOOTSTRAP_COLOR_WARNING
+} from "./bootstrap_colors";
 
 
 export const ThemeConstants = {

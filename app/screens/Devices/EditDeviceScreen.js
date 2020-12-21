@@ -11,7 +11,7 @@ import {
 	SectionList, ImageBackground, Modal, Slider, TextInput, TouchableOpacity,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import {API_UPDATE_DEVICE_IMAGE} from "../../constants";
+import {API_UPDATE_DEVICE_IMAGE} from "../../api/api_routes_v_1.0.0.0";
 
 
 export default class DeviceSettingsScreen extends Component{

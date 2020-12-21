@@ -1,18 +1,13 @@
 import React from "react";
 import Swiper from 'react-native-swiper'
-import {Text, View, StyleSheet, ScrollView, TouchableOpacity, Image, FlatList, TextInput} from "react-native";
-import {
-	API_DEFAULT_IMAGES_URL,
-	API_DEVICE_IMAGES_URL,
-	API_LOAD_DEVICES,
-	API_URL, BOOTSTRAP_COLOR_LIGHT,
-	BOOTSTRAP_COLOR_PRIMARY
-} from "../../constants";
+import {Text, View, StyleSheet, ScrollView, TouchableOpacity, Image, FlatList, TextInput, Button} from "react-native";
 import {AntDesign} from "@expo/vector-icons";
-import {Input} from "react-native-elements";
+import {Icon, Input} from "react-native-elements";
+import {t} from "i18n-js";
+import {API_DEFAULT_IMAGES_URL, API_DEVICE_IMAGES_URL, API_LOAD_DEVICES, API_URL} from "../../api/api_routes_v_1.0.0.0";
 
 
-export default class RoomsScreenV4 extends React.Component {
+export default class HomeScreen extends React.Component {
 	constructor() {
 		super();
 		this.state = {
@@ -38,12 +33,12 @@ export default class RoomsScreenV4 extends React.Component {
 	}
 
 	fetchRooms(request_args) {
-		const API_GET_HOUSE_ROOMS = API_URL + 'get_house_rooms';
+		const API_GET_HOUSE_ROOMS = API_URL + 'rooms';
 		return fetch(`${API_GET_HOUSE_ROOMS}?${request_args}`, {method: 'GET'});
 	}
 
 	fetchRoomsCallback(response) {
-		return response.json()
+		return response.json();
 	}
 
 	fetchRoomsSetState(response) {
@@ -186,7 +181,7 @@ export default class RoomsScreenV4 extends React.Component {
 				<TouchableOpacity
 					style={{
 						width: '50%',
-						backgroundColor: BOOTSTRAP_COLOR_PRIMARY,
+						backgroundColor: theme.primaryColor,
 						padding: 8,
 						borderRadius: 6,
 						//marginRight: '10%',
@@ -200,7 +195,7 @@ export default class RoomsScreenV4 extends React.Component {
 					<Text
 						style={{
 							fontSize: 20,
-							color: BOOTSTRAP_COLOR_LIGHT,
+							color: theme.textColor,
 							alignSelf: 'center'
 						}}
 					>
@@ -219,6 +214,7 @@ export default class RoomsScreenV4 extends React.Component {
 
 		return (
 			<View
+				key='create_room'
 				style={{
 					backgroundColor: theme.screenBackgroundColor,
 					flex: 1,
@@ -248,6 +244,7 @@ export default class RoomsScreenV4 extends React.Component {
 					>
 						ADD ROOM
 					</Text>
+					<Button title='test' onPress={() => {this.props.navigation.navigate('rooms_order')}}/>
 				</TouchableOpacity>
 			</View>
 		)
@@ -270,11 +267,41 @@ export default class RoomsScreenV4 extends React.Component {
 		)
 	}
 
+	renderAddDeviceBox() {
+		return (
+			<TouchableOpacity
+				onPress={ () => {this.props.navigation.navigate('add_device');}}
+				onLongPress={()=>{}}
+				style={styles.deviceBox}>
+				<View style={{flex: 1, marginTop: 10}}>
+					<Icon
+						name="add-circle-outline"
+						type='material'
+						size={90}
+						color={theme.textColor}
+					/>
+				</View>
+				<View style={styles.nameView}>
+					<Text style={{
+						fontSize: 22,
+						color: theme.textColor
+					}}>
+						{
+							t('dashboard.devices.add_device')
+						}
+					</Text>
+				</View>
+			</TouchableOpacity>
+		)
+	}
+
 	renderDeviceBox(device, device_index) {
 		const {theme} = this.props.screenProps;
 		return (
 			<TouchableOpacity
 				onPress={(event) => {
+					// TODO:
+					//this.props.navigation.navigate('rooms_order', {device_id: device.id})
 					this.props.navigation.navigate('control_device', {device_id: device.id})
 				}}
 				onLongPress={() => {
@@ -312,8 +339,9 @@ export default class RoomsScreenV4 extends React.Component {
 				numColumns={2}
 				//refreshing={this.state.refreshing}
 				data={devices}
+				keyExtractor={(item, index) => `room_${room['id']}_device_${item['id']}`}
+				//renderItem={({item, index}) => <Text>a</Text>}
 				renderItem={({item, index}) => this.renderDeviceBox(item, index)}
-				keyExtractor={item => `room_${room.name}_device_${item.name}`}
 				//onRefresh={()=>{this.loadDevicesFromRoom()}}
 				contentContainerStyle={{
 					paddingBottom: '12%'
@@ -360,15 +388,44 @@ export default class RoomsScreenV4 extends React.Component {
 					this.renderDevices(room, this.getDevicesFromRoom(room))
 				}
 				{
-					this.renderAddDeviceInRoomButton(room)
+					//this.renderAddDeviceInRoomButton(room)
 				}
 			</View>
 		);
 	}
 
 	renderAllDevices() {
+		const {theme} = this.props.screenProps;
 		return (
-			this.renderDevices({id: -1}, this.state.devices)
+			<View
+				key='all_devices'
+				style={{
+					backgroundColor: theme.screenBackgroundColor,
+					padding: '3%',
+					flex: 1
+				}}
+			>
+				<View
+					style={{
+						paddingBottom: '3%',
+						borderBottomWidth: 2,
+						borderBottomColor: theme.textColor
+					}}
+				>
+					<Text
+						style={{
+							color: theme.textColor,
+							fontSize: 22,
+							alignSelf: "center",
+						}}
+					>
+						All devices
+					</Text>
+				</View>
+				{
+					this.renderDevices({id: -1}, this.state.devices)
+				}
+			</View>
 		)
 	}
 

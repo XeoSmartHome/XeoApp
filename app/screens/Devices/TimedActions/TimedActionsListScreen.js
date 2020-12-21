@@ -1,6 +1,6 @@
 import React from "react";
-import {BackHandler, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View} from "react-native";
-import {API_DELETE_TIMED_ACTIONS_MULTIPLE, API_GET_DEVICE_TIMED_ACTIONS, API_LOAD_DEVICE} from "../../../constants";
+import {ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View} from "react-native";
+import {API_DELETE_TIMED_ACTIONS_MULTIPLE, API_GET_DEVICE_TIMED_ACTIONS} from "../../../api/api_routes_v_1.0.0.0";
 import I18n from "i18n-js";
 import {RadioButton} from "react-native-paper";
 import Cron from "../../utils/new_cron_class";
@@ -254,7 +254,13 @@ export default class TimedActionsListScreen extends React.Component {
 		const is_selected = this.state.selected_timed_actions[index];
 
 		const cronParser = new Cron();
-		cronParser.parseCronExpression(action.cron);
+
+		try {
+			cronParser.parseCronExpression(action.cron);
+		} catch (e) {
+
+		}
+
 		const minute = cronParser.getMinutes();
 		const hour = cronParser.getHours();
 		const days = cronParser.getDaysOfWeek();

@@ -6,7 +6,7 @@ import {
 	Text,
 	TextInput, TouchableOpacity, View
 } from 'react-native'
-import {BOOTSTRAP_COLOR_LIGHT, BOOTSTRAP_COLOR_PRIMARY, BOOTSTRAP_COLOR_SECONDARY} from "../../../constants";
+import {BOOTSTRAP_COLOR_LIGHT, BOOTSTRAP_COLOR_PRIMARY, BOOTSTRAP_COLOR_SECONDARY} from "../../../themes/bootstrap_colors";
 import * as ImagePicker from "expo-image-picker";
 import I18n from 'i18n-js'
 

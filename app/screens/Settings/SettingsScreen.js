@@ -3,7 +3,7 @@ import {Button, Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpac
 import {Icon} from "react-native-elements";
 // noinspection ES6CheckImport
 import {t} from "i18n-js"
-import { Ionicons } from '@expo/vector-icons';
+import {AntDesign, FontAwesome5, Ionicons} from '@expo/vector-icons';
 
 
 export default class SettingsScreen extends Component{
@@ -34,6 +34,24 @@ export default class SettingsScreen extends Component{
 							color: theme.textColor
 						}]}>
 							{t('settings.account')}
+						</Text>
+					</TouchableOpacity>
+				</View>
+
+				<View style={styles.row}>
+					<TouchableOpacity style={{flexDirection: 'row'}}
+									  onPress={ () => { this.props.navigation.navigate('rooms_order') } }
+					>
+						<FontAwesome5
+							name="home"
+							size={25}
+							color={theme.textColor}
+						/>
+						<Text style={[styles.button_text, {
+							color: theme.textColor
+						}]}>
+							{/*t('settings.account')*/}
+							Rooms
 						</Text>
 					</TouchableOpacity>
 				</View>

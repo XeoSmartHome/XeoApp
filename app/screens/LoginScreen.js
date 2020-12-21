@@ -4,24 +4,11 @@ import {
 	View,
 	StyleSheet,
 	TextInput,
-	Button,
 	Image,
 	TouchableOpacity,
-	SafeAreaView, ScrollView, StatusBar
+	ScrollView, StatusBar
 } from "react-native";
-import {
-	API_IS_AUTHENTICATED,
-	API_LOGIN_URL,
-	API_LOGIN_WITH_FACEBOOK,
-	API_LOGIN_WITH_GOOGLE, BOOTSTRAP_COLOR_DANGER,
-	BOOTSTRAP_COLOR_LIGHT,
-	BOOTSTRAP_COLOR_PRIMARY,
-	BOOTSTRAP_COLOR_SECONDARY,
-	FACEBOOK_APP_ID,
-	GOOGLE_OAUTH_CLIENT_ID_EXPO,
-	GOOGLE_OAUTH_CLIENT_ID_STANDALONE,
-	XEO_BLUE
-} from "../constants";
+
 import * as Google from 'expo-google-app-auth';
 import {Icon} from "react-native-elements";
 import I18n from 'i18n-js';
@@ -29,6 +16,9 @@ import * as Facebook from 'expo-facebook';
 import AsyncStorage from "@react-native-community/async-storage";
 import ThemeProvider, {ThemeContext} from "../themes/ThemeProvider";
 import {color} from "react-native-reanimated";
+import {API_IS_AUTHENTICATED, API_LOGIN_WITH_FACEBOOK, API_LOGIN_WITH_GOOGLE} from "../api/api_routes_v_1.0.0.0";
+import {FACEBOOK_APP_ID, GOOGLE_OAUTH_CLIENT_ID_EXPO, GOOGLE_OAUTH_CLIENT_ID_STANDALONE} from "../constants";
+import {BOOTSTRAP_COLOR_LIGHT, BOOTSTRAP_COLOR_PRIMARY, BOOTSTRAP_COLOR_SECONDARY} from "../themes/bootstrap_colors";
 
 
 const t = (key) => I18n.t('login.' + key);

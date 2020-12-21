@@ -1,8 +1,10 @@
 import React from "react";
 import {ScrollView, Text, TouchableOpacity, View} from "react-native";
-import {API_LOAD_SENSORS} from "../../constants";
 import {ProgressBar} from "react-native-paper";
 import {mapValue} from "react-native-chart-kit/dist/Utils";
+import {API_LOAD_SENSORS} from "../../api/api_routes_v_1.0.0.0";
+import I18n from 'i18n-js';
+
 
 const t = (key) => I18n.t('.' + key);
 

@@ -1,15 +1,19 @@
 import React from "react";
 import I18n from 'i18n-js';
 import {
-	Image, Modal, Picker,
-	ScrollView, Slider, Text, TouchableOpacity, View
-
+	Image,
+	Modal,
+	ScrollView,
+	Text,
+	TouchableOpacity,
+	View
 } from 'react-native';
-import {API_CONTROL_DEVICE, API_LOAD_DEVICE, BOOTSTRAP_COLOR_LIGHT, XEO_BLUE} from "../../constants";
-import {socket_io} from "../DashboardScreen/DashboardScreen";
+import {API_CONTROL_DEVICE, API_LOAD_DEVICE} from "../../api/api_routes_v_1.0.0.0";
+import io from "socket.io-client";
 
 
 const t = (key) => I18n.t('device_remote_control.' + key);
+let socket_io = io('https://xeosmarthome.com', {transports: ['websocket'], timeout: 30000});
 
 
 export default class DeviceRemoteControlScreen extends React.Component{
@@ -155,7 +159,7 @@ export default class DeviceRemoteControlScreen extends React.Component{
 					<Text
 						style={{
 							alignSelf: "center",
-							color: BOOTSTRAP_COLOR_LIGHT,
+							color: theme.lightColor,
 							fontSize: 18
 						}}
 					>

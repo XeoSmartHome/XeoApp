@@ -1,6 +1,5 @@
 import React, {Component} from "react";
-import {Button, SafeAreaView, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View} from "react-native";
-import {Icon} from "react-native-elements";
+import {ScrollView, StyleSheet, Switch, Text, View} from "react-native";
 
 
 export default class NotificationsSettingsScreen extends Component{

@@ -14,8 +14,6 @@ import {Icon} from "react-native-elements";
 // noinspection ES6CheckImport
 import {t} from 'i18n-js';
 
-export let socket_io = io('https://xeosmarthome.com', {transports: ['websocket'], timeout: 30000});
-
 
 export default class DashboardScreen extends Component{
 	constructor() {

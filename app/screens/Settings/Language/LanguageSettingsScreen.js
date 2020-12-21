@@ -1,7 +1,6 @@
 import React, {Component} from "react";
 import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import I18n, {t} from 'i18n-js';
-import * as Localization from "expo-localization";
 import {Icon} from "react-native-elements";
 import AsyncStorage from "@react-native-community/async-storage";
 

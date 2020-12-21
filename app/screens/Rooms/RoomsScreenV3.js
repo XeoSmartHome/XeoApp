@@ -4,7 +4,7 @@ import {createMaterialTopTabNavigator} from "react-navigation-tabs";
 import {createAppContainer} from "react-navigation";
 import ThemeProvider, {ThemeContext} from "../../themes/ThemeProvider";
 import DashboardScreen from "../DashboardScreen/DashboardScreen";
-import {API_URL} from "../../constants";
+import {API_URL} from "../../api/api_routes_v_1.0.0.0";
 import {t} from "i18n-js";
 import {Icon} from "react-native-elements";
 

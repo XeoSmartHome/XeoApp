@@ -8,7 +8,7 @@ import {
 import {
 	API_LOAD_DEVICES,
 	API_URL,
-} from "../../constants";
+} from "../../api/api_routes_v_1.0.0.0";
 // noinspection ES6CheckImport
 import I18n from 'i18n-js';
 
