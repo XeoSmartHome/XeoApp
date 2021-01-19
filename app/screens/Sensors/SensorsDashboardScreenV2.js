@@ -9,67 +9,65 @@ import I18n from 'i18n-js';
 const t = (key) => I18n.t('.' + key);
 
 
-export default class SensorsDashboardScreenV2 extends React.Component{
+export default class SensorsDashboardScreenV2 extends React.Component {
 	constructor() {
 		super();
 		this.state = {
 			devices: []
 		}
+	}
+
+
+	fetchSensors() {
+		return fetch(API_LOAD_SENSORS, {method: 'GET'});
+	}
+
+	fetchSensorsCallback(response) {
+		return response.json();
+	}
+
+	fetchSensorsSetState(response) {
+		this.setState({
+			devices: response
+		});
+	}
+
+	loadSensors() {
+		this.fetchSensors().then(this.fetchSensorsCallback).then(this.fetchSensorsSetState.bind(this)).catch((error) => console.warn(error));
+	}
+
+	componentDidMount() {
+		this.willFocusSubscription = this.props.navigation.addListener(
+			'willFocus', () => {
+				this.loadSensors();
+			}
+		);
 		this.loadSensors();
 	}
 
-	loadSensors(){
-		fetch(API_LOAD_SENSORS).then(
-			(response) => response.json()
-		).then( (response) => {
-			this.setState({
-				devices: response
-			});
-		}).catch( (error) => {
-			alert(error);
-		})
-	}
-
-	componentDidMount(){
-		this.willFocusSubscription = this.props.navigation.addListener(
-			'willFocus', () => {
-				//this.loadSensors();
-			}
-		);
-	}
-
-	onSensorPress(sensor){
+	onSensorPress(sensor) {
 		/*this.props.navigation.navigate('sensor',
 			{
 				sensor_id: sensor['id']
 			});*/
 	}
 
-	renderSensor(sensor, index){
+	renderSensor(sensor, index) {
 		const {theme} = this.props.screenProps;
 		const sensor_value = mapValue(sensor['value'], sensor['min_value'], sensor['max_value'], 0, 1)
 		return (
 			<TouchableOpacity
 				key={'sensor_' + index}
-				onPress={ () => this.onSensorPress(sensor) }
+				onPress={() => this.onSensorPress(sensor)}
 			>
 				<Text
-					style={{
-						color: theme.textColor,
-						fontSize: 18,
-						paddingTop: 8,
-						paddingBottom: 4
-					}}
+					style={styles.sensor_name}
 				>
 					{sensor['name']}: {sensor['value']}{sensor['unit']}
 				</Text>
 				<ProgressBar
 					color={theme.primaryColor}
-					style={{
-						height: 16,
-						//borderWidth: 1,
-						borderColor: theme.textColor
-					}}
+					style={styles.progress_bar}
 					progress={sensor_value}
 				/>
 			</TouchableOpacity>
@@ -81,18 +79,10 @@ export default class SensorsDashboardScreenV2 extends React.Component{
 		return (
 			<View
 				key={'device_' + index}
-				style={{
-					paddingBottom: 25
-				}}
+				style={styles.device_view}
 			>
 				<Text
-					style={{
-						color: theme.textColor,
-						fontSize: 20,
-						borderBottomWidth: 1,
-						borderColor: theme.textColor,
-						paddingBottom: 6
-					}}
+					style={styles.device_name}
 				>
 					{device['name']}
 				</Text>
@@ -110,9 +100,7 @@ export default class SensorsDashboardScreenV2 extends React.Component{
 				style={{
 					backgroundColor: theme.screenBackgroundColor
 				}}
-				contentContainerStyle={{
-					padding: '3%'
-				}}
+				contentContainerStyle={styles.scroll_view_content_container}
 			>
 				{
 					this.state.devices.map(this.renderDevice.bind(this))
@@ -121,3 +109,31 @@ export default class SensorsDashboardScreenV2 extends React.Component{
 		)
 	}
 }
+
+
+const styles = StyleSheet.create({
+	scroll_view_content_container: {
+		padding: '3%'
+	},
+	device_view: {
+		paddingBottom: 50
+	},
+	device_name: {
+		color: theme.textColor,
+		fontSize: 20,
+		borderBottomWidth: 1,
+		borderColor: theme.textColor,
+		paddingBottom: 6
+	},
+	sensor_name: {
+		color: theme.textColor,
+		fontSize: 18,
+		paddingTop: 8,
+		paddingBottom: 4
+	},
+	progress_bar: {
+		height: 16,
+		//borderWidth: 1,
+		borderColor: theme.textColor
+	}
+});

@@ -42,7 +42,7 @@ export const BottomNavigator = createBottomTabNavigator(
 						size={24}
 						color={tintColor}
 					/>
-				)
+				),
 			})
 		},
 	},
@@ -61,7 +61,7 @@ export const BottomNavigator = createBottomTabNavigator(
 			},
 		}),
 		resetOnBlur: true,
-		initialRouteName: 'dashboard',
+		initialRouteName: 'home',
 		order: ['home', 'dashboard', 'sensors'],
 	}
 );

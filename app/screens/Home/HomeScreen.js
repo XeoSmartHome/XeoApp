@@ -1,10 +1,26 @@
 import React from "react";
-import Swiper from 'react-native-swiper'
-import {Text, View, StyleSheet, ScrollView, TouchableOpacity, Image, FlatList, TextInput, Button} from "react-native";
-import {AntDesign} from "@expo/vector-icons";
+import {
+	Text,
+	View,
+	StyleSheet,
+	ScrollView,
+	TouchableOpacity,
+	Image,
+	FlatList,
+	TextInput,
+	Button,
+	LogBox,
+} from "react-native";
+import {AntDesign, Feather, FontAwesome, MaterialIcons, Octicons} from "@expo/vector-icons";
 import {Icon, Input} from "react-native-elements";
 import {t} from "i18n-js";
 import {API_DEFAULT_IMAGES_URL, API_DEVICE_IMAGES_URL, API_LOAD_DEVICES, API_URL} from "../../api/api_routes_v_1.0.0.0";
+import {FloatingAction} from "react-native-floating-action";
+import ScrollableTabView from 'react-native-scrollable-tab-view';
+import ScrollableTabBar from "react-native-scrollable-tab-view/ScrollableTabBar";
+import {DeviceBox} from "../Devices/DeviceBox";
+// !!! REPLACE 'ios' with 'android' !!!
+// !!! REMOVE getNode() function !!!
 
 
 export default class HomeScreen extends React.Component {
@@ -16,13 +32,22 @@ export default class HomeScreen extends React.Component {
 			devices: [],
 			creating_room: false,
 			new_room_name: null,
+			tab_index: 0,
 
+			//fab_open: false
 		};
 	}
 
 	componentDidMount() {
+		LogBox.ignoreLogs(['Encountered two children with the same key']);
 		this.loadRooms();
 		this.loadDevices();
+		this.willFocusSubscription = this.props.navigation.addListener(
+			'willFocus', () => {
+				this.loadRooms();
+				this.loadDevices();
+			}
+		);
 	}
 
 
@@ -76,7 +101,6 @@ export default class HomeScreen extends React.Component {
 			house_id: house_id,
 			name: room_name
 		});
-
 	}
 
 	fetchCreateRoom(request_args) {
@@ -138,118 +162,6 @@ export default class HomeScreen extends React.Component {
 		this.fetchDeleteRoom(this.getFetchDeleteRoomArguments(this.state.house_id, this.state.new_room_name)).then(this.fetchDeleteRoomCallback).then(this.fetchDeleteRoomSetStateCallback).catch((error) => console.warn(error));
 	}
 
-	openCreateRoomInterface() {
-		this.setState({
-			creating_room: true,
-		});
-	}
-
-	onNewRoomMameInputChangeText(text) {
-		this.setState({
-			new_room_name: text
-		});
-	}
-
-	createRoomButtonPress() {
-		this.createRoom(this.state.house_id, this.state.new_room_name);
-	}
-
-	renderCrateRoomFields() {
-		const {theme} = this.props.screenProps;
-
-		return (
-			<View
-				style={{
-					backgroundColor: theme.screenBackgroundColor,
-					flex: 1,
-					//justifyContent: "center"
-				}}
-			>
-				<TextInput
-					style={[styles.new_room_name_input, {
-						borderColor: theme.textColor,
-						color: theme.textColor
-					}]}
-					value={this.state.new_room_name}
-					onChangeText={this.onNewRoomMameInputChangeText.bind(this)}
-					placeholder={'Room name'}
-					placeholderTextColor={theme.secondaryColor}
-					autoCapitalize='sentences'
-					autoFocus={true}
-				/>
-
-				<TouchableOpacity
-					style={{
-						width: '50%',
-						backgroundColor: theme.primaryColor,
-						padding: 8,
-						borderRadius: 6,
-						//marginRight: '10%',
-						alignSelf: 'center',
-						marginTop: '10%',
-						//opacity: button_dissabled ? theme.buttonDisabledOpacity : 1
-					}}
-					//disabled={button_dissabled}
-					onPress={this.createRoomButtonPress.bind(this)}
-				>
-					<Text
-						style={{
-							fontSize: 20,
-							color: theme.textColor,
-							alignSelf: 'center'
-						}}
-					>
-						Create room
-					</Text>
-				</TouchableOpacity>
-			</View>
-		)
-	}
-
-	renderTabCreateRoom() {
-		const {theme} = this.props.screenProps;
-
-		if (this.state.creating_room === true)
-			return this.renderCrateRoomFields();
-
-		return (
-			<View
-				key='create_room'
-				style={{
-					backgroundColor: theme.screenBackgroundColor,
-					flex: 1,
-					justifyContent: "center"
-				}}
-			>
-				<TouchableOpacity
-					style={{
-						alignSelf: "center",
-						alignItems: "center",
-						//borderWidth: 1,
-						width: '80%'
-					}}
-					onPress={this.openCreateRoomInterface.bind(this)}
-				>
-					<AntDesign
-						name="pluscircleo"
-						size={60}
-						color={theme.textColor}
-						style={{}}
-					/>
-					<Text
-						style={{
-							color: theme.textColor,
-							fontSize: 24
-						}}
-					>
-						ADD ROOM
-					</Text>
-					<Button title='test' onPress={() => {this.props.navigation.navigate('rooms_order')}}/>
-				</TouchableOpacity>
-			</View>
-		)
-	}
-
 	renderAddDeviceInRoomButton(room) {
 		return (
 			<TouchableOpacity
@@ -268,11 +180,17 @@ export default class HomeScreen extends React.Component {
 	}
 
 	renderAddDeviceBox() {
+		const {theme} = this.props.screenProps;
 		return (
 			<TouchableOpacity
-				onPress={ () => {this.props.navigation.navigate('add_device');}}
-				onLongPress={()=>{}}
-				style={styles.deviceBox}>
+				onPress={() => {
+					this.props.navigation.navigate('add_device');
+				}}
+				onLongPress={() => {
+				}}
+				style={[styles.deviceBox, {
+					borderColor: theme.primaryColor
+				}]}>
 				<View style={{flex: 1, marginTop: 10}}>
 					<Icon
 						name="add-circle-outline"
@@ -296,53 +214,38 @@ export default class HomeScreen extends React.Component {
 	}
 
 	renderDeviceBox(device, device_index) {
+		if (device === 'null')
+			return this.renderAddDeviceBox();
 		const {theme} = this.props.screenProps;
 		return (
-			<TouchableOpacity
-				onPress={(event) => {
-					// TODO:
-					//this.props.navigation.navigate('rooms_order', {device_id: device.id})
+			<DeviceBox
+				key={device['id']}
+				device={device}
+				theme={theme}
+				onPress={() => {
 					this.props.navigation.navigate('control_device', {device_id: device.id})
 				}}
 				onLongPress={() => {
-					this.props.navigation.navigate('room_device_options', {
+					this.props.navigation.navigate('device_settings', {
 						device_id: device.id,
 						house_id: this.state.house_id,
 						room_id: this.state.room_id,
 						room_name: this.state.room_name
 					})
 				}}
-				style={styles.deviceBox}>
-				<View style={styles.imageView}>
-					<Image
-						style={styles.deviceImage}
-						source={{uri: device.image !== '' ? API_DEVICE_IMAGES_URL + device.image : API_DEFAULT_IMAGES_URL + device['default_image']}}
-					/>
-				</View>
-
-				<View style={styles.nameView}>
-					<Text style={[styles.deviceName, {
-						color: theme.textColor
-					}]}>
-						{device.name.length < 15 ? device.name : device.name.substr(0, 14) + '...'}
-					</Text>
-				</View>
-			</TouchableOpacity>
+			/>
 		);
 	}
 
 	renderDevices(room, devices) {
 		const {theme} = this.props.screenProps;
-
+		//console.warn(room['id'])
 		return (
 			<FlatList
 				numColumns={2}
-				//refreshing={this.state.refreshing}
 				data={devices}
-				keyExtractor={(item, index) => `room_${room['id']}_device_${item['id']}`}
-				//renderItem={({item, index}) => <Text>a</Text>}
+				keyExtractor={(item, index) => `room-${room['id']}-device-${item['id']}`}
 				renderItem={({item, index}) => this.renderDeviceBox(item, index)}
-				//onRefresh={()=>{this.loadDevicesFromRoom()}}
 				contentContainerStyle={{
 					paddingBottom: '12%'
 				}}
@@ -354,36 +257,99 @@ export default class HomeScreen extends React.Component {
 		return room['devices_ids'].map((device_id) => this.state.devices.find((device) => device.id === device_id));
 	}
 
-	renderRoom(room, room_index) {
+	getCurrentRoom() {
+		if (this.state.tab_index === 0)
+			return null;
+		return this.state.rooms[this.state.tab_index - 1];
+	}
+
+	onAddDeviceButtonPress(room) {
+		this.props.navigation.navigate('add_device_in_room', {
+			room: room,
+			devices: this.state.devices
+		});
+	}
+
+	onRemoveDeviceButtonPress(room) {
+		this.props.navigation.navigate('remove_device_from_room', {
+			room: room,
+			devices: this.state.devices
+		});
+	}
+
+	onOrderDevicesButtonPress(room) {
+		this.props.navigation.navigate('order_devices_in_room', {
+			room: room,
+			devices: this.state.devices
+		});
+	}
+
+	onFloatingActionPressItem(name) {
+		const room = this.getCurrentRoom();
+		switch (name) {
+			case 'add_device':
+				this.onAddDeviceButtonPress(room);
+				break;
+			case 'remove_device':
+				this.onRemoveDeviceButtonPress(room);
+				break;
+			case 'order_devices':
+				this.onOrderDevicesButtonPress(room)
+				break;
+		}
+	}
+
+
+	renderFloatingActionButton() {
 		const {theme} = this.props.screenProps;
+
+		const actions = [
+			{
+				text: "Add device in room",
+				icon: <Feather name="plus" size={24} color={theme.lightColor}/>,
+				name: "add_device",
+				position: 3,
+				color: theme.successColor,
+			}, {
+				text: "Remove device from room",
+				icon: <Octicons name="trashcan" size={24} color={theme.lightColor}/>,
+				name: "remove_device",
+				position: 2,
+				color: theme.dangerColor,
+			},
+			{
+				text: "Order devices",
+				icon: <Octicons name="list-unordered" size={24} color={theme.lightColor}/>,
+				name: "order_devices",
+				position: 1,
+				color: theme.warningColor,
+			},
+		];
+
 		return (
-			<View
-				key={`room_${room_index}`}
-				style={{
-					backgroundColor: theme.screenBackgroundColor,
-					padding: '3%',
-					flex: 1
-				}}
+			<FloatingAction
+				/*floatingIcon={this.state.fab_open ? <Feather name="x" size={24} color={theme.textColor}/> :
+					<MaterialIcons name="edit" size={24} color={theme.textColor}/>}*/
+				//onOpen={() => this.setState({fab_open: true})}
+				//onClose={() => this.setState({fab_open: false})}
+				color={theme.primaryColor}
+				actions={actions}
+				onPressItem={this.onFloatingActionPressItem.bind(this)}
+			/>
+		)
+	}
+
+	renderRoomTab(room, room_index) {
+		const {
+			theme
+		}
+			= this.props.screenProps;
+		return (
+			<
+				View
+				tabLabel={room['name']}
+				style={room_styles.container}
 			>
-				<View
-					style={{
-						paddingBottom: '3%',
-						borderBottomWidth: 2,
-						borderBottomColor: theme.textColor
-					}}
-				>
-					<Text
-						style={{
-							color: theme.textColor,
-							fontSize: 22,
-							alignSelf: "center",
-						}}
-					>
-						{
-							room['name']
-						}
-					</Text>
-				</View>
 				{
 					this.renderDevices(room, this.getDevicesFromRoom(room))
 				}
@@ -394,38 +360,96 @@ export default class HomeScreen extends React.Component {
 		);
 	}
 
-	renderAllDevices() {
+	renderAllDevicesTab() {
 		const {theme} = this.props.screenProps;
 		return (
 			<View
-				key='all_devices'
+				tabLabel={'ALL DEVICES'}
 				style={{
 					backgroundColor: theme.screenBackgroundColor,
 					padding: '3%',
 					flex: 1
 				}}
 			>
-				<View
-					style={{
-						paddingBottom: '3%',
-						borderBottomWidth: 2,
-						borderBottomColor: theme.textColor
-					}}
-				>
-					<Text
-						style={{
-							color: theme.textColor,
-							fontSize: 22,
-							alignSelf: "center",
-						}}
-					>
-						All devices
-					</Text>
-				</View>
 				{
-					this.renderDevices({id: -1}, this.state.devices)
+					this.renderDevices({id: -1}, this.state.devices.concat(['null']))
 				}
 			</View>
+		)
+	}
+
+	renderSettingsTab() {
+		const {theme} = this.props.screenProps;
+
+		return (
+			<ScrollView
+				tabLabel={'SETTINGS'}
+				style={{
+					backgroundColor: theme.screenBackgroundColor
+				}}
+			>
+
+				<View style={styles.row}>
+					<TouchableOpacity
+						style={{flexDirection: 'row'}}
+						onPress={() => {
+							this.props.navigation.navigate('create_room')
+						}}
+					>
+						<MaterialIcons
+							name="add-circle-outline"
+							size={styles.icon.fontSize}
+							color={theme.textColor}
+						/>
+						<Text style={[styles.button_text, {
+							color: theme.textColor
+						}]}>
+							Add room
+						</Text>
+					</TouchableOpacity>
+				</View>
+
+				<View style={styles.row}>
+					<TouchableOpacity
+						style={{flexDirection: 'row'}}
+						onPress={() => {
+							this.props.navigation.navigate('delete_room')
+						}}
+					>
+						<AntDesign
+							name="delete"
+							size={styles.icon.fontSize}
+							color={theme.textColor}
+						/>
+						<Text style={[styles.button_text, {
+							color: theme.textColor
+						}]}>
+							Delete room
+						</Text>
+					</TouchableOpacity>
+				</View>
+
+				<View style={styles.row}>
+					<TouchableOpacity
+						style={{flexDirection: 'row'}}
+						onPress={() => {
+							this.props.navigation.navigate('rooms_order')
+						}}
+					>
+						<Octicons
+							name="list-unordered"
+							size={styles.icon.fontSize}
+							color={theme.textColor}
+						/>
+						<Text style={[styles.button_text, {
+							color: theme.textColor
+						}]}>
+							Order rooms
+						</Text>
+					</TouchableOpacity>
+				</View>
+
+			</ScrollView>
 		)
 	}
 
@@ -433,59 +457,55 @@ export default class HomeScreen extends React.Component {
 		const {theme} = this.props.screenProps;
 
 		let tabs = [];
-		tabs.push(this.renderAllDevices());
-		tabs = tabs.concat(this.state.rooms.map(this.renderRoom.bind(this)));
-		tabs.push(this.renderTabCreateRoom());
+		tabs.push(this.renderAllDevicesTab());
+		tabs = tabs.concat(this.state.rooms.map(this.renderRoomTab.bind(this)));
+		tabs.push(this.renderSettingsTab());
 
 		return (
-			<Swiper
-				showsPagination={true}
-				showsButtons={false}
-				loop={false}
-				activeDotColor={theme.primaryColor}
-				style={{
-					backgroundColor: theme.screenBackgroundColor,
-				}}
+			<View
+				style={styles.container}
 			>
+				<ScrollableTabView
+					style={{
+						backgroundColor: theme.screenBackgroundColor
+					}}
+					tabBarActiveTextColor={theme.textColor}
+					tabBarInactiveTextColor={theme.textColor}
+					tabBarUnderlineStyle={{
+						backgroundColor: theme.primaryColor
+					}}
+					tabBarTextStyle={{}}
+					prerenderingSiblingsNumber={1}
+					initialPage={0}
+					renderTabBar={() => <ScrollableTabBar/>}
+					onChangeTab={({i}) => this.setState({tab_index: i})}
+				>
+					{
+						tabs
+					}
+				</ScrollableTabView>
 				{
-					tabs
+					this.state.tab_index !== 0 && this.state.tab_index !== this.state.rooms.length + 1 &&
+					this.renderFloatingActionButton()
 				}
-			</Swiper>
+			</View>
+
 		)
 	}
 }
 
 
-const styles = StyleSheet.create({
-	wrapper: {},
-	slide1: {
-		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
-		backgroundColor: '#9DD6EB'
-	},
-	slide2: {
-		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
-		backgroundColor: '#97CAE5'
-	},
-	slide3: {
-		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
-		backgroundColor: '#92BBD9'
-	},
-	text: {
-		color: '#fff',
-		fontSize: 30,
-		fontWeight: 'bold'
-	},
+const room_styles = StyleSheet.create({
 	container: {
-		flex: 1,
-		paddingHorizontal: 10,
-		paddingTop: 10,
-		backgroundColor: '#F5F5F5'
+		padding: '3%',
+		flex: 1
+	}
+});
+
+
+const styles = StyleSheet.create({
+	container: {
+		flex: 1
 	},
 	deviceBox: {
 		height: 170,
@@ -495,12 +515,9 @@ const styles = StyleSheet.create({
 		alignSelf: 'center',
 		borderWidth: 2,
 		borderRadius: 15,
-		//backgroundColor: '#c4c7ce',
-		borderColor: '#4267b2',
 	},
 	imageView: {
 		flex: 3,
-		//backgroundColor: 'blue'
 	},
 	deviceImage: {
 		height: '100%',
@@ -509,12 +526,11 @@ const styles = StyleSheet.create({
 	},
 	nameView: {
 		flex: 1,
-		//backgroundColor: 'green',
 		justifyContent: 'center',
 		alignItems: 'center'
 	},
 	deviceName: {
-		fontSize: 18
+		fontSize: 16
 	},
 	fab: {
 		position: 'absolute',
@@ -541,5 +557,20 @@ const styles = StyleSheet.create({
 		padding: 8,
 		width: '75%',
 		alignSelf: 'center'
+	},
+	row: {
+		//borderBottomWidth: 2,
+		//borderColor: BOOTSTRAP_COLOR_DARK,
+		paddingVertical: '3%',
+		paddingHorizontal: '1%',
+		width: '94%',
+		marginHorizontal: '3%',
+	},
+	button_text: {
+		fontSize: 20,
+		marginLeft: 8
+	},
+	icon: {
+		fontSize: 26
 	}
-})
+});

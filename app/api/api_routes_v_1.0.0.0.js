@@ -1,5 +1,5 @@
 
-
+//export const API_URL = 'https://api.xeosmarthome.com/v1/';
 export const API_URL = 'https://dashboard.xeosmarthome.com/api/';
 
 // GENERAL
@@ -32,9 +32,22 @@ export const API_DELETE_ACTION = API_URL + 'delete_action';
 export const API_DELETE_TIMED_ACTIONS_MULTIPLE = API_URL + 'delete_timed_actions_multiple';
 export const API_GET_DEVICE_TIMED_ACTION = API_URL + 'get_device_timed_action';
 export const API_UPDATE_DEVICE_IMAGE = API_URL + 'update_device_image';
+
+export const API_GET_DEVICE = API_URL + 'device';
+
+// SENSORS
 export const API_LOAD_SENSORS = API_URL + 'sensors';
 
 // ROOMS
+export const API_GET_ROOMS = API_URL + 'rooms';
+export const API_CREATE_ROOM = API_URL + 'create_room';
+export const API_DELETE_ROOM = API_URL + 'delete_room';
+export const API_UPDATE_ROOMS_ORDER = API_URL + 'update_rooms_order';
+export const API_ADD_DEVICE_IN_ROOM = API_URL + 'room/add_device';
+export const API_REMOVE_DEVICE_FROM_ROOM = API_URL + 'room/remove_device'
+export const API_UPDATE_DEVICES_ORDER_IN_ROOM = API_URL + 'room/update_device_order';
+
+// ACTION LINKS
 
 export const API_GET_ACTION_LINKS = API_URL + 'action_link/device/';
 export const API_GENERATE_ACTION_LINK = API_URL + 'action_link/generate';

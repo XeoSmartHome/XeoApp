@@ -11,7 +11,7 @@ import {
 	SectionList,
 	TouchableOpacity,
 	TextInput,
-	BackHandler
+	BackHandler,
 } from "react-native";
 import {
 	API_DEFAULT_IMAGES_URL,

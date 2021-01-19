@@ -1,3 +1,4 @@
+import React from "react";
 import createStackNavigator from "react-navigation-stack/src/navigators/createStackNavigator";
 import LoginScreen from "../screens/LoginScreen";
 import {t} from "i18n-js";
@@ -16,8 +17,6 @@ import HelpScreen from "../screens/Settings/Help/HelpScreen";
 import CreateAccountScreen_v2 from "../screens/AccountManagement/CreateAccountScreen_v2";
 import TermsAndConditionsScreen from "../screens/AccountManagement/TermsAndConditionsScreen";
 import RoomScreen from "../screens/Rooms/RoomScreen";
-import CreateNewRoom from "../screens/Rooms/CreateNewRoom";
-import AddDeviceInRoom from "../screens/Rooms/AddDeviceInRoom";
 import RenameRoomScreen from "../screens/Rooms/RenameRoom";
 import RoomOptionsScreen from "../screens/Rooms/RoomOptionsScreen";
 import RoomDeviceOptionsScreen from "../screens/Rooms/RoomDeviceOptionsScreen";
@@ -32,9 +31,14 @@ import HelpCenterScreen from "../screens/Settings/Help/HelpCenterScreen";
 import ReportABug from "../screens/Settings/Help/ReportABug";
 import ActionLinksListScreen from "../screens/Devices/ActionLinks/ActionLinksListScreen";
 import CreateActionLink from "../screens/Devices/ActionLinks/CreateActionLink";
-import React from "react";
 import {BottomNavigator} from "./BottomNavigator";
-import RoomsOrderScreen from "../screens/Settings/RoomsOrder/RoomsOrderScreen";
+import RoomsOrderScreen from "../screens/Settings/Rooms/RoomsOrderScreen";
+import RoomsSettingsScreen from "../screens/Settings/Rooms/RoomsSettingsScreen";
+import DeleteRoomScreen from "../screens/Settings/Rooms/DeleteRoomScreen";
+import CreateRoomScreen from "../screens/Settings/Rooms/CreateRoomScreen";
+import AddDeviceInRoomScreen from "../screens/Rooms/AddDeviceInRoomScreen";
+import RemoveDeviceFromRoomScreen from "../screens/Rooms/RemoveDeviceFromRoomScreen";
+import OrderDevicesInRoom from "../screens/Rooms/OrderDevicesInRoom";
 
 
 export const StackNavigator = createStackNavigator({
@@ -60,7 +64,7 @@ export const StackNavigator = createStackNavigator({
 			</TouchableOpacity>)
 		})
 	},
-	add_device: {
+	/*add_device: {
 		screen: AddDeviceScreen,
 		navigationOptions: ({screenProps}) => ({
 			title: t('add_device.navigation.title'),
@@ -109,7 +113,7 @@ export const StackNavigator = createStackNavigator({
 			headerTintColor: 'white',
 		})
 	},*/
-	settings_screen: {
+	/*settings_screen: {
 		screen: SettingsScreen,
 		navigationOptions: ({screenProps}) => ({
 			title: t('settings.navigation.title'),
@@ -173,17 +177,26 @@ export const StackNavigator = createStackNavigator({
 			headerTintColor: screenProps.theme.headerTextColor,
 		})
 	},
-	create_new_room: {
-		screen: CreateNewRoom,
+	add_device_in_room: {
+		screen: AddDeviceInRoomScreen,
 		navigationOptions: ({screenProps}) => ({
-			title: t('create_new_room.navigation.title'),
+			//title: 'Add device in room',
 			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
 			headerTintColor: screenProps.theme.headerTextColor,
 		})
 	},
-	add_device_in_room: {
-		screen: AddDeviceInRoom,
+	remove_device_from_room: {
+		screen: RemoveDeviceFromRoomScreen,
 		navigationOptions: ({screenProps}) => ({
+			//title: 'Remove device from room',
+			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
+			headerTintColor: screenProps.theme.headerTextColor,
+		})
+	},
+	order_devices_in_room:{
+		screen: OrderDevicesInRoom,
+		navigationOptions: ({screenProps}) => ({
+			//title: 'Remove device from room',
 			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
 			headerTintColor: screenProps.theme.headerTextColor,
 		})
@@ -294,12 +307,36 @@ export const StackNavigator = createStackNavigator({
 			headerTintColor: screenProps.theme.headerTextColor
 		})
 	},
-	rooms_order: {
-		screen: RoomsOrderScreen,
+	rooms_settings: {
+		screen: RoomsSettingsScreen,
 		navigationOptions: ({screenProps}) => ({
-			title: 'Rooms order',
+			title: 'Rooms settings',
 			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
 			headerTintColor: screenProps.theme.headerTextColor
 		})
-	}
+	},
+	create_room:{
+		screen: CreateRoomScreen,
+		navigationOptions: ({screenProps}) => ({
+			title: 'Create room',
+			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
+			headerTintColor: screenProps.theme.headerTextColor
+		})
+	},
+	delete_room: {
+		screen: DeleteRoomScreen,
+		navigationOptions: ({screenProps}) => ({
+			title: 'Delete room',
+			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
+			headerTintColor: screenProps.theme.headerTextColor
+		})
+	},
+	rooms_order: {
+		screen: RoomsOrderScreen,
+		navigationOptions: ({screenProps}) => ({
+			title: 'Order rooms',
+			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
+			headerTintColor: screenProps.theme.headerTextColor
+		})
+	}*/
 }, {initialRouteName: 'login'});

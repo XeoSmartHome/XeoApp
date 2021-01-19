@@ -23,11 +23,11 @@
     ],
     "ios": {
       "bundleIdentifier": "com.xeosmarthome.xeoapp",
-      "buildNumber": "1.0.0"
+      "buildNumber": "1.0.1"
     },
     "android": {
       "package": "com.xeosmarthome.xeoapp",
-      "versionCode": 1
+      "versionCode": 2
     }
   }
 }

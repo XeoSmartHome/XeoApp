@@ -2,7 +2,9 @@ import React from "react";
 import I18n from 'i18n-js';
 import {
 	View,
-	StyleSheet, Text, FlatList
+	StyleSheet,
+	Text,
+	FlatList
 } from "react-native";
 import Swiper from "react-native-swiper";
 import DraggableFlatList from "react-native-draggable-flatlist";
@@ -115,6 +117,8 @@ export default class DashboardScreen extends React.Component {
 				columns_number = 1;
 				break;
 		}
+
+		return undefined;
 
 		return (
 			<View

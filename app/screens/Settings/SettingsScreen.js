@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import {Button, Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {Icon} from "react-native-elements";
 // noinspection ES6CheckImport
-import {t} from "i18n-js"
+import {t} from "i18n-js";
 import {AntDesign, FontAwesome5, Ionicons} from '@expo/vector-icons';
 
 
@@ -40,7 +40,7 @@ export default class SettingsScreen extends Component{
 
 				<View style={styles.row}>
 					<TouchableOpacity style={{flexDirection: 'row'}}
-									  onPress={ () => { this.props.navigation.navigate('rooms_order') } }
+									  onPress={ () => { this.props.navigation.navigate('rooms_settings') } }
 					>
 						<FontAwesome5
 							name="home"

@@ -4,7 +4,8 @@ import AsyncStorage from "@react-native-community/async-storage";
 import * as Localization from "expo-localization";
 import ThemeProvider, {ThemeContext} from "./app/themes/ThemeProvider";
 import I18n from 'i18n-js';
-import {StackNavigator} from "./app/navigators/StackNavigator";
+//import {StackNavigator} from "./app/navigators/StackNavigator";
+import {Text, View} from "react-native";
 
 
 I18n.fallbacks = true;
@@ -22,7 +23,7 @@ AsyncStorage.getItem('locale').then((item) => {
 });
 
 
-const Container = createAppContainer(StackNavigator);
+//const Container = createAppContainer(StackNavigator);
 
 
 const App = () => (
@@ -30,7 +31,7 @@ const App = () => (
 		<ThemeContext.Consumer>
 			{
 				(props) => (
-					<Container screenProps={props}/>
+					null//<Container screenProps={props}/>
 				)
 			}
 		</ThemeContext.Consumer>

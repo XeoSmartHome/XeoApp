@@ -11,7 +11,7 @@ import {
 	StatusBar
 } from "react-native";
 import {Icon} from "react-native-elements";
-import {API_LOAD_SENSORS, BOOTSTRAP_COLOR_SECONDARY, XEO_BLUE} from "../../constants";
+import {API_LOAD_SENSORS, BOOTSTRAP_COLOR_SECONDARY, XEO_BLUE} from "../constants";
 
 
 export default class SensorsDashboardScreen extends Component{
