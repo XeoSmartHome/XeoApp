@@ -1,5 +1,5 @@
 import React from "react";
-import {ScrollView, Text, TouchableOpacity, View} from "react-native";
+import {ScrollView, Text, TouchableOpacity, View, StyleSheet} from "react-native";
 import {ProgressBar} from "react-native-paper";
 import {mapValue} from "react-native-chart-kit/dist/Utils";
 import {API_LOAD_SENSORS} from "../../api/api_routes_v_1.0.0.0";
@@ -119,14 +119,14 @@ const styles = StyleSheet.create({
 		paddingBottom: 50
 	},
 	device_name: {
-		color: theme.textColor,
+		//color: theme.textColor,
 		fontSize: 20,
 		borderBottomWidth: 1,
-		borderColor: theme.textColor,
+		//borderColor: theme.textColor,
 		paddingBottom: 6
 	},
 	sensor_name: {
-		color: theme.textColor,
+		//color: theme.textColor,
 		fontSize: 18,
 		paddingTop: 8,
 		paddingBottom: 4
@@ -134,6 +134,6 @@ const styles = StyleSheet.create({
 	progress_bar: {
 		height: 16,
 		//borderWidth: 1,
-		borderColor: theme.textColor
+		//borderColor: theme.textColor
 	}
 });

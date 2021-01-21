@@ -14,17 +14,20 @@ import {Icon} from "react-native-elements";
 import I18n from 'i18n-js';
 import * as Facebook from 'expo-facebook';
 import AsyncStorage from "@react-native-community/async-storage";
-import ThemeProvider, {ThemeContext} from "../themes/ThemeProvider";
-import {color} from "react-native-reanimated";
-import {API_IS_AUTHENTICATED, API_LOGIN_WITH_FACEBOOK, API_LOGIN_WITH_GOOGLE} from "../api/api_routes_v_1.0.0.0";
-import {FACEBOOK_APP_ID, GOOGLE_OAUTH_CLIENT_ID_EXPO, GOOGLE_OAUTH_CLIENT_ID_STANDALONE} from "../constants";
-import {BOOTSTRAP_COLOR_LIGHT, BOOTSTRAP_COLOR_PRIMARY, BOOTSTRAP_COLOR_SECONDARY} from "../themes/bootstrap_colors";
+import {
+	API_IS_AUTHENTICATED,
+	API_LOGIN_URL,
+	API_LOGIN_WITH_FACEBOOK,
+	API_LOGIN_WITH_GOOGLE
+} from "../../api/api_routes_v_1.0.0.0";
+import {FACEBOOK_APP_ID, GOOGLE_OAUTH_CLIENT_ID_EXPO, GOOGLE_OAUTH_CLIENT_ID_STANDALONE} from "../../constants";
+import {BOOTSTRAP_COLOR_LIGHT, BOOTSTRAP_COLOR_PRIMARY, BOOTSTRAP_COLOR_SECONDARY} from "../../themes/bootstrap_colors";
 
 
 const t = (key) => I18n.t('login.' + key);
 
 
-export default class LoginScreen extends Component{
+export default class LoginScreen extends Component {
 	constructor() {
 		super();
 		this.state = {
@@ -40,7 +43,7 @@ export default class LoginScreen extends Component{
 		this.load_session();
 	}
 
-	load_session(){
+	load_session() {
 		/*AsyncStorage.getItem('session_cookie').then(value => {
 			//if (value !== '')
 				//this.props.navigation.replace('main', {});
@@ -49,9 +52,9 @@ export default class LoginScreen extends Component{
 			(response) => response.json()
 		).then(
 			(response) => {
-				if(response['authenticated'] === true){
+				if (response['authenticated'] === true) {
 					AsyncStorage.getItem('lock_app_with_pin_enable').then((lock_app_with_pin_enable) => {
-						if(lock_app_with_pin_enable === 'true') {
+						if (lock_app_with_pin_enable === 'true') {
 							this.props.navigation.replace('pin', {next: 'main', params: {}});
 						} else {
 							this.props.navigation.replace('main', {});
@@ -67,24 +70,24 @@ export default class LoginScreen extends Component{
 		})
 	}
 
-	show_error_message(message){
+	show_error_message(message) {
 		this.setState({
 			show_error_message: true,
 			error_message: message
 		});
 	}
 
-	hide_error_message(){
+	hide_error_message() {
 		this.setState({
 			show_error_message: false
 		});
 	}
 
-	go_to_main_page(){
+	go_to_main_page() {
 		this.props.navigation.replace('main', {});
 	}
 
-	login(){
+	login() {
 		fetch(API_LOGIN_URL, {
 			mode: 'cors',
 			method: 'POST',
@@ -104,9 +107,9 @@ export default class LoginScreen extends Component{
 				return response.json();
 			}
 		).then((response) => {
-			if(response.status === 200) {
+			if (response.status === 200) {
 				this.go_to_main_page();
-			}else {
+			} else {
 				switch (response.error) {
 					case 'UserNotFound':
 						this.show_error_message(t('errors.user_not_found'));
@@ -121,13 +124,43 @@ export default class LoginScreen extends Component{
 		});
 	}
 
-	login_with_google(){
+	/*loginGoogleApi() {
+		return Google.logInAsync({
+			androidClientId: GOOGLE_OAUTH_CLIENT_ID_EXPO,
+			androidStandaloneAppClientId: GOOGLE_OAUTH_CLIENT_ID_STANDALONE,
+			redirectUrl: ''
+		});
+	}
+
+	fetchLoginWithGoogle() {
+		return fetch(API_LOGIN_WITH_GOOGLE, {
+			mode: 'cors',
+			method: 'POST',
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				token: idToken
+			})
+		});
+	}
+
+	fetchLoginWithGoogleCallback(response) {
+		return response.json();
+	}
+
+	loginWithGoogle() {
+		this.loginGoogleApi().then(this.fetchLoginWithGoogle()).then(this.fetchLoginWithGoogleCallback).then();
+	}*/
+
+	login_with_google() {
 		Google.logInAsync({
 			androidClientId: GOOGLE_OAUTH_CLIENT_ID_EXPO,
 			androidStandaloneAppClientId: GOOGLE_OAUTH_CLIENT_ID_STANDALONE,
 			redirectUrl: ''
-		}).then( ({idToken, type}) => {
-			if(type === 'cancel') {
+		}).then(({idToken, type}) => {
+			if (type === 'cancel') {
 				return;
 			}
 			fetch(API_LOGIN_WITH_GOOGLE, {
@@ -142,26 +175,52 @@ export default class LoginScreen extends Component{
 				})
 			}).then(
 				(response) => response.json()
-			).then( (response) => {
-				if(response.status === 200){
+			).then((response) => {
+				if (response.status === 200) {
 					this.go_to_main_page();
 				}
-			}).catch( (error) => {
+			}).catch((error) => {
 				alert(error);
 			})
-		}).catch( (error) => {
+		}).catch((error) => {
 			alert(error);
 		});
 	}
 
-	login_with_facebook(){
-		Facebook.initializeAsync({appId: FACEBOOK_APP_ID, appName: 'XeoApp'
-		 }).then( () => {
+	/*initializeFacebookAsync(){
+		return Facebook.initializeAsync({
+			appId: FACEBOOK_APP_ID,
+			appName: 'XeoApp'
+		});
+	}
+
+	logInWithFacebookAsync() {
+		return Facebook.logInWithReadPermissionsAsync({
+			permissions: ['public_profile', 'email']
+		});
+	}
+
+	logInWithFacebookCallback({type, token, expires, permissions, declinedPermissions}) {
+
+	}
+
+	fetchLoginWithFacebook() {
+
+	}*/
+
+	/*logInWithFacebook() {
+		this.initializeFacebookAsync().then(this.logInWithFacebookAsync).then()
+	}*/
+
+	login_with_facebook() {
+		Facebook.initializeAsync({
+			appId: FACEBOOK_APP_ID, appName: 'XeoApp'
+		}).then(() => {
 			Facebook.logInWithReadPermissionsAsync(
 				{
 					permissions: ['public_profile', 'email']
 				}
-			).then( ({type, token, expires, permissions, declinedPermissions}) => {
+			).then(({type, token, expires, permissions, declinedPermissions}) => {
 				fetch(API_LOGIN_WITH_FACEBOOK, {
 					mode: 'cors',
 					method: 'POST',
@@ -174,30 +233,30 @@ export default class LoginScreen extends Component{
 					})
 				}).then(
 					(response) => response.json()
-				).then( (response) => {
-					if(response.status === 200){
+				).then((response) => {
+					if (response.status === 200) {
 						this.go_to_main_page();
 					}
-				}).catch( (error) => {
+				}).catch((error) => {
 					alert(error);
 				})
-			}).catch( (error) => {
+			}).catch((error) => {
 				alert(error)
 			});
-		}).catch( (error) => {
+		}).catch((error) => {
 			alert(error);
 		});
 	}
 
-	create_account(){
+	create_account() {
 		this.props.navigation.navigate('create_account');
 	}
 
-	render(){
+	render() {
 		const {theme} = this.props.screenProps;
 		const login_button_enabled = this.state.email.length !== 0 && this.state.password.length !== 0;
 
-		if(this.state.loading){
+		if (this.state.loading) {
 			return (
 				<ScrollView
 					style={{
@@ -217,13 +276,13 @@ export default class LoginScreen extends Component{
 				<StatusBar hidden={true}/>
 				<Image
 					style={styles.logo}
-					source={require("../assets/images/logo_xeo_no_background.png")}
+					source={require("../../assets/images/logo_xeo_no_background.png")}
 				/>
 				<View style={styles.form}>
 					<Text style={[styles.inputHint, {
 						color: theme.textColor
 					}]}>
-						{ t('email') }:
+						{t('email')}:
 					</Text>
 					<TextInput
 						style={[styles.textInput, {
@@ -239,7 +298,7 @@ export default class LoginScreen extends Component{
 					<Text style={[styles.inputHint, {
 						color: theme.textColor
 					}]}>
-						{ t('password') }:
+						{t('password')}:
 					</Text>
 					<TextInput
 						style={[styles.textInput, {
@@ -255,7 +314,7 @@ export default class LoginScreen extends Component{
 					/>
 
 					{
-						this.state.show_error_message  && (
+						this.state.show_error_message && (
 							<View
 								style={{
 									marginTop: 20,
@@ -267,7 +326,7 @@ export default class LoginScreen extends Component{
 										fontSize: 16
 									}}
 								>
-									{ this.state.error_message }
+									{this.state.error_message}
 								</Text>
 							</View>
 						)
@@ -285,7 +344,7 @@ export default class LoginScreen extends Component{
 							onPress={this.login.bind(this)}
 						>
 							<Text style={styles.buttonText}>
-								{ I18n.t("login.login") }
+								{I18n.t("login.login")}
 							</Text>
 						</TouchableOpacity>
 
@@ -294,12 +353,17 @@ export default class LoginScreen extends Component{
 							onPress={this.create_account.bind(this)}
 						>
 							<Text style={styles.buttonText}>
-								{ I18n.t("login.create_account") }
+								{I18n.t("login.create_account")}
 							</Text>
 						</TouchableOpacity>
 
 						<TouchableOpacity
-							style={[styles.button, {backgroundColor: '#DB4437', flexDirection: 'row', justifyContent: 'center', alignItems:'center'}]}
+							style={[styles.button, {
+								backgroundColor: '#DB4437',
+								flexDirection: 'row',
+								justifyContent: 'center',
+								alignItems: 'center'
+							}]}
 							onPress={() => {
 								this.login_with_google()
 							}}
@@ -311,12 +375,17 @@ export default class LoginScreen extends Component{
 								type='antdesign'
 							/>
 							<Text style={[styles.buttonText, {}]}>
-								{ t('login_with_google') }
+								{t('login_with_google')}
 							</Text>
 						</TouchableOpacity>
 
 						<TouchableOpacity
-							style={[styles.button, {backgroundColor: XEO_BLUE, flexDirection: 'row', justifyContent: 'center', alignItems:'center'}]}
+							style={[styles.button, {
+								backgroundColor: XEO_BLUE,
+								flexDirection: 'row',
+								justifyContent: 'center',
+								alignItems: 'center'
+							}]}
 							onPress={() => {
 								this.login_with_facebook()
 							}}
@@ -328,7 +397,7 @@ export default class LoginScreen extends Component{
 								type='entypo'
 							/>
 							<Text style={[styles.buttonText, {}]}>
-								{ t('login_with_facebook') }
+								{t('login_with_facebook')}
 							</Text>
 						</TouchableOpacity>
 
@@ -341,45 +410,45 @@ export default class LoginScreen extends Component{
 
 
 const styles = StyleSheet.create({
-	screen:{
+	screen: {
 		flex: 1,
 		alignItems: 'center',
 		backgroundColor: '#F5F5F5',
 	},
-	logo:{
+	logo: {
 		width: 125,
 		height: 125,
 		margin: 10,
 	},
-	form:{
+	form: {
 		width: '80%',
 	},
-	inputHint:{
+	inputHint: {
 		fontSize: 18,
 		top: 10
 	},
-	textInput:{
+	textInput: {
 		height: 50,
 		fontSize: 18,
 		borderBottomWidth: 2,
 	},
-	button:{
+	button: {
 		padding: 6,
 		marginVertical: 8,
 		alignSelf: 'center',
 		borderRadius: 8,
 		width: '80%',
 	},
-	buttonText:{
+	buttonText: {
 		color: BOOTSTRAP_COLOR_LIGHT,
 		fontSize: 18,
 		alignSelf: 'center',
 		marginHorizontal: 6
 	},
-	loginButton:{
+	loginButton: {
 		backgroundColor: BOOTSTRAP_COLOR_PRIMARY
 	},
-	newAccountButton:{
+	newAccountButton: {
 		backgroundColor: BOOTSTRAP_COLOR_SECONDARY,
 	}
 });

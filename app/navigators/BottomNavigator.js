@@ -1,11 +1,14 @@
+import React from "react";
 import {createBottomTabNavigator} from "react-navigation-tabs";
 import SensorsDashboardScreenV2 from "../screens/Sensors/SensorsDashboardScreenV2";
-import {t} from "i18n-js";
-import {Icon} from "react-native-elements";
 import HomeScreen from "../screens/Home/HomeScreen";
-import React from "react";
-import DashboardScreen from "../screens/Dashboard/DashboardScreen";
+import {Icon} from "react-native-elements";
 import {MaterialCommunityIcons, Octicons} from "@expo/vector-icons";
+import DashboardScreen from "../deprecated/DashboardScreen/DashboardScreen";
+import I18n from 'i18n-js';
+
+
+const t = (key) => I18n.t(key);
 
 
 export const BottomNavigator = createBottomTabNavigator(

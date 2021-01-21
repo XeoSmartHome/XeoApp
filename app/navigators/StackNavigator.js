@@ -1,6 +1,6 @@
 import React from "react";
 import createStackNavigator from "react-navigation-stack/src/navigators/createStackNavigator";
-import LoginScreen from "../screens/LoginScreen";
+import LoginScreen from "../screens/Account/LoginScreen";
 import {t} from "i18n-js";
 import {TouchableOpacity} from "react-native";
 import {Icon} from "react-native-elements";
@@ -31,7 +31,6 @@ import HelpCenterScreen from "../screens/Settings/Help/HelpCenterScreen";
 import ReportABug from "../screens/Settings/Help/ReportABug";
 import ActionLinksListScreen from "../screens/Devices/ActionLinks/ActionLinksListScreen";
 import CreateActionLink from "../screens/Devices/ActionLinks/CreateActionLink";
-import {BottomNavigator} from "./BottomNavigator";
 import RoomsOrderScreen from "../screens/Settings/Rooms/RoomsOrderScreen";
 import RoomsSettingsScreen from "../screens/Settings/Rooms/RoomsSettingsScreen";
 import DeleteRoomScreen from "../screens/Settings/Rooms/DeleteRoomScreen";
@@ -39,6 +38,7 @@ import CreateRoomScreen from "../screens/Settings/Rooms/CreateRoomScreen";
 import AddDeviceInRoomScreen from "../screens/Rooms/AddDeviceInRoomScreen";
 import RemoveDeviceFromRoomScreen from "../screens/Rooms/RemoveDeviceFromRoomScreen";
 import OrderDevicesInRoom from "../screens/Rooms/OrderDevicesInRoom";
+import {BottomNavigator} from "./BottomNavigator";
 
 
 export const StackNavigator = createStackNavigator({
@@ -64,7 +64,7 @@ export const StackNavigator = createStackNavigator({
 			</TouchableOpacity>)
 		})
 	},
-	/*add_device: {
+	add_device: {
 		screen: AddDeviceScreen,
 		navigationOptions: ({screenProps}) => ({
 			title: t('add_device.navigation.title'),
@@ -113,7 +113,7 @@ export const StackNavigator = createStackNavigator({
 			headerTintColor: 'white',
 		})
 	},*/
-	/*settings_screen: {
+	settings_screen: {
 		screen: SettingsScreen,
 		navigationOptions: ({screenProps}) => ({
 			title: t('settings.navigation.title'),
@@ -338,5 +338,5 @@ export const StackNavigator = createStackNavigator({
 			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
 			headerTintColor: screenProps.theme.headerTextColor
 		})
-	}*/
+	}
 }, {initialRouteName: 'login'});

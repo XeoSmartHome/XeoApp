@@ -9,10 +9,10 @@ import {
 } from "react-native";
 import {
 	API_LOGIN_URL,
-} from "../api/api_routes_v_1.0.0.0";
+} from "../../api/api_routes_v_1.0.0.0";
 import I18n from 'i18n-js';
-import {BOOTSTRAP_COLOR_DANGER, BOOTSTRAP_COLOR_LIGHT, BOOTSTRAP_COLOR_SUCCESS} from "../themes/bootstrap_colors";
-import {XEO_BLUE} from "../constants";
+import {BOOTSTRAP_COLOR_DANGER, BOOTSTRAP_COLOR_LIGHT, BOOTSTRAP_COLOR_SUCCESS} from "../../themes/bootstrap_colors";
+import {XEO_BLUE} from "../../constants";
 
 
 const t = (key) => I18n.t('create_account.' + key);
