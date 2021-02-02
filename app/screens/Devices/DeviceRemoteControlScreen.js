@@ -3,22 +3,25 @@ import I18n from 'i18n-js';
 import {
 	Image,
 	Modal,
-	ScrollView,
+	ScrollView, Slider,
 	Text,
+	ToastAndroid,
 	TouchableOpacity,
 	View
 } from 'react-native';
 import {API_CONTROL_DEVICE, API_LOAD_DEVICE} from "../../api/api_routes_v_1.0.0.0";
 import io from "socket.io-client";
+import {apiPostRequest} from "../../api/requests";
+import {Picker} from "@react-native-picker/picker";
 
 
 const t = (key) => I18n.t('device_remote_control.' + key);
-let socket_io = io('https://xeosmarthome.com', {transports: ['websocket'], timeout: 30000});
+//let socket_io = io('https://xeosmarthome.com', {transports: ['websocket'], timeout: 30000});
 
 
 export default class DeviceRemoteControlScreen extends React.Component{
 	static navigationOptions = ({ navigation, screenProps }) => ({
-		title: 'Devices: ' + ( navigation.state.params.device_name === undefined ? '' : navigation.state.params.device_name ),
+		title: navigation.state.params.device_name === undefined ? '' : navigation.state.params.device_name,
 		headerRight: () => (
 			<TouchableOpacity onPress={ () => {
 				navigation.navigate('device_alarms', {device_id: navigation.state.params.device_id})
@@ -92,31 +95,20 @@ export default class DeviceRemoteControlScreen extends React.Component{
 
 	componentDidMount() {
 		this.loadDevice();
-		this.setWebSocketHandler();
+		//this.setWebSocketHandler();
 	}
 
 	executeAction(action_type_id: number, parameters=[]){
-		fetch(API_CONTROL_DEVICE, {
-			method: 'POST',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				device_id: this.state.device_id,
-				action_type_id: action_type_id,
-				parameters: parameters
-			})
+		apiPostRequest(API_CONTROL_DEVICE, {
+			device_id: this.state.device_id,
+			action_type_id: action_type_id,
+			parameters: parameters
 		}).then(
-			(response) => response.json()
-		).then(
 			(response) => {
-				//alert(response.message);
+				ToastAndroid.show('Action sent', ToastAndroid.SHORT);
 			}
 		).catch(
-			(error) => {
-				alert(error);
-			}
+			(error) => console.warn(error)
 		)
 	}
 
@@ -258,7 +250,7 @@ export default class DeviceRemoteControlScreen extends React.Component{
 							</Text>
 							<Slider
 								style={{width: 300, height: 30, borderRadius: 50}}
-								thumbTintColor={XEO_BLUE}
+								thumbTintColor={theme.primaryColor}
 								minimumTrackTintColor={theme.textColor}
 								maximumTrackTintColor={theme.textColor}
 								minimumValue={parameter_type.min}

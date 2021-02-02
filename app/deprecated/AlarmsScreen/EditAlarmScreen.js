@@ -9,15 +9,8 @@ import {
 	Button, Modal, Picker, ScrollView
 } from "react-native";
 import DateTimePicker from '@react-native-community/datetimepicker';
-import CronParser from "../../utils/CronParser";
-import {
-	API_ADD_ACTION,
-	API_LOAD_DEVICE,
-	API_UPDATE_DEVICE_TIMED_ACTION, BOOTSTRAP_COLOR_LIGHT,
-	BOOTSTRAP_COLOR_PRIMARY,
-	XEO_BLUE
-} from "../../../constants";
 import I18n from 'i18n-js';
+import CronParser from "../../screens/utils/CronParser";
 
 
 function serializeCron(minute:string, hour:string, day_of_month:string, month: string, day_of_week:string, year:string) {

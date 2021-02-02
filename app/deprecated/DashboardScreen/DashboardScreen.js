@@ -8,7 +8,6 @@ import {
 	SafeAreaView,
 	TouchableOpacity, StatusBar,
 } from "react-native";
-import {API_DEFAULT_IMAGES_URL, API_DEVICE_IMAGES_URL, API_LOAD_DEVICES} from "../../constants";
 import io from "socket.io-client";
 import {Icon} from "react-native-elements";
 // noinspection ES6CheckImport

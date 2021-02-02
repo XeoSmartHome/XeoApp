@@ -3,6 +3,7 @@ import {API_GET_ROOMS, API_UPDATE_ROOMS_ORDER, API_URL} from "../../../api/api_r
 import {ScrollView, View, StyleSheet, Text, TouchableOpacity, BackHandler, Alert} from "react-native";
 import DraggableFlatList from "react-native-draggable-flatlist";
 import ToastAndroid from "react-native/Libraries/Components/ToastAndroid/ToastAndroid";
+import {apiPostRequest} from "../../../api/requests";
 
 
 export default class RoomsOrderScreen extends React.Component {
@@ -74,48 +75,27 @@ export default class RoomsOrderScreen extends React.Component {
 		this.fetchRooms(this.getFetchRoomsArguments()).then(this.fetchRoomsCallback).then(this.fetchRoomsSetState.bind(this)).catch((error) => console.warn(error));
 	}
 
-
-	getUpdateRoomsOrderArguments() {
-		return JSON.stringify({
+	apiUpdateRoomsOrder() {
+		apiPostRequest(API_UPDATE_ROOMS_ORDER, {
 			house_id: 1,
 			order: this.state.rooms.map((room) => room.id)
-		});
-	}
-
-	fetchUpdateRoomsOrder(request_args) {
-		return fetch(API_UPDATE_ROOMS_ORDER, {
-			method: 'POST',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json',
-			},
-			body: request_args
-		});
-	}
-
-	fetchUpdateRoomsOrderCallback(response) {
-		return response.json();
-	}
-
-	fetchUpdateRoomsOrderSetState(response) {
-		switch (response['status']) {
-			case 200:
-				ToastAndroid.show('Room order updated', ToastAndroid.SHORT);
-				this.props.navigation.goBack();
-				break;
-			case 400:
-				console.warn(response);
-				break;
-		}
-	}
-
-	saveRoomsOrder() {
-		this.fetchUpdateRoomsOrder(this.getUpdateRoomsOrderArguments()).then(this.fetchUpdateRoomsOrderCallback).then(this.fetchUpdateRoomsOrderSetState.bind(this)).catch((error) => console.warn(error));
+		}).then( (response) => {
+			switch (response['status']) {
+				case 200:
+					ToastAndroid.show('Room order updated', ToastAndroid.SHORT);
+					this.props.navigation.goBack();
+					break;
+				case 400:
+					console.warn(response);
+					break;
+			}
+		}).catch( (error) => console.warn(error));
 	}
 
 
 	onSaveButtonPress() {
-		this.saveRoomsOrder();
+		//this.saveRoomsOrder();
+		this.apiUpdateRoomsOrder();
 		this.setState({
 			changed: false
 		});

@@ -20,7 +20,12 @@ import {
 	API_LOGIN_WITH_FACEBOOK,
 	API_LOGIN_WITH_GOOGLE
 } from "../../api/api_routes_v_1.0.0.0";
-import {FACEBOOK_APP_ID, GOOGLE_OAUTH_CLIENT_ID_EXPO, GOOGLE_OAUTH_CLIENT_ID_STANDALONE} from "../../constants";
+import {
+	FACEBOOK_APP_ID,
+	GOOGLE_OAUTH_CLIENT_ID_EXPO,
+	GOOGLE_OAUTH_CLIENT_ID_STANDALONE,
+	XEO_BLUE
+} from "../../constants";
 import {BOOTSTRAP_COLOR_LIGHT, BOOTSTRAP_COLOR_PRIMARY, BOOTSTRAP_COLOR_SECONDARY} from "../../themes/bootstrap_colors";
 
 
@@ -31,8 +36,8 @@ export default class LoginScreen extends Component {
 	constructor() {
 		super();
 		this.state = {
-			email: "neco31@yahoo.com",
-			password: "12345678",
+			email: "",
+			password: "",
 			show_error_message: false,
 			error_message: '',
 			loading: true
@@ -264,7 +269,7 @@ export default class LoginScreen extends Component {
 						backgroundColor: theme.screenBackgroundColor
 					}}
 				>
-
+					<StatusBar hidden={true}/>
 				</ScrollView>
 			)
 		}
@@ -290,6 +295,7 @@ export default class LoginScreen extends Component {
 							borderColor: theme.textColor
 						}]}
 						placeholder={t('email')}
+						placeholderTextColor={theme.placeholderTextColor}
 						autoCorrect={false}
 						autoCapitalize='none'
 						value={this.state.email}
@@ -306,6 +312,7 @@ export default class LoginScreen extends Component {
 							borderColor: theme.textColor
 						}]}
 						placeholder={t('password')}
+						placeholderTextColor={theme.placeholderTextColor}
 						autoCorrect={false}
 						autoCapitalize='none'
 						secureTextEntry={true}
@@ -322,7 +329,7 @@ export default class LoginScreen extends Component {
 							>
 								<Text
 									style={{
-										color: BOOTSTRAP_COLOR_DANGER,
+										color: theme.dangerColor,
 										fontSize: 16
 									}}
 								>

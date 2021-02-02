@@ -7,9 +7,9 @@
       "ios",
       "android"
     ],
-    "version": "1.0.1",
+    "version": "1.0.2",
     "orientation": "portrait",
-    "icon": "./app/assets/images/logo_xeo_no_background.png",
+    "icon": "./app/assets/images/logo_xeo_ios.jpg",
     "splash": {
       "image": "./app/assets/images/splash_screen.png",
       "resizeMode": "contain",
@@ -23,11 +23,11 @@
     ],
     "ios": {
       "bundleIdentifier": "com.xeosmarthome.xeoapp",
-      "buildNumber": "1.0.1"
+      "buildNumber": "1.0.2"
     },
     "android": {
       "package": "com.xeosmarthome.xeoapp",
-      "versionCode": 2
+      "versionCode": 3
     }
   }
 }

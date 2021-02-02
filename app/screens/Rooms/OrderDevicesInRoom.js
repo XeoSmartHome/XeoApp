@@ -24,7 +24,8 @@ export default class OrderDevicesInRoom extends React.Component {
 		this.state = {
 			room: {},
 			devices: [],
-			changed: false
+			changed: false,
+			house_id: -1
 		};
 	}
 
@@ -122,7 +123,7 @@ export default class OrderDevicesInRoom extends React.Component {
 	saveDevicesOrder() {
 		this.fetchUpdateDevicesOrder(this.getFetchUpdateDevicesOrderArguments())
 			.then(this.fetchUpdateDevicesOrderCallback)
-			.then(this.fetchUpdateDevicesOrderSetStateCallback)
+			.then(this.fetchUpdateDevicesOrderSetStateCallback.bind(this))
 			.catch((error) => console.warn(error));
 	}
 

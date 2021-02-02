@@ -14,21 +14,14 @@ import AccountSettingsScreen from "../screens/Settings/Account/AccountSettingsSc
 import SecurityScreen from "../screens/Settings/Security/SecurityScreen";
 import ChangePasswordScreen from "../screens/Settings/Security/ChangePasswordScreen";
 import HelpScreen from "../screens/Settings/Help/HelpScreen";
-import CreateAccountScreen_v2 from "../screens/AccountManagement/CreateAccountScreen_v2";
+import CreateAccountScreen from "../screens/Account/CreateAccountScreen";
 import TermsAndConditionsScreen from "../screens/AccountManagement/TermsAndConditionsScreen";
-import RoomScreen from "../screens/Rooms/RoomScreen";
-import RenameRoomScreen from "../screens/Rooms/RenameRoom";
-import RoomOptionsScreen from "../screens/Rooms/RoomOptionsScreen";
-import RoomDeviceOptionsScreen from "../screens/Rooms/RoomDeviceOptionsScreen";
-import RoomSharingMainScreen from "../screens/RoomSharing/RoomSharingMainScreen";
 import PinSettingsScreen from "../screens/Settings/Security/PinSettingsScreen";
 import PinScreen from "../screens/Settings/Security/PinScreen";
-import SensorScreen from "../screens/Sensors/SensorScreen";
 import NotificationsSettingsScreen from "../screens/Settings/Notifications/NotificationsSettingsScreen";
 import LanguageSettingsScreen from "../screens/Settings/Language/LanguageSettingsScreen";
 import ThemeSettingsScreen from "../screens/Settings/Theme/ThemeSettingsScreen";
 import HelpCenterScreen from "../screens/Settings/Help/HelpCenterScreen";
-import ReportABug from "../screens/Settings/Help/ReportABug";
 import ActionLinksListScreen from "../screens/Devices/ActionLinks/ActionLinksListScreen";
 import CreateActionLink from "../screens/Devices/ActionLinks/CreateActionLink";
 import RoomsOrderScreen from "../screens/Settings/Rooms/RoomsOrderScreen";
@@ -42,14 +35,6 @@ import {BottomNavigator} from "./BottomNavigator";
 
 
 export const StackNavigator = createStackNavigator({
-	login: {
-		screen: LoginScreen,
-		navigationOptions: ({screenProps}) => ({
-			title: t('login.navigation.title'),
-			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
-			headerTintColor: screenProps.theme.headerTextColor,
-		})
-	},
 	main: {
 		screen: BottomNavigator,
 		navigationOptions: ({navigation, screenProps}) => ({
@@ -64,18 +49,34 @@ export const StackNavigator = createStackNavigator({
 			</TouchableOpacity>)
 		})
 	},
-	add_device: {
-		screen: AddDeviceScreen,
+	login: {
+		screen: LoginScreen,
 		navigationOptions: ({screenProps}) => ({
-			title: t('add_device.navigation.title'),
+			title: t('login.navigation.title'),
 			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
 			headerTintColor: screenProps.theme.headerTextColor,
 		})
 	},
-	control_device: {
-		//screen: ControlDeviceScreen,
-		screen: DeviceRemoteControlScreen,
+	create_account: {
+		screen: CreateAccountScreen,
 		navigationOptions: ({screenProps}) => ({
+			title: t('create_account.navigation.title'),
+			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
+			headerTintColor: screenProps.theme.headerTextColor,
+		})
+	},
+	terms_and_conditions: {
+		screen: TermsAndConditionsScreen,
+		navigationOptions: ({screenProps}) => ({
+			title: t('terms_and_conditions.navigation.title'),
+			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
+			headerTintColor: screenProps.theme.headerTextColor,
+		})
+	},
+	add_device: {
+		screen: AddDeviceScreen,
+		navigationOptions: ({screenProps}) => ({
+			title: t('add_device.navigation.title'),
 			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
 			headerTintColor: screenProps.theme.headerTextColor,
 		})
@@ -88,8 +89,14 @@ export const StackNavigator = createStackNavigator({
 			headerTintColor: screenProps.theme.headerTextColor,
 		})
 	},
+	control_device: {
+		screen: DeviceRemoteControlScreen,
+		navigationOptions: ({screenProps}) => ({
+			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
+			headerTintColor: screenProps.theme.headerTextColor,
+		})
+	},
 	device_alarms: {
-		//screen: AlarmsScreen,
 		screen: TimedActionsListScreen,
 		navigationOptions: ({screenProps}) => ({
 			title: "Programmed actions",
@@ -105,14 +112,6 @@ export const StackNavigator = createStackNavigator({
 			headerTintColor: screenProps.theme.headerTextColor,
 		})
 	},
-	/*device_edit_alarm:{
-		screen: EditAlarmScreen,
-		navigationOptions: ({screenProps}) => ({
-			title: "",
-			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
-			headerTintColor: 'white',
-		})
-	},*/
 	settings_screen: {
 		screen: SettingsScreen,
 		navigationOptions: ({screenProps}) => ({
@@ -120,8 +119,7 @@ export const StackNavigator = createStackNavigator({
 			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
 			headerTintColor: screenProps.theme.headerTextColor,
 		})
-	}
-	,
+	},
 	account_settings: {
 		screen: AccountSettingsScreen,
 		navigationOptions: ({screenProps}) => ({
@@ -146,6 +144,44 @@ export const StackNavigator = createStackNavigator({
 			headerTintColor: screenProps.theme.headerTextColor,
 		})
 	},
+	pin_settings: {
+		screen: PinSettingsScreen,
+		navigationOptions: ({screenProps}) => ({
+			title: t('pin_settings.navigation.title'),
+			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
+			headerTintColor: screenProps.theme.headerTextColor,
+		})
+	},
+	pin: {
+		screen: PinScreen,
+		navigationOptions: {
+			header: () => null
+		}
+	},
+	notifications_settings: {
+		screen: NotificationsSettingsScreen,
+		navigationOptions: ({screenProps}) => ({
+			title: t('settings.notifications'),
+			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
+			headerTintColor: screenProps.theme.headerTextColor,
+		})
+	},
+	language_settings: {
+		screen: LanguageSettingsScreen,
+		navigationOptions: ({screenProps}) => ({
+			title: t('language_settings.navigation.title'),
+			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
+			headerTintColor: screenProps.theme.headerTextColor
+		})
+	},
+	theme_settings: {
+		screen: ThemeSettingsScreen,
+		navigationOptions: ({screenProps}) => ({
+			title: t('theme_settings.navigation.title'),
+			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
+			headerTintColor: screenProps.theme.headerTextColor
+		})
+	},
 	help: {
 		screen: HelpScreen,
 		navigationOptions: ({screenProps}) => ({
@@ -154,27 +190,12 @@ export const StackNavigator = createStackNavigator({
 			headerTintColor: screenProps.theme.headerTextColor,
 		})
 	},
-	create_account: {
-		screen: CreateAccountScreen_v2,
+	help_center: {
+		screen: HelpCenterScreen,
 		navigationOptions: ({screenProps}) => ({
-			title: t('create_account.navigation.title'),
+			title: t('help_center.navigation.title'),
 			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
-			headerTintColor: screenProps.theme.headerTextColor,
-		})
-	},
-	terms_and_conditions: {
-		screen: TermsAndConditionsScreen,
-		navigationOptions: ({screenProps}) => ({
-			title: t('terms_and_conditions.navigation.title'),
-			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
-			headerTintColor: screenProps.theme.headerTextColor,
-		})
-	},
-	room: {
-		screen: RoomScreen,
-		navigationOptions: ({screenProps}) => ({
-			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
-			headerTintColor: screenProps.theme.headerTextColor,
+			headerTintColor: screenProps.theme.headerTextColor
 		})
 	},
 	add_device_in_room: {
@@ -199,96 +220,6 @@ export const StackNavigator = createStackNavigator({
 			//title: 'Remove device from room',
 			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
 			headerTintColor: screenProps.theme.headerTextColor,
-		})
-	},
-	rename_room: {
-		screen: RenameRoomScreen,
-		navigationOptions: ({screenProps}) => ({
-			title: t('rename_room.navigation.title'),
-			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
-			headerTintColor: screenProps.theme.headerTextColor,
-		})
-	},
-	room_options: {
-		screen: RoomOptionsScreen,
-		navigationOptions: ({screenProps}) => ({
-			title: t('room_options.navigation.title'),
-			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
-			headerTintColor: screenProps.theme.headerTextColor,
-		})
-	},
-	room_device_options: {
-		screen: RoomDeviceOptionsScreen,
-		navigationOptions: ({screenProps}) => ({
-			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
-			headerTintColor: screenProps.theme.headerTextColor,
-		})
-	},
-	room_sharing: {
-		screen: RoomSharingMainScreen,
-		navigationOptions: ({screenProps}) => ({
-			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
-			headerTintColor: screenProps.theme.headerTextColor,
-		})
-	},
-	pin_settings: {
-		screen: PinSettingsScreen,
-		navigationOptions: ({screenProps}) => ({
-			title: t('pin_settings.navigation.title'),
-			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
-			headerTintColor: screenProps.theme.headerTextColor,
-		})
-	},
-	pin: {
-		screen: PinScreen,
-		navigationOptions: {
-			header: () => null
-		}
-	},
-	sensor: {
-		screen: SensorScreen,
-		navigationOptions: ({screenProps}) => ({
-			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
-			headerTintColor: screenProps.theme.headerTextColor,
-		})
-	},
-	notifications_settings: {
-		screen: NotificationsSettingsScreen,
-		navigationOptions: ({screenProps}) => ({
-			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
-			headerTintColor: screenProps.theme.headerTextColor,
-		})
-	},
-	language_settings: {
-		screen: LanguageSettingsScreen,
-		navigationOptions: ({screenProps}) => ({
-			title: t('language_settings.navigation.title'),
-			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
-			headerTintColor: screenProps.theme.headerTextColor
-		})
-	},
-	theme_settings: {
-		screen: ThemeSettingsScreen,
-		navigationOptions: ({screenProps}) => ({
-			title: t('theme_settings.navigation.title'),
-			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
-			headerTintColor: screenProps.theme.headerTextColor
-		})
-	},
-	help_center: {
-		screen: HelpCenterScreen,
-		navigationOptions: ({screenProps}) => ({
-			title: t('help_center.navigation.title'),
-			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
-			headerTintColor: screenProps.theme.headerTextColor
-		})
-	},
-	report_a_bug: {
-		screen: ReportABug,
-		navigationOptions: ({screenProps}) => ({
-			title: t('report_a_bug.navigation.title'),
-			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
-			headerTintColor: screenProps.theme.headerTextColor
 		})
 	},
 	action_links: {

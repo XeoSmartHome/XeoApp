@@ -340,10 +340,7 @@ export default class HomeScreen extends React.Component {
 	}
 
 	renderRoomTab(room, room_index) {
-		const {
-			theme
-		}
-			= this.props.screenProps;
+		const {theme} = this.props.screenProps;
 		return (
 			<
 				View
@@ -352,9 +349,6 @@ export default class HomeScreen extends React.Component {
 			>
 				{
 					this.renderDevices(room, this.getDevicesFromRoom(room))
-				}
-				{
-					//this.renderAddDeviceInRoomButton(room)
 				}
 			</View>
 		);

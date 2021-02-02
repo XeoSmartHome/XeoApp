@@ -107,7 +107,7 @@
     "theme_settings": {
         "light": "Light",
         "dark": "Dark",
-        "pink": 'Pink',
+        "pink": "Pink",
         "navigation": {
             "title": "Theme"
         }

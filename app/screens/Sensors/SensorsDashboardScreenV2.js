@@ -61,13 +61,15 @@ export default class SensorsDashboardScreenV2 extends React.Component {
 				onPress={() => this.onSensorPress(sensor)}
 			>
 				<Text
-					style={styles.sensor_name}
+					style={[styles.sensor_name, {
+						color: theme.textColor
+					}]}
 				>
 					{sensor['name']}: {sensor['value']}{sensor['unit']}
 				</Text>
 				<ProgressBar
 					color={theme.primaryColor}
-					style={styles.progress_bar}
+					style={[styles.progress_bar]}
 					progress={sensor_value}
 				/>
 			</TouchableOpacity>
@@ -82,7 +84,10 @@ export default class SensorsDashboardScreenV2 extends React.Component {
 				style={styles.device_view}
 			>
 				<Text
-					style={styles.device_name}
+					style={[styles.device_name, {
+						color: theme.textColor,
+						borderColor: theme.textColor,
+					}]}
 				>
 					{device['name']}
 				</Text>
@@ -119,21 +124,16 @@ const styles = StyleSheet.create({
 		paddingBottom: 50
 	},
 	device_name: {
-		//color: theme.textColor,
 		fontSize: 20,
 		borderBottomWidth: 1,
-		//borderColor: theme.textColor,
 		paddingBottom: 6
 	},
 	sensor_name: {
-		//color: theme.textColor,
 		fontSize: 18,
 		paddingTop: 8,
 		paddingBottom: 4
 	},
 	progress_bar: {
 		height: 16,
-		//borderWidth: 1,
-		//borderColor: theme.textColor
 	}
 });

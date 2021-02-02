@@ -10,15 +10,16 @@ import {
 	View,
 	ScrollView
 } from "react-native";
-import {API_LOGOUT, BOOTSTRAP_COLOR_DARK} from "../../../constants";
-import { NavigationActions, StackActions } from 'react-navigation';
+import {NavigationActions, StackActions} from 'react-navigation';
 import I18n from 'i18n-js'
+import {API_GET_USER_PROFILE, API_LOGOUT} from "../../../api/api_routes_v_1.0.0.0";
+import {apiGetRequest, apiPostRequest} from "../../../api/requests";
 
 
 const t = (key) => I18n.t('account_settings.' + key);
 
 
-export default class AccountSettingsScreen extends Component{
+export default class AccountSettingsScreen extends Component {
 	constructor() {
 		super();
 		this.state = {
@@ -27,38 +28,48 @@ export default class AccountSettingsScreen extends Component{
 			user_email: '',
 			user_phone_number: ''
 		};
+	}
+
+	componentDidMount() {
 		this.loadUserProfile();
 	}
 
-	signOut(){
-		fetch(API_LOGOUT, {
-			mode: 'cors',
-				method: 'POST',
-			headers: {
-			Accept: 'application/json',
-				'Content-Type': 'application/json',
-			}
-		}).then(
-			(response) => response.json()
-		).then(
-			(response) => {
-				if(response.status === 200){
-					const resetAction = StackActions.reset({
-						index: 0,
-						actions: [NavigationActions.navigate({ routeName: 'login' })],
-					});
-					this.props.navigation.dispatch(resetAction);
-				}
-			}
-		).catch(
-			(error) => {
-
-		})
+	loadUserProfile() {
+		apiGetRequest(API_GET_USER_PROFILE).then((response) => {
+			this.setState({
+				first_name: response.first_name,
+				last_name: response.last_name,
+				email: response.email
+			});
+		});
 	}
 
-	render(){
+
+	signOut() {
+		apiPostRequest(API_LOGOUT).then((response) => {
+			if (response.status === 200) {
+				const resetAction = StackActions.reset({
+					index: 0,
+					actions: [NavigationActions.navigate({routeName: 'login'})],
+				});
+				this.props.navigation.dispatch(resetAction);
+			}
+		}).catch((error) => {
+			console.warn(error);
+		});
+	}
+
+	onSignOutButtonPress() {
+		this.signOut();
+	}
+
+	onSwitchAccountButtonPress() {
+		this.props.navigation.navigate('');
+	}
+
+	render() {
 		const {theme} = this.props.screenProps;
-		return(
+		return (
 			<ScrollView
 				style={{
 					flex: 1,
@@ -73,7 +84,7 @@ export default class AccountSettingsScreen extends Component{
 							color: theme.textColor
 						}]}
 					>
-						{ t('user') }: {this.state.first_name} {this.state.last_name}
+						{t('user')}: {this.state.first_name} {this.state.last_name}
 					</Text>
 				</View>
 
@@ -83,7 +94,7 @@ export default class AccountSettingsScreen extends Component{
 							color: theme.textColor
 						}]}
 					>
-						{ t('email') }: {this.state.email}
+						{t('email')}: {this.state.email}
 					</Text>
 				</View>
 
@@ -105,9 +116,9 @@ export default class AccountSettingsScreen extends Component{
 								color: theme.textColor,
 								fontSize: 20
 							}}
-							onPress={ () => this.signOut() }
+							onPress={() => this.onSignOutButtonPress()}
 						>
-							{ t('sign_out') }
+							{t('sign_out')}
 						</Text>
 					</TouchableOpacity>
 
@@ -115,7 +126,7 @@ export default class AccountSettingsScreen extends Component{
 						style={{
 							marginVertical: 8
 						}}
-						onPress={ () => {} }
+						onPress={() => this.onSwitchAccountButtonPress()}
 					>
 						<Text
 							style={{
@@ -123,7 +134,7 @@ export default class AccountSettingsScreen extends Component{
 								fontSize: 20
 							}}
 						>
-							{ t('switch_account') }
+							{t('switch_account')}
 						</Text>
 					</TouchableOpacity>*/}
 
@@ -133,21 +144,6 @@ export default class AccountSettingsScreen extends Component{
 
 	}
 
-	loadUserProfile(){
-		fetch('https://dashboard.xeosmarthome.com/api/user_profile', {
-				method: 'GET'
-			}
-		).then(
-			(response) => response.json()
-		).then((response) => {
-				this.setState({ first_name: response.first_name});
-				this.setState({ last_name: response.last_name});
-				this.setState({ email: response.email});
-			}
-		).catch((error) => {
-			alert(error)
-		})
-	}
 }
 
 
@@ -155,7 +151,7 @@ const styles = StyleSheet.create({
 	row: {
 		paddingVertical: '3%',
 	},
-	row_text:{
+	row_text: {
 		fontSize: 20,
 	}
 });

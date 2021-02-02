@@ -35,7 +35,7 @@ export const BottomNavigator = createBottomTabNavigator(
 				)
 			})
 		},
-		dashboard: {
+		/*dashboard: {
 			screen: DashboardScreen,
 			navigationOptions: ({screenProps}) => ({
 				tabBarLabel: 'DASHBOARD', //t('dashboard.navigation.devices'),
@@ -47,7 +47,7 @@ export const BottomNavigator = createBottomTabNavigator(
 					/>
 				),
 			})
-		},
+		},*/
 	},
 	{
 		defaultNavigationOptions: ({screenProps}) => ({
@@ -65,6 +65,6 @@ export const BottomNavigator = createBottomTabNavigator(
 		}),
 		resetOnBlur: true,
 		initialRouteName: 'home',
-		order: ['home', 'dashboard', 'sensors'],
+		order: ['home', /*'dashboard',*/ 'sensors'],
 	}
 );

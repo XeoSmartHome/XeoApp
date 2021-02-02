@@ -1,8 +1,7 @@
 import React from "react";
 import I18n from 'i18n-js';
-import {ScrollView, Text, TouchableOpacity, View, Clipboard, Alert} from "react-native";
-import {API_DELETE_ACTION_LINK, API_GET_ACTION_LINKS} from "../../../constants";
-
+import {ScrollView, Text, TouchableOpacity, View, Alert, ToastAndroid, Clipboard} from "react-native";
+import {API_DELETE_ACTION_LINK, API_GET_ACTION_LINKS} from "../../../api/api_routes_v_1.0.0.0";
 
 const t = (key) => I18n.t('action_links_list.' + key);
 
@@ -68,6 +67,11 @@ export default class ActionLinksListScreen extends React.Component {
 		);
 	}
 
+	onCopyLinkButtonPress(action_link) {
+		Clipboard.setString(action_link['url']);
+		ToastAndroid.show('Link copied', ToastAndroid.SHORT);
+	}
+
 	actionLinkLongPress(action_link){
 		Alert.alert(
 			'',
@@ -77,7 +81,10 @@ export default class ActionLinksListScreen extends React.Component {
 					text: "Cancel",
 					style: "cancel",
 				},
-				{ text: "OK", onPress: () => this.deleteActionLink(action_link['id']) }
+				{
+					text: "OK",
+					onPress: () => this.deleteActionLink(action_link['id'])
+				}
 			],
 			{
 
@@ -116,9 +123,7 @@ export default class ActionLinksListScreen extends React.Component {
 						style={{
 							alignSelf: "flex-end",
 						}}
-						onPress={ () => {
-							Clipboard.setString(action_link['url']);
-						}}
+						onPress={ () => this.onCopyLinkButtonPress(action_link)}
 					>
 						<Text
 							style={{

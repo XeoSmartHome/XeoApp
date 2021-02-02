@@ -25,17 +25,6 @@ export default class HelpScreen extends Component{
 
 				<TouchableOpacity
 					style={styles.row}
-					onPress={ () => this.props.navigation.navigate('report_a_bug') }
-				>
-					<Text style={[styles.row_text, {
-						color: theme.textColor
-					}]}>
-						{t('report_a_bug')}
-					</Text>
-				</TouchableOpacity>
-
-				<TouchableOpacity
-					style={styles.row}
 					onPress={ () => this.props.navigation.navigate('help_center') }
 				>
 					<Text style={[styles.row_text, {
