@@ -70,6 +70,9 @@ export default class HomeScreen extends React.Component {
 		this.setState({
 			rooms: response['rooms']
 		});
+		this.setState({
+			rooms: response['rooms']
+		});
 	}
 
 	loadRooms() {
@@ -280,7 +283,7 @@ export default class HomeScreen extends React.Component {
 	onOrderDevicesButtonPress(room) {
 		this.props.navigation.navigate('order_devices_in_room', {
 			room: room,
-			devices: this.state.devices
+			devices: this.getDevicesFromRoom(room)
 		});
 	}
 

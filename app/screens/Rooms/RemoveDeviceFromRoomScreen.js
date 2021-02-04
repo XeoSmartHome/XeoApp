@@ -1,5 +1,5 @@
 import React from "react";
-import {FlatList, Image, Text, TouchableOpacity, View, StyleSheet, ToastAndroid, Alert} from "react-native";
+import {FlatList, Image, Text, TouchableOpacity, View, StyleSheet, ToastAndroid, Alert, Modal} from "react-native";
 import {t} from "i18n-js";
 import {
 	API_REMOVE_DEVICE_FROM_ROOM
@@ -17,7 +17,9 @@ export default class RemoveDeviceFromRoomScreen extends React.Component {
 		this.state = {
 			house_id: -1,
 			room: {},
-			devices: []
+			devices: [],
+
+			confirm_modal_visible: false
 		}
 	}
 
@@ -72,7 +74,7 @@ export default class RemoveDeviceFromRoomScreen extends React.Component {
 	}
 
 	onDevicePress(device) {
-		Alert.alert(
+		/*Alert.alert(
 			`Remove "${device['name']}" from "${this.state.room['name']}"?`,
 			'',
 			[
@@ -91,7 +93,28 @@ export default class RemoveDeviceFromRoomScreen extends React.Component {
 				}
 			],
 			{cancelable: false}
-		);
+		);*/
+		/*this.setState({
+			confirm_modal_visible: true
+		});*/
+		this.removeDeviceFromRoom(device['id']);
+	}
+
+	closeModal() {
+		this.setState({
+			confirm_modal_visible: false
+		});
+	}
+
+	renderConfirmModal() {
+		return (
+			<Modal
+				visible={this.state.confirm_modal_visible}
+				onRequestClose={this.closeModal.bind(this)}
+			>
+
+			</Modal>
+		)
 	}
 
 	renderDeviceBox(device, device_index) {
@@ -109,23 +132,22 @@ export default class RemoveDeviceFromRoomScreen extends React.Component {
 		const {theme} = this.props.screenProps;
 
 		return (
-			<FlatList
-				style={{
-					backgroundColor: theme.screenBackgroundColor,
-					padding: '3%'
-				}}
-				numColumns={2}
-				data={this.state.devices}
-				keyExtractor={(item, index) => `
-	device
--${item['id']}
-`}
-				renderItem={({item, index}) => this.renderDeviceBox(item, index)}
-				contentContainerStyle={{
-					paddingBottom: '12%'
-				}}
-			/>
-
+			<View style={{flex: 1}}>
+				{this.renderConfirmModal()}
+				<FlatList
+					style={{
+						backgroundColor: theme.screenBackgroundColor,
+						padding: '3%'
+					}}
+					numColumns={2}
+					data={this.state.devices}
+					keyExtractor={(item, index) => `device-${item['id']}`}
+					renderItem={({item, index}) => this.renderDeviceBox(item, index)}
+					contentContainerStyle={{
+						paddingBottom: '12%'
+					}}
+				/>
+			</View>
 		);
 	}
 }
