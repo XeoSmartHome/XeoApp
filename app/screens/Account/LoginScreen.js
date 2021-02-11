@@ -246,7 +246,7 @@ export default class LoginScreen extends Component {
 					alert(error);
 				})
 			}).catch((error) => {
-				alert(error)
+				alert(error);
 			});
 		}).catch((error) => {
 			alert(error);

@@ -70,9 +70,6 @@ export default class HomeScreen extends React.Component {
 		this.setState({
 			rooms: response['rooms']
 		});
-		this.setState({
-			rooms: response['rooms']
-		});
 	}
 
 	loadRooms() {
@@ -345,8 +342,8 @@ export default class HomeScreen extends React.Component {
 	renderRoomTab(room, room_index) {
 		const {theme} = this.props.screenProps;
 		return (
-			<
-				View
+			<View
+				key={`room-${room_index}`}
 				tabLabel={room['name']}
 				style={room_styles.container}
 			>
@@ -361,6 +358,7 @@ export default class HomeScreen extends React.Component {
 		const {theme} = this.props.screenProps;
 		return (
 			<View
+				key={'all-devices'}
 				tabLabel={'ALL DEVICES'}
 				style={{
 					backgroundColor: theme.screenBackgroundColor,
@@ -380,6 +378,7 @@ export default class HomeScreen extends React.Component {
 
 		return (
 			<ScrollView
+				key={'settings'}
 				tabLabel={'SETTINGS'}
 				style={{
 					backgroundColor: theme.screenBackgroundColor
@@ -486,7 +485,6 @@ export default class HomeScreen extends React.Component {
 					this.renderFloatingActionButton()
 				}
 			</View>
-
 		)
 	}
 }

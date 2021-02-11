@@ -2,7 +2,7 @@ import React from "react";
 import createStackNavigator from "react-navigation-stack/src/navigators/createStackNavigator";
 import LoginScreen from "../screens/Account/LoginScreen";
 import {t} from "i18n-js";
-import {TouchableOpacity} from "react-native";
+import {AsyncStorage, TouchableOpacity} from "react-native";
 import {Icon} from "react-native-elements";
 import AddDeviceScreen from "../screens/Devices/AddDeviceScreen";
 import DeviceRemoteControlScreen from "../screens/Devices/DeviceRemoteControlScreen";
@@ -32,7 +32,13 @@ import AddDeviceInRoomScreen from "../screens/Rooms/AddDeviceInRoomScreen";
 import RemoveDeviceFromRoomScreen from "../screens/Rooms/RemoveDeviceFromRoomScreen";
 import OrderDevicesInRoom from "../screens/Rooms/OrderDevicesInRoom";
 import {BottomNavigator} from "./BottomNavigator";
+import AnimationsSettingsScreen from "../screens/Settings/Animations/AnimationsSettingsScreen";
 
+
+//const animations_enable = await AsyncStorage.getItem('animations_enable');
+
+
+//export const StackNavigator = (animations_enable) => createStackNavigator({
 
 export const StackNavigator = createStackNavigator({
 	main: {
@@ -182,6 +188,14 @@ export const StackNavigator = createStackNavigator({
 			headerTintColor: screenProps.theme.headerTextColor
 		})
 	},
+	animations_settings: {
+		screen: AnimationsSettingsScreen,
+		navigationOptions: ({screenProps}) => ({
+			title: 'Animations',
+			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
+			headerTintColor: screenProps.theme.headerTextColor
+		})
+	},
 	help: {
 		screen: HelpScreen,
 		navigationOptions: ({screenProps}) => ({
@@ -270,4 +284,4 @@ export const StackNavigator = createStackNavigator({
 			headerTintColor: screenProps.theme.headerTextColor
 		})
 	}
-}, {initialRouteName: 'login'});
+}, {initialRouteName: 'login', defaultNavigationOptions: {animationEnabled: true}});

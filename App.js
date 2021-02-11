@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {createAppContainer} from 'react-navigation';
 import AsyncStorage from "@react-native-community/async-storage";
 import * as Localization from "expo-localization";
@@ -24,6 +24,27 @@ AsyncStorage.getItem('locale').then((item) => {
 
 
 const Container = createAppContainer(StackNavigator);
+
+const ContainerWrapper = (props) => {
+	const [animations_enable, setAnimationsEnable] = useState('unknown');
+
+	AsyncStorage.getItem('animations_enable').then( (animations_enable) => {
+		setAnimationsEnable(animations_enable === 'true')
+	})
+
+	if(animations_enable !== 'unknown'){
+		const Container = createAppContainer(StackNavigator(animations_enable));
+		return (
+			<Container screenProps={props.screenProps}/>
+		)
+	}
+
+	const Container = createAppContainer(StackNavigator(false));
+	return (
+		<Container screenProps={props.screenProps}/>
+	)
+
+}
 
 
 const App = () => (
