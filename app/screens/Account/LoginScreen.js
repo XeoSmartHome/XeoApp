@@ -388,7 +388,7 @@ export default class LoginScreen extends Component {
 
 						<TouchableOpacity
 							style={[styles.button, {
-								backgroundColor: XEO_BLUE,
+								backgroundColor: theme.primaryColor,
 								flexDirection: 'row',
 								justifyContent: 'center',
 								alignItems: 'center'

@@ -1,5 +1,4 @@
 import React from "react";
-import SortableGrid from 'react-native-yet-another-sortable';
 import {Alert, BackHandler, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {
 	API_DEFAULT_IMAGES_URL,
