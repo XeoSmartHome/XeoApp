@@ -10,6 +10,7 @@ import {
 import I18n from "i18n-js";
 import CheckBox from "@react-native-community/checkbox";
 import {API_CREATE_ACCOUNT} from "../../api/api_routes_v_1.0.0.0";
+import {API} from "../../api/api";
 
 
 const t = (key) => I18n.t('create_account.' + key);
@@ -45,30 +46,20 @@ export default class CreateAccountScreen extends React.Component {
 		}
 	}
 
+	/**
+	 * Call API to create an account.
+	 */
 	createAccount(){
 		this.setState({
 			loading: true
 		});
-		fetch(API_CREATE_ACCOUNT, {
-			mode: 'cors',
-			method: 'POST',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				first_name: this.state.first_name,
-				last_name: this.state.last_name,
-				email: this.state.email,
-				password: this.state.password,
-			}),
-		}).then(
-			(response) => {
-				//const cookie = response.headers['map']['set-cookie'].split('=')[1].split(';')[0];
-				//this.save_session(cookie);
-				return response.json();
-			}
-		).then(response => {
+
+		API.account.createAccount({
+			first_name: this.state.first_name,
+			last_name: this.state.last_name,
+			email: this.state.email,
+			password: this.state.password
+		}).then(response => {
 			this.setState({
 				loading: false
 			});
@@ -84,6 +75,10 @@ export default class CreateAccountScreen extends React.Component {
 		});
 	}
 
+	/**
+	 * Validates user input.
+	 * @param first_name
+	 */
 	checkFirstName(first_name){
 		if(first_name === ''){
 			this.setState({
@@ -98,6 +93,10 @@ export default class CreateAccountScreen extends React.Component {
 		});
 	}
 
+	/**
+	 * Validates user input.
+	 * @param last_name
+	 */
 	checkLastName(last_name){
 		if(last_name === ''){
 			this.setState({
@@ -112,6 +111,10 @@ export default class CreateAccountScreen extends React.Component {
 		});
 	}
 
+	/**
+	 * Validates user input.
+	 * @param email
+	 */
 	checkEmail(email){
 		if(email === ''){
 			this.setState({
@@ -126,6 +129,10 @@ export default class CreateAccountScreen extends React.Component {
 		});
 	}
 
+	/**
+	 * Validates user input.
+	 * @param password
+	 */
 	checkPassword(password){
 		if(password.length < 8){
 			this.setState({
@@ -140,6 +147,10 @@ export default class CreateAccountScreen extends React.Component {
 		});
 	}
 
+	/**
+	 * Validates user input.
+	 * @param confirm_password
+	 */
 	checkConfirmPassword(confirm_password){
 		if(confirm_password !== this.state.password){
 			this.setState({

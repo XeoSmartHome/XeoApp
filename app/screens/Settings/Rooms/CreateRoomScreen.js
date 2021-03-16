@@ -3,6 +3,7 @@ import I18n from "i18n-js";
 import {ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
 import {API_CREATE_ROOM, API_URL} from "../../../api/api_routes_v_1.0.0.0";
 import ToastAndroid from "react-native/Libraries/Components/ToastAndroid/ToastAndroid";
+import {API} from "../../../api/api";
 
 
 const t = (key) => I18n.t(`create_new_room.${key}`);
@@ -21,29 +22,12 @@ export default class CreateRoomScreen extends React.Component {
 		//this.state.house_id = this.props.navigation.state.params?.house_id;
 	}
 
-	getFetchCreateRoomArguments(house_id, room_name) {
-		return JSON.stringify({
-			house_id: house_id,
-			name: room_name
-		});
-	}
 
-	fetchCreateRoom(request_args) {
-		return fetch(API_CREATE_ROOM, {
-			method: 'POST',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json',
-			},
-			body: request_args
-		});
-	}
-
-	fetchCreateRoomCallback(response) {
-		return response.json();
-	}
-
-	fetchCreateRoomSetStateCallback(response) {
+	/**
+	 * Trigger when API respond to "create room" request.
+	 * @param response
+	 */
+	createRoomCallback(response) {
 		switch (response['status']) {
 			case 200:
 				ToastAndroid.show('Room created', ToastAndroid.SHORT);
@@ -55,12 +39,26 @@ export default class CreateRoomScreen extends React.Component {
 		}
 	}
 
+	/**
+	 * Call API to create a new room
+	 * @param {number} house_id
+	 * @param {string} room_name
+	 */
 	createRoom(house_id, room_name) {
-		this.fetchCreateRoom(this.getFetchCreateRoomArguments(house_id, room_name)).then(this.fetchCreateRoomCallback).then(this.fetchCreateRoomSetStateCallback.bind(this)).catch((error) => console.warn(error));
+		API.house.rooms.createRoom({
+			house_id: house_id,
+			name: room_name
+		}).then(
+			this.createRoomCallback.bind(this)
+		).catch(
+			(error) => console.warn(error)
+		);
 	}
 
+	/**
+	 * Triggered when the user press the create room button.
+	 */
 	onCreateRoomButtonPress() {
-		//console.warn(this.getFetchCreateRoomArguments(this.state.house_id, this.state.room_name));
 		this.createRoom(this.state.house_id, this.state.room_name);
 	}
 

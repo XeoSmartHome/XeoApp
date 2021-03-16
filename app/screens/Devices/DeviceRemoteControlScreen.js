@@ -13,6 +13,7 @@ import {API_CONTROL_DEVICE, API_LOAD_DEVICE} from "../../api/api_routes_v_1.0.0.
 import io from "socket.io-client";
 import {apiPostRequest} from "../../api/requests";
 import {Picker} from "@react-native-picker/picker";
+import {API} from "../../api/api";
 
 
 const t = (key) => I18n.t('device_remote_control.' + key);
@@ -52,6 +53,10 @@ export default class DeviceRemoteControlScreen extends React.Component{
 	}
 
 	loadDevice(){
+		/*API.devices.getDevice({
+			id: this.props.navigation.state.params.device_id
+		});*/
+
 		fetch(API_LOAD_DEVICE + this.props.navigation.state.params.device_id,{
 				method: 'GET'
 			}

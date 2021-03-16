@@ -5,6 +5,7 @@ import {
 	Text
 } from 'react-native';
 
+
 export default class RecoverPasswordScreen extends React.Component {
 	constructor() {
 		super();

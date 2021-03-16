@@ -27,6 +27,7 @@ import {
 	XEO_BLUE
 } from "../../constants";
 import {BOOTSTRAP_COLOR_LIGHT, BOOTSTRAP_COLOR_PRIMARY, BOOTSTRAP_COLOR_SECONDARY} from "../../themes/bootstrap_colors";
+import {API} from "../../api/api";
 
 
 const t = (key) => I18n.t('login.' + key);
@@ -93,25 +94,10 @@ export default class LoginScreen extends Component {
 	}
 
 	login() {
-		fetch(API_LOGIN_URL, {
-			mode: 'cors',
-			method: 'POST',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				email: this.state.email,
-				password: this.state.password,
-			}),
-		}).then(
-			(response) => {
-				//const cookie = response.headers['map']['set-cookie'].split('=')[1].split(';')[0];
-				//this.save_session(cookie);
-				//console.warn(response.headers.get('set-cookie'));
-				return response.json();
-			}
-		).then((response) => {
+		API.account.login({
+			email: this.state.email,
+			password: this.state.password
+		}).then((response) => {
 			if (response.status === 200) {
 				this.go_to_main_page();
 			} else {
@@ -129,36 +115,6 @@ export default class LoginScreen extends Component {
 		});
 	}
 
-	/*loginGoogleApi() {
-		return Google.logInAsync({
-			androidClientId: GOOGLE_OAUTH_CLIENT_ID_EXPO,
-			androidStandaloneAppClientId: GOOGLE_OAUTH_CLIENT_ID_STANDALONE,
-			redirectUrl: ''
-		});
-	}
-
-	fetchLoginWithGoogle() {
-		return fetch(API_LOGIN_WITH_GOOGLE, {
-			mode: 'cors',
-			method: 'POST',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				token: idToken
-			})
-		});
-	}
-
-	fetchLoginWithGoogleCallback(response) {
-		return response.json();
-	}
-
-	loginWithGoogle() {
-		this.loginGoogleApi().then(this.fetchLoginWithGoogle()).then(this.fetchLoginWithGoogleCallback).then();
-	}*/
-
 	login_with_google() {
 		Google.logInAsync({
 			androidClientId: GOOGLE_OAUTH_CLIENT_ID_EXPO,
@@ -168,16 +124,8 @@ export default class LoginScreen extends Component {
 			if (type === 'cancel') {
 				return;
 			}
-			fetch(API_LOGIN_WITH_GOOGLE, {
-				mode: 'cors',
-				method: 'POST',
-				headers: {
-					Accept: 'application/json',
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					token: idToken
-				})
+			API.account.loginWithGoogle({
+				token: idToken
 			}).then(
 				(response) => response.json()
 			).then((response) => {
@@ -192,31 +140,6 @@ export default class LoginScreen extends Component {
 		});
 	}
 
-	/*initializeFacebookAsync(){
-		return Facebook.initializeAsync({
-			appId: FACEBOOK_APP_ID,
-			appName: 'XeoApp'
-		});
-	}
-
-	logInWithFacebookAsync() {
-		return Facebook.logInWithReadPermissionsAsync({
-			permissions: ['public_profile', 'email']
-		});
-	}
-
-	logInWithFacebookCallback({type, token, expires, permissions, declinedPermissions}) {
-
-	}
-
-	fetchLoginWithFacebook() {
-
-	}*/
-
-	/*logInWithFacebook() {
-		this.initializeFacebookAsync().then(this.logInWithFacebookAsync).then()
-	}*/
-
 	login_with_facebook() {
 		Facebook.initializeAsync({
 			appId: FACEBOOK_APP_ID, appName: 'XeoApp'
@@ -226,25 +149,15 @@ export default class LoginScreen extends Component {
 					permissions: ['public_profile', 'email']
 				}
 			).then(({type, token, expires, permissions, declinedPermissions}) => {
-				fetch(API_LOGIN_WITH_FACEBOOK, {
-					mode: 'cors',
-					method: 'POST',
-					headers: {
-						Accept: 'application/json',
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify({
-						token: token
-					})
-				}).then(
-					(response) => response.json()
-				).then((response) => {
+				API.account.loginWithFacebook({
+					token: token
+				}).then((response) => {
 					if (response.status === 200) {
 						this.go_to_main_page();
 					}
 				}).catch((error) => {
 					alert(error);
-				})
+				});
 			}).catch((error) => {
 				alert(error);
 			});

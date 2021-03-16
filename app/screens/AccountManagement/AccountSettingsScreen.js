@@ -1,5 +1,6 @@
 import React, {Component} from "react";
 import {Image, SafeAreaView, Text, TextInput, TouchableOpacity, StyleSheet, Button, View} from "react-native";
+import {API} from "../../api/api";
 
 
 export default class AccountSettings extends Component{
@@ -17,23 +18,21 @@ export default class AccountSettings extends Component{
 	}
 
 	loadUserProfile(){
-		fetch('https://dashboard.xeosmarthome.com/api/user_profile', {
-				method: 'GET'
+		API.account.getUserProfile().then((response) => {
+				this.setState({ first_name: response.first_name});
+				this.setState({ last_name: response.last_name});
+				this.setState({ email: response.email});
 			}
-		).then(
-			(response) => response.json()
-		).then((response) => {
-			this.setState({ first_name: response.first_name});
-			this.setState({ last_name: response.last_name});
-			this.setState({ email: response.email});
-		}
 		).catch((error) => {
 			alert(error)
-		})
+		});
 	}
 
 
 	saveUserProfile(){
+		/*API.account.upda({
+
+		});*/
 		fetch('https://dashboard.xeosmarthome.com/api/update_user_profile', {
 				method: 'POST',
 			body: JSON.stringify({

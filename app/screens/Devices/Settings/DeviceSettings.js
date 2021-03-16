@@ -9,17 +9,11 @@ import {
 	ImageBackground,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import {
-	API_CHANGE_DEVICE_NAME,
-	API_DEFAULT_IMAGES_URL,
-	API_DEVICE_IMAGES_URL,
-	API_UPDATE_DEVICE_IMAGE,
-	BOOTSTRAP_COLOR_DARK, BOOTSTRAP_COLOR_LIGHT, BOOTSTRAP_COLOR_PRIMARY
-} from "../../../constants";
-import { FontAwesome } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
 // noinspection ES6CheckImport
 import  I18n from "i18n-js";
+import {API_DEFAULT_IMAGES_URL, API_DEVICE_IMAGES_URL} from "../../../api/api_routes_v_1.0.0.0";
+import {API} from "../../../api/api";
 
 
 const t = (key) => I18n.t('device_settings.' + key);
@@ -74,7 +68,8 @@ export default class DeviceSettingsScreen2 extends Component{
 		});
 	}
 
-	updateDeviceName(){
+	updateDeviceName() {
+		//API.devices.
 		fetch(API_CHANGE_DEVICE_NAME, {
 			method: 'POST',
 			headers: {
@@ -215,7 +210,11 @@ export default class DeviceSettingsScreen2 extends Component{
 							{ t('name') }: { this.state.device_name }
 						</Text>
 						<TouchableOpacity
-							style={{ alignSelf: 'flex-end', flex: 2, color: BOOTSTRAP_COLOR_DARK}}
+							style={{
+								alignSelf: 'flex-end',
+								flex: 2,
+								//color: BOOTSTRAP_COLOR_DARK
+							}}
 							onPress={ () => {
 								this.setState({
 									editing_device_name: !this.state.editing_device_name,
@@ -260,7 +259,7 @@ export default class DeviceSettingsScreen2 extends Component{
 							/>
 							<TouchableOpacity
 								style={{
-									backgroundColor: BOOTSTRAP_COLOR_PRIMARY,
+									//backgroundColor: BOOTSTRAP_COLOR_PRIMARY,
 									padding: 4,
 									borderRadius: 8,
 									width: '30%',
@@ -276,7 +275,7 @@ export default class DeviceSettingsScreen2 extends Component{
 									style={{
 										alignSelf: 'center',
 										fontSize: 18,
-										color: BOOTSTRAP_COLOR_LIGHT
+										//color: BOOTSTRAP_COLOR_LIGHT
 									}}
 								>
 									{ t('confirm_name_editing') }
@@ -307,7 +306,11 @@ export default class DeviceSettingsScreen2 extends Component{
 					</Text>
 
 					<TouchableOpacity
-						style={{ alignSelf: 'flex-end', flex: 2, color: BOOTSTRAP_COLOR_DARK}}
+						style={{
+							alignSelf: 'flex-end',
+							flex: 2,
+							//color: BOOTSTRAP_COLOR_DARK
+						}}
 						onPress={ () => {
 							this.onShowSerial();
 						}}
@@ -380,7 +383,7 @@ export default class DeviceSettingsScreen2 extends Component{
 					>
 						<TouchableOpacity
 							style={{
-								backgroundColor: BOOTSTRAP_COLOR_PRIMARY,
+								//backgroundColor: BOOTSTRAP_COLOR_PRIMARY,
 								padding: 10,
 								width: 50,
 								borderRadius: 20,
@@ -388,7 +391,7 @@ export default class DeviceSettingsScreen2 extends Component{
 							}}
 							onPress={ () => this.updateDeviceImage()}
 						>
-							<Feather name="edit" size={30} color={BOOTSTRAP_COLOR_LIGHT} />
+							<Feather name="edit" size={30} color={theme.textColor} />
 						</TouchableOpacity>
 					</ImageBackground>
 				</View>

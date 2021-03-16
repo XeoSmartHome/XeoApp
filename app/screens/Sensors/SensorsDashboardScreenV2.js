@@ -4,6 +4,7 @@ import {ProgressBar} from "react-native-paper";
 import {mapValue} from "react-native-chart-kit/dist/Utils";
 import {API_LOAD_SENSORS} from "../../api/api_routes_v_1.0.0.0";
 import I18n from 'i18n-js';
+import {API} from "../../api/api";
 
 
 const t = (key) => I18n.t('.' + key);
@@ -18,22 +19,18 @@ export default class SensorsDashboardScreenV2 extends React.Component {
 	}
 
 
-	fetchSensors() {
-		return fetch(API_LOAD_SENSORS, {method: 'GET'});
-	}
-
-	fetchSensorsCallback(response) {
-		return response.json();
-	}
-
-	fetchSensorsSetState(response) {
+	loadSensorsCallback(response) {
 		this.setState({
 			devices: response
 		});
 	}
 
 	loadSensors() {
-		this.fetchSensors().then(this.fetchSensorsCallback).then(this.fetchSensorsSetState.bind(this)).catch((error) => console.warn(error));
+		API.sensors.getSensors().then(
+			this.loadSensorsCallback.bind(this)
+		).catch(
+			(error) => console.warn(error)
+		)
 	}
 
 	componentDidMount() {

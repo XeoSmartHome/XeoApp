@@ -3,6 +3,7 @@ import I18n from "i18n-js";
 import {ScrollView, StyleSheet, Text, TouchableOpacity} from "react-native";
 import {API_DELETE_ROOM, API_GET_ROOMS, API_URL} from "../../../api/api_routes_v_1.0.0.0";
 import ToastAndroid from "react-native/Libraries/Components/ToastAndroid/ToastAndroid";
+import {API} from "../../../api/api";
 
 
 const t = (key) => I18n.t(`1234.${key}`);
@@ -20,57 +21,23 @@ export default class DeleteRoomScreen extends React.Component {
 		this.loadRooms();
 	}
 
-
-	getFetchRoomsArguments() {
-		return new URLSearchParams({
-			house_id: 1
-		});
-	}
-
-	fetchRooms(request_args) {
-		return fetch(`${API_GET_ROOMS}?${request_args}`, {method: 'GET'});
-	}
-
-	fetchRoomsCallback(response) {
-		return response.json();
-	}
-
-	fetchRoomsSetState(response) {
+	loadRoomsCallback(response) {
 		this.setState({
 			rooms: response['rooms']
 		});
 	}
 
 	loadRooms() {
-		this.fetchRooms(this.getFetchRoomsArguments()).then(this.fetchRoomsCallback).then(this.fetchRoomsSetState.bind(this)).catch((error) => console.warn(error));
+		API.house.rooms.getRooms({
+			house_id: -1
+		}).then(
+			this.loadRoomsCallback.bind(this)
+		).catch(
+			(error) => console.warn(error)
+		);
 	}
 
-
-	getFetchDeleteRoomArguments(room_id) {
-		return JSON.stringify({
-			house_id: 1,
-			room_id: room_id
-		});
-	}
-
-
-	fetchDeleteRoom(request_args) {
-		return fetch(API_DELETE_ROOM, {
-			method: 'POST',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json',
-			},
-			body: request_args
-		});
-	}
-
-	fetchDeleteRoomCallback(response) {
-		return response.json();
-	}
-
-
-	fetchDeleteRoomSetStateCallback(response) {
+	deleteRoomCallback(response) {
 		//console.warn(response);
 		switch (response['status']) {
 			case 200:
@@ -84,9 +51,20 @@ export default class DeleteRoomScreen extends React.Component {
 	}
 
 	delete_room(room_id) {
-		this.fetchDeleteRoom(this.getFetchDeleteRoomArguments(room_id)).then(this.fetchDeleteRoomCallback).then(this.fetchDeleteRoomSetStateCallback.bind(this)).catch((error) => console.warn(error));
+		API.house.rooms.deleteRoom({
+			house_id: -1,
+			room_id: room_id
+		}).then(
+			this.deleteRoomCallback.bind(this)
+		).catch(
+			(error) => console.warn(error)
+		);
 	}
 
+	/**
+	 * Triggered when the user press on a room.
+	 * @param room
+	 */
 	onRoomPress(room) {
 		this.delete_room(room['id'])
 	}
