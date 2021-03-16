@@ -1,10 +1,7 @@
 import React from "react";
 import {FlatList, Image, Text, TouchableOpacity, View, StyleSheet, ToastAndroid, Alert, Modal} from "react-native";
-import {t} from "i18n-js";
-import {
-	API_REMOVE_DEVICE_FROM_ROOM
-} from "../../api/api_routes_v_1.0.0.0";
 import {DeviceBox} from "../Devices/DeviceBox";
+import {API} from "../../api/api";
 
 
 export default class RemoveDeviceFromRoomScreen extends React.Component {
@@ -32,30 +29,11 @@ export default class RemoveDeviceFromRoomScreen extends React.Component {
 		});
 	}
 
-	getFetchRemoveDeviceFromRoomArguments(house_id, room_id, device_id) {
-		return JSON.stringify({
-			house_id: house_id,
-			room_id: room_id,
-			device_id: device_id
-		});
-	}
-
-	fetchRemoveDeviceFromRoom(request_args) {
-		return fetch(API_REMOVE_DEVICE_FROM_ROOM, {
-			method: 'POST',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json',
-			},
-			body: request_args
-		})
-	}
-
-	fetchRemoveDeviceFromRoomCallback(response) {
-		return response.json();
-	}
-
-	fetchRemoveDeviceFromRoomSetStateCallback(response) {
+	/**
+	 * Triggered when API respond to the request.
+	 * @param response
+	 */
+	removeDeviceFromRoomCallback(response) {
 		switch (response['status']) {
 			case 200:
 				ToastAndroid.show('Device removed from room', ToastAndroid.SHORT);
@@ -66,13 +44,24 @@ export default class RemoveDeviceFromRoomScreen extends React.Component {
 		}
 	}
 
+	/**
+	 * Call API to remove a device from a room.
+	 * @param {number} device_id
+	 */
 	removeDeviceFromRoom(device_id) {
-		this.fetchRemoveDeviceFromRoom(this.getFetchRemoveDeviceFromRoomArguments(this.state.house_id, this.state.room.id, device_id))
-			.then(this.fetchRemoveDeviceFromRoomCallback)
-			.then(this.fetchRemoveDeviceFromRoomSetStateCallback.bind(this))
-			.catch((error) => console.warn(error));
+		API.house.rooms.removeDevice({
+			house_id: this.state.house_id,
+			room_id: this.state.room.id,
+			device_id: device_id
+		}).then(
+			this.removeDeviceFromRoomCallback.bind(this)
+		).catch((error) => console.warn(error));
 	}
 
+	/**
+	 * Triggered when the user press on a device.
+	 * @param device
+	 */
 	onDevicePress(device) {
 		/*Alert.alert(
 			`Remove "${device['name']}" from "${this.state.room['name']}"?`,
@@ -100,6 +89,9 @@ export default class RemoveDeviceFromRoomScreen extends React.Component {
 		this.removeDeviceFromRoom(device['id']);
 	}
 
+	/**
+	 * Close confirm-action-modal.
+	 */
 	closeModal() {
 		this.setState({
 			confirm_modal_visible: false

@@ -14,11 +14,12 @@ import {
 import {AntDesign, Feather, FontAwesome, MaterialIcons, Octicons} from "@expo/vector-icons";
 import {Icon, Input} from "react-native-elements";
 import {t} from "i18n-js";
-import {API_DEFAULT_IMAGES_URL, API_DEVICE_IMAGES_URL, API_LOAD_DEVICES, API_URL} from "../../api/api_routes_v_1.0.0.0";
+import {API_URL} from "../../api/api_routes_v_1.0.0.0";
 import {FloatingAction} from "react-native-floating-action";
 import ScrollableTabView from 'react-native-scrollable-tab-view';
 import ScrollableTabBar from "react-native-scrollable-tab-view/ScrollableTabBar";
 import {DeviceBox} from "../Devices/DeviceBox";
+import {API} from "../../api/api";
 // !!! REPLACE 'ios' with 'android' !!!
 // !!! REMOVE getNode() function !!!
 
@@ -50,49 +51,26 @@ export default class HomeScreen extends React.Component {
 		);
 	}
 
-
-	getFetchRoomsArguments() {
-		return new URLSearchParams({
-			house_id: 1
-		});
-	}
-
-	fetchRooms(request_args) {
-		const API_GET_HOUSE_ROOMS = API_URL + 'rooms';
-		return fetch(`${API_GET_HOUSE_ROOMS}?${request_args}`, {method: 'GET'});
-	}
-
-	fetchRoomsCallback(response) {
-		return response.json();
-	}
-
-	fetchRoomsSetState(response) {
+	getRoomsCallback(response) {
 		this.setState({
 			rooms: response['rooms']
 		});
 	}
 
 	loadRooms() {
-		this.fetchRooms(this.getFetchRoomsArguments()).then(this.fetchRoomsCallback).then(this.fetchRoomsSetState.bind(this)).catch((error) => console.warn(error));
+		API.house.rooms.getRooms({
+			house_id: this.state.house_id
+		}).then(this.getRoomsCallback.bind(this)).catch((error) => console.warn(error));
 	}
 
-
-	fetchDevices() {
-		return fetch(API_LOAD_DEVICES, {method: 'GET'});
-	}
-
-	fetchDevicesCallback(response) {
-		return response.json()
-	}
-
-	fetchDevicesSetState(response) {
+	getDevicesCallback(response) {
 		this.setState({
 			devices: response
 		});
 	}
 
 	loadDevices() {
-		this.fetchDevices().then(this.fetchDevicesCallback).then(this.fetchDevicesSetState.bind(this)).catch((error) => console.warn(error));
+		API.devices.getDevices().then(this.getDevicesCallback.bind(this)).catch((error) => console.warn(error));
 	}
 
 
@@ -160,23 +138,6 @@ export default class HomeScreen extends React.Component {
 
 	deleteRoom() {
 		this.fetchDeleteRoom(this.getFetchDeleteRoomArguments(this.state.house_id, this.state.new_room_name)).then(this.fetchDeleteRoomCallback).then(this.fetchDeleteRoomSetStateCallback).catch((error) => console.warn(error));
-	}
-
-	renderAddDeviceInRoomButton(room) {
-		return (
-			<TouchableOpacity
-				onPress={() => {
-					this.props.navigation.navigate('add_device_in_room', {
-						house_id: this.state.house_id,
-						room_id: room.id,
-						room_name: room.name
-					});
-				}}
-				style={styles.fab}
-			>
-				<Text style={styles.fabIcon}>+</Text>
-			</TouchableOpacity>
-		)
 	}
 
 	renderAddDeviceBox() {

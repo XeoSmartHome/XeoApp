@@ -1,9 +1,7 @@
 import React from "react";
 import {FlatList, Image, Text, TouchableOpacity, View, StyleSheet, ToastAndroid} from "react-native";
-import {Icon} from "react-native-elements";
-import {t} from "i18n-js";
-import {API_ADD_DEVICE_IN_ROOM, API_DEFAULT_IMAGES_URL, API_DEVICE_IMAGES_URL} from "../../api/api_routes_v_1.0.0.0";
 import {DeviceBox} from "../Devices/DeviceBox";
+import {API} from "../../api/api";
 
 
 export default class AddDeviceInRoomScreen extends React.Component {
@@ -29,30 +27,12 @@ export default class AddDeviceInRoomScreen extends React.Component {
 		});
 	}
 
-	getFetchAddDeviceInRoomArguments(house_id, room_id, device_id) {
-		return JSON.stringify({
-			house_id: house_id,
-			room_id: room_id,
-			device_id: device_id
-		});
-	}
-
-	fetchAddDeviceInRoom(request_args) {
-		return fetch(API_ADD_DEVICE_IN_ROOM, {
-			method: 'POST',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json',
-			},
-			body: request_args
-		})
-	}
-
-	fetchAddDeviceInRoomCallback(response) {
-		return response.json();
-	}
-
-	fetchAddDeviceInRoomSetStateCallback(response) {
+	/**
+	 * Triggered when API respond to the the request.
+	 * @param response
+	 */
+	addDeviceInRoomCallback(response) {
+		console.warn(response);
 		switch (response['status']) {
 			case 200:
 				ToastAndroid.show('Device added in room', ToastAndroid.SHORT);
@@ -63,13 +43,27 @@ export default class AddDeviceInRoomScreen extends React.Component {
 		}
 	}
 
+	/**
+	 * Call API to add a device in a room.
+	 * @param {number} device_id
+	 */
 	addDeviceInRoom(device_id) {
-		this.fetchAddDeviceInRoom(this.getFetchAddDeviceInRoomArguments(this.state.house_id, this.state.room.id, device_id))
-			.then(this.fetchAddDeviceInRoomCallback)
-				.then(this.fetchAddDeviceInRoomSetStateCallback.bind(this))
-					.catch((error) => console.warn(error));
+		API.house.rooms.addDevice({
+			house_id: this.state.house_id,
+			room_id: this.state.room.id,
+			device_id: device_id
+		}).then(
+			this.addDeviceInRoomCallback.bind(this)
+		).catch(
+			(error) => console.warn(error)
+		);
+
 	}
 
+	/**
+	 * Triggered when the user press on a device.
+	 * @param device
+	 */
 	onDevicePress(device) {
 		this.addDeviceInRoom(device['id']);
 	}
@@ -111,5 +105,4 @@ export default class AddDeviceInRoomScreen extends React.Component {
 
 
 const styles = StyleSheet.create({
-	container: {},
 });

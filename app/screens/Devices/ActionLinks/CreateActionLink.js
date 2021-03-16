@@ -2,8 +2,7 @@ import React from "react";
 import I18n from 'i18n-js';
 import {ScrollView, Text, TouchableOpacity, View} from "react-native";
 import {Picker} from '@react-native-picker/picker';
-import request from "../../../api/request";
-import {API_GENERATE_ACTION_LINK} from "../../../constants";
+import {API_GENERATE_ACTION_LINK} from "../../../api/api_routes_v_1.0.0.0";
 
 const t = (key) => I18n.t('action_links_list.' + key);
 
