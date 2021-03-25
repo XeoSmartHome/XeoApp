@@ -1,8 +1,7 @@
 import React from "react";
 import I18n from "i18n-js";
 import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import {Icon} from "react-native-elements";
-import {AntDesign, Ionicons, MaterialIcons, Octicons} from "@expo/vector-icons";
+import {AntDesign, MaterialIcons, Octicons} from "@expo/vector-icons";
 
 
 const t = (key) => I18n.t(`1234.${key}`);

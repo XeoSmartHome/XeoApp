@@ -1,7 +1,6 @@
 import React from "react";
 import I18n from "i18n-js";
 import {ScrollView, StyleSheet, Text, TouchableOpacity} from "react-native";
-import {API_DELETE_ROOM, API_GET_ROOMS, API_URL} from "../../../api/api_routes_v_1.0.0.0";
 import ToastAndroid from "react-native/Libraries/Components/ToastAndroid/ToastAndroid";
 import {API} from "../../../api/api";
 

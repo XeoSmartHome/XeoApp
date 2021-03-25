@@ -122,6 +122,12 @@ export const ROUTES = {
             method: GET
         }
     },
+    HOUSE: {
+        UPDATE_ROOMS_ORDER: {
+            path: 'update_rooms_order',
+            method: POST
+        }
+    },
     ROOMS: {
         GET_ROOMS: {
             path: 'rooms',

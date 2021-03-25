@@ -86,11 +86,19 @@ export const API = {
         registerDevice: (params) => apiRequest(ROUTES.DEVICES.REGISTER_DEVICE, params),
 
         /**
-         *
+         * Removes a device from user's account.
          * @param {number} params.device_id
          * @return {*}
          */
         deleteDevice: (params) => apiRequest(ROUTES.DEVICES.DELETE_DEVICE, params),
+
+        /**
+         * Updates a device's name.
+         * @param {number} params.id
+         * @param {string} params.name
+         * @return {*}
+         */
+        updateDeviceName: (params) => apiRequest(ROUTES.DEVICES.UPDATE_DEVICE_NAME, params),
     },
 
     sensors: {
@@ -98,6 +106,14 @@ export const API = {
     },
 
     house: {
+        /**
+         *
+         * @param {number} params.house_id
+         * @param {number[]} params.order
+         * @return {*}
+         */
+        updateRoomsOrder: (params) => apiRequest(ROUTES.HOUSE.UPDATE_ROOMS_ORDER, params),
+
         rooms: {
             /**
              *

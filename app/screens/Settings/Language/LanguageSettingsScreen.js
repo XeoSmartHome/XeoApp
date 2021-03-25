@@ -43,7 +43,7 @@ export default class LanguageSettingsScreen extends Component{
 	}
 
 	render() {
-		const {mode, theme, setTheme} = this.props.screenProps;
+		const {theme} = this.props.screenProps;
 		return(
 			<ScrollView
 				style={[styles.page, {

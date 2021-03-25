@@ -12,8 +12,7 @@ import {
 } from "react-native";
 import {NavigationActions, StackActions} from 'react-navigation';
 import I18n from 'i18n-js'
-import {API_GET_USER_PROFILE, API_LOGOUT} from "../../../api/api_routes_v_1.0.0.0";
-import {apiGetRequest, apiPostRequest} from "../../../api/requests";
+import {API} from "../../../api/api";
 
 
 const t = (key) => I18n.t('account_settings.' + key);
@@ -34,37 +33,44 @@ export default class AccountSettingsScreen extends Component {
 		this.loadUserProfile();
 	}
 
-	loadUserProfile() {
-		apiGetRequest(API_GET_USER_PROFILE).then((response) => {
-			this.setState({
-				first_name: response.first_name,
-				last_name: response.last_name,
-				email: response.email
-			});
+	loadUserProfileCallback(response) {
+		this.setState({
+			first_name: response.first_name,
+			last_name: response.last_name,
+			email: response.email
 		});
 	}
 
+	loadUserProfile() {
+		API.account.getUserProfile().then(
+			this.loadUserProfileCallback.bind(this)
+		).catch(
+			(error) => {
+				console.warn(error);
+			}
+		);
+	}
+
+	signOutCallback(response) {
+		if (response.status === 200) {
+			const resetAction = StackActions.reset({
+				index: 0,
+				actions: [NavigationActions.navigate({routeName: 'login'})],
+			});
+			this.props.navigation.dispatch(resetAction);
+		}
+	}
 
 	signOut() {
-		apiPostRequest(API_LOGOUT).then((response) => {
-			if (response.status === 200) {
-				const resetAction = StackActions.reset({
-					index: 0,
-					actions: [NavigationActions.navigate({routeName: 'login'})],
-				});
-				this.props.navigation.dispatch(resetAction);
-			}
-		}).catch((error) => {
+		API.account.logout().then(
+			this.signOutCallback.bind(this)
+		).catch((error) => {
 			console.warn(error);
 		});
 	}
 
 	onSignOutButtonPress() {
 		this.signOut();
-	}
-
-	onSwitchAccountButtonPress() {
-		this.props.navigation.navigate('');
 	}
 
 	render() {
@@ -121,23 +127,6 @@ export default class AccountSettingsScreen extends Component {
 							{t('sign_out')}
 						</Text>
 					</TouchableOpacity>
-
-					{/*<TouchableOpacity
-						style={{
-							marginVertical: 8
-						}}
-						onPress={() => this.onSwitchAccountButtonPress()}
-					>
-						<Text
-							style={{
-								color: theme.textColor,
-								fontSize: 20
-							}}
-						>
-							{t('switch_account')}
-						</Text>
-					</TouchableOpacity>*/}
-
 				</View>
 			</ScrollView>
 		)

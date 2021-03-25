@@ -1,9 +1,10 @@
 import React from "react";
 import {API_GET_ROOMS, API_UPDATE_ROOMS_ORDER, API_URL} from "../../../api/api_routes_v_1.0.0.0";
-import {ScrollView, View, StyleSheet, Text, TouchableOpacity, BackHandler, Alert} from "react-native";
+import {View, StyleSheet, Text, TouchableOpacity, BackHandler, Alert} from "react-native";
 import DraggableFlatList from "react-native-draggable-flatlist";
 import ToastAndroid from "react-native/Libraries/Components/ToastAndroid/ToastAndroid";
 import {apiPostRequest} from "../../../api/requests";
+import {API} from "../../../api/api";
 
 
 export default class RoomsOrderScreen extends React.Component {
@@ -50,52 +51,48 @@ export default class RoomsOrderScreen extends React.Component {
 		return true;
 	}
 
-
-	getFetchRoomsArguments() {
-		return new URLSearchParams({
-			house_id: 1
-		});
-	}
-
-	fetchRooms(request_args) {
-		return fetch(`${API_GET_ROOMS}?${request_args}`, {method: 'GET'});
-	}
-
-	fetchRoomsCallback(response) {
-		return response.json();
-	}
-
-	fetchRoomsSetState(response) {
+	loadRoomsCallback(response) {
 		this.setState({
 			rooms: response['rooms']
 		});
 	}
 
 	loadRooms() {
-		this.fetchRooms(this.getFetchRoomsArguments()).then(this.fetchRoomsCallback).then(this.fetchRoomsSetState.bind(this)).catch((error) => console.warn(error));
+		API.house.rooms.getRooms({
+			house_id: -1
+		}).then(
+			this.loadRoomsCallback.bind(this)
+		).catch(
+			(error) => console.warn(error)
+		);
 	}
 
-	apiUpdateRoomsOrder() {
-		apiPostRequest(API_UPDATE_ROOMS_ORDER, {
-			house_id: 1,
+	updateRoomsOrderCallback(response) {
+		switch (response['status']) {
+			case 200:
+				ToastAndroid.show('Room order updated', ToastAndroid.SHORT);
+				this.props.navigation.goBack();
+				break;
+			case 400:
+				console.warn(response);
+				break;
+		}
+	}
+
+	UpdateRoomsOrder() {
+		API.house.updateRoomsOrder({
+			house_id: -1,
 			order: this.state.rooms.map((room) => room.id)
-		}).then( (response) => {
-			switch (response['status']) {
-				case 200:
-					ToastAndroid.show('Room order updated', ToastAndroid.SHORT);
-					this.props.navigation.goBack();
-					break;
-				case 400:
-					console.warn(response);
-					break;
-			}
-		}).catch( (error) => console.warn(error));
+		}).then(
+			this.updateRoomsOrderCallback.bind(this)
+		).catch(
+			(error) => console.warn(error)
+		);
 	}
 
 
 	onSaveButtonPress() {
-		//this.saveRoomsOrder();
-		this.apiUpdateRoomsOrder();
+		this.UpdateRoomsOrder();
 		this.setState({
 			changed: false
 		});
