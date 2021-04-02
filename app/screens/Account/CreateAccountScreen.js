@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import I18n from "i18n-js";
 import CheckBox from "@react-native-community/checkbox";
-import {API_CREATE_ACCOUNT} from "../../api/api_routes_v_1.0.0.0";
 import {API} from "../../api/api";
 
 

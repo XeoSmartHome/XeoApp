@@ -1,12 +1,8 @@
 import React from "react";
 import {Alert, BackHandler, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import {
-	API_DEFAULT_IMAGES_URL,
-	API_DEVICE_IMAGES_URL,
-	API_REMOVE_DEVICE_FROM_ROOM, API_UPDATE_DEVICES_ORDER_IN_ROOM
-} from "../../api/api_routes_v_1.0.0.0";
 import DraggableFlatList from "react-native-draggable-flatlist";
 import ToastAndroid from "react-native/Libraries/Components/ToastAndroid/ToastAndroid";
+import {API} from "../../api/api";
 
 
 export default class OrderDevicesInRoom extends React.Component {
@@ -68,7 +64,7 @@ export default class OrderDevicesInRoom extends React.Component {
 	}
 
 	onSaveButtonPress() {
-		this.saveDevicesOrder();
+		this.updateDevicesOrder();
 	}
 
 	renderNavigationRightHeader() {
@@ -88,30 +84,7 @@ export default class OrderDevicesInRoom extends React.Component {
 		)
 	}
 
-	getFetchUpdateDevicesOrderArguments() {
-		return JSON.stringify({
-			house_id: this.state.house_id,
-			room_id: this.state.room['id'],
-			order: this.state.devices.map((device) => device['id'])
-		});
-	}
-
-	fetchUpdateDevicesOrder(request_args) {
-		return fetch(API_UPDATE_DEVICES_ORDER_IN_ROOM, {
-			method: 'POST',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json',
-			},
-			body: request_args
-		})
-	}
-
-	fetchUpdateDevicesOrderCallback(response) {
-		return response.json();
-	}
-
-	fetchUpdateDevicesOrderSetStateCallback(response) {
+	updateDevicesOrderCallback(response) {
 		switch (response['status']) {
 			case 200:
 				ToastAndroid.show('Device order updated', ToastAndroid.SHORT);
@@ -122,11 +95,18 @@ export default class OrderDevicesInRoom extends React.Component {
 		}
 	}
 
-	saveDevicesOrder() {
-		this.fetchUpdateDevicesOrder(this.getFetchUpdateDevicesOrderArguments())
-			.then(this.fetchUpdateDevicesOrderCallback)
-			.then(this.fetchUpdateDevicesOrderSetStateCallback.bind(this))
-			.catch((error) => console.warn(error));
+	updateDevicesOrder() {
+		API.house.rooms.updateDevicesOrder({
+			house_id: this.state.house_id,
+			room_id: this.state.room.id,
+			order: this.state.devices.map((device) => device['id'])
+		}).then(
+			this.updateDevicesOrderCallback.bind(this)
+		).catch(
+			(error) => {
+				console.warn(error);
+			}
+		)
 	}
 
 	renderDevice({item, index, drag, isActive}) {

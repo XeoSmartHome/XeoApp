@@ -13,8 +13,7 @@ import {
 } from "react-native";
 import {BarCodeScanner} from 'expo-barcode-scanner';
 import I18N from 'i18n-js'
-import {API_ADD_DEVICE} from "../../api/api_routes_v_1.0.0.0";
-import {apiPostRequest} from "../../api/requests";
+import {API} from "../../api/api";
 
 
 const t = (key) => I18N.t('add_device.' + key);
@@ -30,27 +29,33 @@ export default class AddDeviceScreen extends Component {
 		};
 	}
 
+	registerDeviceCallback(response) {
+		if (response.status === 200) {
+			this.props.navigation.goBack();
+		}
+		if (response.status === 400) {
+			switch (response.error) {
+				case 'ValueError':
+					ToastAndroid.show("value error", ToastAndroid.LONG);
+					break;
+				case 'DeviceTypeNotFound':
+					ToastAndroid.show("Serial invalid", ToastAndroid.LONG);
+					break;
+			}
+		}
+	}
+
 	registerDevice() {
-		apiPostRequest(API_ADD_DEVICE, {
+		API.devices.registerDevice({
 			name: this.state.new_device_name,
-			serial: this.state.new_device_serial,
-		}).then((response) => {
-			if (response.status === 200) {
-				this.props.navigation.goBack();
+			serial: this.state.new_device_serial
+		}).then(
+			this.registerDeviceCallback.bind(this)
+		).catch(
+			(error) => {
+				console.warn(error);
 			}
-			if (response.status === 400) {
-				switch (response.error) {
-					case 'ValueError':
-						ToastAndroid.show("value error", ToastAndroid.LONG);
-						break;
-					case 'DeviceTypeNotFound':
-						ToastAndroid.show("Serial invalid", ToastAndroid.LONG);
-						break;
-				}
-			}
-		}).catch((error) => {
-			console.warn(error);
-		});
+		);
 	}
 
 	onAddDevicePress() {

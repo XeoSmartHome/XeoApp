@@ -3,8 +3,7 @@ import {createBottomTabNavigator} from "react-navigation-tabs";
 import SensorsDashboardScreenV2 from "../screens/Sensors/SensorsDashboardScreenV2";
 import HomeScreen from "../screens/Home/HomeScreen";
 import {Icon} from "react-native-elements";
-import {MaterialCommunityIcons, Octicons} from "@expo/vector-icons";
-import DashboardScreen from "../deprecated/DashboardScreen/DashboardScreen";
+import {Octicons} from "@expo/vector-icons";
 import I18n from 'i18n-js';
 
 

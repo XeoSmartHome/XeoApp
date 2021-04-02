@@ -2,7 +2,6 @@ import React from "react";
 import I18n from 'i18n-js';
 import {ScrollView, Text, TouchableOpacity, View} from "react-native";
 import {Picker} from '@react-native-picker/picker';
-import {API_GENERATE_ACTION_LINK} from "../../../api/api_routes_v_1.0.0.0";
 import {API} from "../../../api/api";
 
 const t = (key) => I18n.t('action_links_list.' + key);
@@ -19,24 +18,29 @@ export default class CreateActionLink extends React.Component {
 		};
 	}
 
-	loadDevice(){
-		fetch('https://dashboard.xeosmarthome.com/api/device/' + this.props.navigation.state.params.device_id,{
-				method: 'GET'
-			}
-		).then(
-			(response) => response.json()
-		).then((response) => {
-			this.setState({
-				device_name: response['name'],
-				device_actions_types: response['actions_types'],
-			})
-		}).catch((error) => {
-			alert(error);
+	componentDidMount() {
+		this.getDevice();
+	}
+
+	getDeviceCallback(response) {
+		// console.warn(response);
+		const {device} = response;
+		this.setState({
+			device_actions_types: device['actions_types'],
+			device_name: device['name']
 		});
 	}
 
-	componentDidMount() {
-		this.loadDevice();
+	getDevice() {
+		API.devices.getDevice({
+			id: this.props.navigation.state.params.device_id
+		}).then(
+			this.getDeviceCallback.bind(this)
+		).catch(
+			(error) => {
+				console.warn(error);
+			}
+		)
 	}
 
 	renderActionTypePicker(){

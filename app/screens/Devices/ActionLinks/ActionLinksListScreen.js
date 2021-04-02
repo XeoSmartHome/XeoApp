@@ -1,7 +1,6 @@
 import React from "react";
 import I18n from 'i18n-js';
 import {ScrollView, Text, TouchableOpacity, View, Alert, ToastAndroid, Clipboard} from "react-native";
-import {API_DELETE_ACTION_LINK, API_GET_ACTION_LINKS} from "../../../api/api_routes_v_1.0.0.0";
 import {API} from "../../../api/api";
 
 const t = (key) => I18n.t('action_links_list.' + key);

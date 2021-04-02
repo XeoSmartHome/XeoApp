@@ -1,7 +1,6 @@
 import React from "react";
 import I18n from "i18n-js";
 import {Picker, ScrollView, Slider, StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import {API_GET_DEVICE_TIMED_ACTION, API_UPDATE_DEVICE_TIMED_ACTION} from "../../../api/api_routes_v_1.0.0.0";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import {Icon} from "react-native-elements";
 import Cron from "../../utils/new_cron_class";

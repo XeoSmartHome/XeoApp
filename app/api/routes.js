@@ -35,7 +35,7 @@ export const ROUTES = {
         },
         IS_AUTHENTICATED: {
             path: 'is_authenticated',
-            method: POST
+            method: GET
         }
     },
     DEVICES: {

@@ -1,6 +1,5 @@
 import React from "react";
 import {ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View} from "react-native";
-import {API_DELETE_TIMED_ACTIONS_MULTIPLE, API_GET_DEVICE_TIMED_ACTIONS} from "../../../api/api_routes_v_1.0.0.0";
 import I18n from "i18n-js";
 import {RadioButton} from "react-native-paper";
 import Cron from "../../utils/new_cron_class";

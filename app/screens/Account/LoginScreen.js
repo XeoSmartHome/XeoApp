@@ -14,12 +14,7 @@ import {Icon} from "react-native-elements";
 import I18n from 'i18n-js';
 import * as Facebook from 'expo-facebook';
 import AsyncStorage from "@react-native-community/async-storage";
-import {
-	API_IS_AUTHENTICATED,
-	API_LOGIN_URL,
-	API_LOGIN_WITH_FACEBOOK,
-	API_LOGIN_WITH_GOOGLE
-} from "../../api/api_routes_v_1.0.0.0";
+
 import {
 	FACEBOOK_APP_ID,
 	GOOGLE_OAUTH_CLIENT_ID_EXPO,
@@ -49,31 +44,32 @@ export default class LoginScreen extends Component {
 		this.load_session();
 	}
 
-	load_session() {
-		/*AsyncStorage.getItem('session_cookie').then(value => {
-			//if (value !== '')
-				//this.props.navigation.replace('main', {});
-		});*/
-		fetch(API_IS_AUTHENTICATED).then(
-			(response) => response.json()
-		).then(
-			(response) => {
-				if (response['authenticated'] === true) {
-					AsyncStorage.getItem('lock_app_with_pin_enable').then((lock_app_with_pin_enable) => {
-						if (lock_app_with_pin_enable === 'true') {
-							this.props.navigation.replace('pin', {next: 'main', params: {}});
-						} else {
-							this.props.navigation.replace('main', {});
-						}
-					});
+	userIsAuthenticatedCallback(response) {
+		if (response['authenticated'] === true) {
+			AsyncStorage.getItem('lock_app_with_pin_enable').then((lock_app_with_pin_enable) => {
+				if (lock_app_with_pin_enable === 'true') {
+					this.props.navigation.replace('pin', {next: 'main', params: {}});
 				} else {
-					this.setState({loading: false})
+					this.props.navigation.replace('main', {});
 				}
-			}
-		).catch((error) => {
-			alert(error);
+			});
+		} else {
 			this.setState({loading: false})
-		})
+		}
+	}
+
+	userIsAuthenticated() {
+		API.account.isAuthenticated().then(
+			this.userIsAuthenticatedCallback.bind(this)
+		).catch(
+			(error) => {
+				console.warn(error);
+			}
+		)
+	}
+
+	load_session() {
+		this.userIsAuthenticated();
 	}
 
 	show_error_message(message) {

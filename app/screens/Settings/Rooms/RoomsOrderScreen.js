@@ -1,9 +1,7 @@
 import React from "react";
-import {API_GET_ROOMS, API_UPDATE_ROOMS_ORDER, API_URL} from "../../../api/api_routes_v_1.0.0.0";
 import {View, StyleSheet, Text, TouchableOpacity, BackHandler, Alert} from "react-native";
 import DraggableFlatList from "react-native-draggable-flatlist";
 import ToastAndroid from "react-native/Libraries/Components/ToastAndroid/ToastAndroid";
-import {apiPostRequest} from "../../../api/requests";
 import {API} from "../../../api/api";
 
 

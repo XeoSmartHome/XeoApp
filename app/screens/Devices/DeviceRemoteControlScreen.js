@@ -11,9 +11,7 @@ import {
     View
 } from 'react-native';
 import {MaterialCommunityIcons} from '@expo/vector-icons';
-import {API_CONTROL_DEVICE, API_LOAD_DEVICE} from "../../api/api_routes_v_1.0.0.0";
 import io from "socket.io-client";
-import {apiPostRequest} from "../../api/requests";
 import {Picker} from "@react-native-picker/picker";
 import {API} from "../../api/api";
 
@@ -46,7 +44,7 @@ const actions_style = StyleSheet.create({
     touchable_opacity: {
         width: '70%',
         alignSelf: "center",
-        marginVertical: 10,
+        marginTop: 20,
         padding: 6,
         borderRadius: 8,
     },
