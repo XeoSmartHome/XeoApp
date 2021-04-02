@@ -4,6 +4,7 @@ import {API_DELETE_TIMED_ACTIONS_MULTIPLE, API_GET_DEVICE_TIMED_ACTIONS} from ".
 import I18n from "i18n-js";
 import {RadioButton} from "react-native-paper";
 import Cron from "../../utils/new_cron_class";
+import {API} from "../../../api/api";
 
 
 const t = (key) => I18n.t('device_settings.' + key);
@@ -103,26 +104,24 @@ export default class TimedActionsListScreen extends React.Component {
 		return actions.sort((action_a, action_b) => this.getTimeFromCron(action_a.cron) > this.getTimeFromCron(action_b.cron))
 	}
 
-	loadTimedActions() {
-		let request_args = new URLSearchParams({
-			device_id: this.props.navigation.state.params.device_id
-		}).toString();
-
-		fetch(`${API_GET_DEVICE_TIMED_ACTIONS}?${request_args}`, {
-				method: 'GET'
-			}
-		).then(
-			(response) => response.json()
-		).then((response) => {
-			let timed_actions = response['timed_actions'];
-
-			this.setState({
-				timed_actions: this.sortActionsByTime(timed_actions),
-				selected_timed_actions: timed_actions.map(() => false)
-			});
-		}).catch((error) => {
-			alert(error);
+	loadTimedActionsCallback(response){
+		let timed_actions = response['timed_actions'];
+		this.setState({
+			timed_actions: this.sortActionsByTime(timed_actions),
+			selected_timed_actions: timed_actions.map(() => false)
 		});
+	}
+
+	loadTimedActions() {
+		API.devices.timed_actions.getTimedActions({
+			device_id: this.props.navigation.state.params.device_id
+		}).then(
+			this.loadTimedActionsCallback.bind(this)
+		).catch(
+			(error) => {
+				alert(error);
+			}
+		);
 	}
 
 	/*onHardwareBackPress() {
@@ -145,6 +144,35 @@ export default class TimedActionsListScreen extends React.Component {
 		});
 	}
 
+	deleteTimedActionsCallback(response) {
+		switch (response.status) {
+			case 200:
+				this.loadTimedActions();
+				this.setState({
+					multi_select_active: false
+				});
+				this.props.navigation.setParams({
+					multi_select_active: false
+				});
+				break;
+			case 400:
+				break;
+		}
+	}
+
+	deleteTimedActions(actions_ids) {
+		API.devices.timed_actions.deleteTimedActions({
+			device_id: this.props.navigation.state.params.device_id,
+			actions_ids: actions_ids
+		}).then(
+			this.deleteTimedActionsCallback.bind(this)
+		).catch(
+			(error) => {
+				console.warn(error);
+			}
+		);
+	}
+
 	onDeleteActionsPress() {
 		let actions_ids = [];
 		this.state.selected_timed_actions.forEach(
@@ -154,40 +182,7 @@ export default class TimedActionsListScreen extends React.Component {
 				}
 			});
 
-		fetch(API_DELETE_TIMED_ACTIONS_MULTIPLE, {
-			method: 'POST',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				device_id: this.props.navigation.state.params.device_id,
-				actions_ids: actions_ids
-			}),
-		}).then(
-			(response) => response.json()
-		).then(
-			(response) => {
-				switch (response.status) {
-					case 200:
-						this.loadTimedActions();
-						this.setState({
-							multi_select_active: false
-						});
-						this.props.navigation.setParams({
-							multi_select_active: false
-						});
-						break;
-					case 400:
-						break;
-				}
-			}
-		).catch(
-			(error) => {
-				console.warn(error);
-			}
-		)
-
+		this.deleteTimedActions(actions_ids);
 	}
 
 	onCancelDeletePress() {

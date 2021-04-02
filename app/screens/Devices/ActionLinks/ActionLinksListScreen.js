@@ -2,6 +2,7 @@ import React from "react";
 import I18n from 'i18n-js';
 import {ScrollView, Text, TouchableOpacity, View, Alert, ToastAndroid, Clipboard} from "react-native";
 import {API_DELETE_ACTION_LINK, API_GET_ACTION_LINKS} from "../../../api/api_routes_v_1.0.0.0";
+import {API} from "../../../api/api";
 
 const t = (key) => I18n.t('action_links_list.' + key);
 
@@ -24,46 +25,40 @@ export default class ActionLinksListScreen extends React.Component {
 		this.loadActionLinks();
 	}
 
+	loadActionLinksCallback(response) {
+		this.setState({
+			action_links: response['actions_links']
+		});
+	}
+
 	loadActionLinks() {
-		fetch(API_GET_ACTION_LINKS + this.props.navigation.state.params.device_id, {
-			method: 'GET'
+		API.devices.action_links.getActionsLinks({
+			device_id: this.props.navigation.state.params.device_id
 		}).then(
-			(response) => response.json()
-		).then(
-			(response) => {
-				this.setState({
-					action_links: response
-				});
-			}
+			this.loadActionLinksCallback.bind(this)
 		).catch(
 			(error) => {
 				console.warn(error);
-				alert(error);
 			}
 		)
 	}
 
+	deleteActionLinkCallback(response) {
+		if(response.status === 200){
+			this.loadActionLinks();
+		}
+	}
+
 	deleteActionLink(action_link_id) {
-		fetch(API_DELETE_ACTION_LINK, {
-			method: 'POST',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				device_id: this.props.navigation.state.params.device_id,
-				action_link_id: action_link_id
-			})
+		API.devices.action_links.deleteActionLink({
+			device_id: this.props.navigation.state.params.device_id,
+			action_link_id: action_link_id
 		}).then(
-			(response) => response.json()
-		).then(
-			(response) => {
-				if(response.status === 200){
-					this.loadActionLinks();
-				}
-			}
+			this.deleteActionLinkCallback.bind(this)
 		).catch(
-			(error) => console.warn(error)
+			(error) => {
+				console.warn(error);
+			}
 		);
 	}
 

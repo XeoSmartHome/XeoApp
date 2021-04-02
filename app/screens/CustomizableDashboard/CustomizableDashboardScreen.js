@@ -1,7 +1,6 @@
 import React from "react";
 import I18n from 'i18n-js';
 import {ScrollView, Text, TouchableOpacity, View} from "react-native";
-import {API_LOAD_DEVICES} from "../../constants";
 
 
 const t = (key) => I18n.t('customizable_dashboard.' + key);
@@ -53,16 +52,6 @@ export default class CustomizableDashboardScreen extends React.Component {
 		).catch(
 			(error) => alert(error)
 		)
-		/*fetch(API_LOAD_DEVICES, {
-				method: 'GET'
-		}).then(
-			(response) => response.json()
-		).then((response) => {
-			//console.warn(response);
-			//this.setState({ devices: response})
-		}).catch((error) => {
-			alert(error)
-		})*/
 	}
 
 	renderSection(section, index){

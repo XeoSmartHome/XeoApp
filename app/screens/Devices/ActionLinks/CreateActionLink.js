@@ -3,6 +3,7 @@ import I18n from 'i18n-js';
 import {ScrollView, Text, TouchableOpacity, View} from "react-native";
 import {Picker} from '@react-native-picker/picker';
 import {API_GENERATE_ACTION_LINK} from "../../../api/api_routes_v_1.0.0.0";
+import {API} from "../../../api/api";
 
 const t = (key) => I18n.t('action_links_list.' + key);
 
@@ -115,30 +116,27 @@ export default class CreateActionLink extends React.Component {
 		)
 	}
 
-	onGenerateLinkButtonPress(){
-		fetch(API_GENERATE_ACTION_LINK, {
-			method: 'POST',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				device_id: this.props.navigation.state.params.device_id,
-				action_type_id: this.state.device_actions_types.find((x) => x['id'] === this.state.selected_action_type)['id'],
-				parameters: this.state.parameters
-			})
+	createActionLinkCallback(response) {
+		if(response.status === 200)
+			this.props.navigation.goBack();
+	}
+
+	createActionLink() {
+		API.devices.action_links.createActionLink({
+			device_id: this.props.navigation.state.params.device_id,
+			action_type_id: this.state.device_actions_types.find((x) => x['id'] === this.state.selected_action_type)['id'],
+			parameters: this.state.parameters
 		}).then(
-			(response) => response.json()
-		).then(
-			(response) => {
-				if(response.status === 200)
-					this.props.navigation.goBack();
-			}
+			this.createActionLinkCallback.bind(this)
 		).catch(
 			(error) => {
 				alert(error);
 			}
 		);
+	}
+
+	onGenerateLinkButtonPress(){
+		this.createActionLink();
 	}
 
 	render() {

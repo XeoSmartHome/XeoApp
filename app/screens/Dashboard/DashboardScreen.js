@@ -7,8 +7,6 @@ import {
 	FlatList
 } from "react-native";
 import Swiper from "react-native-swiper";
-import DraggableFlatList from "react-native-draggable-flatlist";
-import TabNavigationView from "react-navigation-tabs/src/navigators/createBottomTabNavigator";
 
 
 const t = (key) => I18n.t(`dashboard.${key}`);

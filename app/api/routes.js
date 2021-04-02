@@ -59,7 +59,7 @@ export const ROUTES = {
             path: 'device',
             method: GET
         },
-        CONTROL_DEVICE: {
+        CALL_ACTION: {
             path: 'control_device',
             method: POST
         },
@@ -71,7 +71,7 @@ export const ROUTES = {
             url: 'https://xeosmarthome.com/static/default_device_images/',
             method: GET
         },
-        UPDATE_IMAGE: {
+        UPDATE_DEVICE_IMAGE: {
             path: 'update_device_image',
             method: POST
         },
@@ -102,15 +102,15 @@ export const ROUTES = {
             }
         },
         ACTION_LINKS: {
-            GET_LINKS: {
-                path: 'action_link/device/',
+            GET_ACTIONS_LINKS: {
+                path: 'actions_links',
                 method: GET
             },
-            CREATE_LINK: {
+            CREATE_ACTION_LINK: {
                 path: 'action_link/generate',
                 method: POST
             },
-            DELETE_LINK: {
+            DELETE_ACTION_LINK: {
                 path: 'action_link/delete',
                 method: POST
             }

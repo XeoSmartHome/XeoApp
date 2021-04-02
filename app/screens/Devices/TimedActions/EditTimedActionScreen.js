@@ -5,6 +5,7 @@ import {API_GET_DEVICE_TIMED_ACTION, API_UPDATE_DEVICE_TIMED_ACTION} from "../..
 import DateTimePicker from "@react-native-community/datetimepicker";
 import {Icon} from "react-native-elements";
 import Cron from "../../utils/new_cron_class";
+import {API} from "../../../api/api";
 
 const t = (key) => I18n.t('edit_timed_action.' + key);
 
@@ -54,7 +55,7 @@ export default class EditTimedActionScreen extends React.Component {
 					marginRight: 25,
 				}}
 				onPress={() => {
-					this.saveTimedActionUpdates();
+					this.updateTimedAction();
 					this.props.navigation.goBack();
 				}}
 			>
@@ -71,42 +72,44 @@ export default class EditTimedActionScreen extends React.Component {
 		)
 	}
 
+	loadTimedActionCallback(response) {
+		const timed_action = response['timed_action'];
+
+		const cron = new Cron();
+		cron.parseCronExpression(timed_action['cron'])
+
+		const date = new Date();
+		date.setHours(cron.getHours());
+		date.setMinutes(cron.getMinutes());
+
+		this.setState({
+			action_id: timed_action['id'],
+			action_name: timed_action['name'],
+			action_active: timed_action['active'],
+			parameters: timed_action['parameters'],
+			date: date,
+			week_days: cron.getDaysOfWeek(),
+		});
+	}
+
 	loadTimedAction() {
-		let request_args = new URLSearchParams({
+		API.devices.timed_actions.getTimedAction({
 			device_id: this.props.navigation.state.params.device_id,
 			action_id: this.props.navigation.state.params.action_id
-		}).toString();
-
-		fetch(API_GET_DEVICE_TIMED_ACTION + '?' + request_args).then(
-			(response) => response.json()
-		).then(
-			(response) => {
-				const timed_action = response['timed_action'];
-
-				const cron = new Cron();
-				cron.parseCronExpression(timed_action['cron'])
-
-				const date = new Date();
-				date.setHours(cron.getHours());
-				date.setMinutes(cron.getMinutes());
-
-				this.setState({
-					action_id: timed_action['id'],
-					action_name: timed_action['name'],
-					action_active: timed_action['active'],
-					parameters: timed_action['parameters'],
-					date: date,
-					week_days: cron.getDaysOfWeek(),
-				});
-			}
+		}).then(
+			this.loadTimedActionCallback.bind(this)
 		).catch(
 			(error) => {
 				console.warn(error);
 			}
-		)
+		);
 	}
 
-	saveTimedActionUpdates() {
+	updateTimedActionCallback(response) {
+		this.props.navigation.goBack();
+	}
+
+	updateTimedAction() {
 		let parameters = this.state.parameters.map(
 			(parameter) => ({
 				name: parameter.name,
@@ -119,23 +122,14 @@ export default class EditTimedActionScreen extends React.Component {
 		cron.setHours(this.state.date.getHours());
 		cron.setDaysOfWeek(this.state.week_days);
 
-		fetch(API_UPDATE_DEVICE_TIMED_ACTION, {
-			method: 'POST',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				device_id: this.props.navigation.state.params.device_id,
-				action_id: this.state.action_id,
-				cron: cron.getCronExpression(),
-				parameters: parameters
-			})
+		API.devices.timed_actions.updateTimedAction({
+			device_id: this.props.navigation.state.params.device_id,
+			action_id: this.state.action_id,
+			cron: cron.getCronExpression(),
+			parameters: parameters
 		}).then(
-			(response) => response.json()
-		).then((response) => {
-			this.props.navigation.goBack()
-		}).catch((error) => {
+			this.updateTimedActionCallback.bind(this)
+		).catch((error) => {
 			alert(error)
 		});
 	}

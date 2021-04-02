@@ -87,10 +87,10 @@ export const API = {
 
         /**
          * Removes a device from user's account.
-         * @param {number} params.device_id
+         * @param {number} params.id
          * @return {*}
          */
-        deleteDevice: (params) => apiRequest(ROUTES.DEVICES.DELETE_DEVICE, params),
+        removeDevice: (params) => apiRequest(ROUTES.DEVICES.DELETE_DEVICE, params),
 
         /**
          * Updates a device's name.
@@ -99,6 +99,91 @@ export const API = {
          * @return {*}
          */
         updateDeviceName: (params) => apiRequest(ROUTES.DEVICES.UPDATE_DEVICE_NAME, params),
+
+        /**
+         * Updates a device's image.
+         * @param {number} params.id
+         * @param params.image
+         */
+        updateDeviceImage: (params) => apiRequest(ROUTES.DEVICES.UPDATE_DEVICE_IMAGE, params),
+
+        /**
+         *
+         * @param {number} params.device_id
+         * @param {number} params.action_type_id
+         * @param {[{
+         *     parameter_type_id: number,
+         *     value: number
+         * }]} params.parameters
+         * @return {*}
+         */
+        callAction: (params) => apiRequest(ROUTES.DEVICES.CALL_ACTION, params),
+
+        timed_actions: {
+
+            /**
+             *
+             * @param {number} params.device_id
+             * @return {*}
+             */
+            getTimedActions: (params) => apiRequest(ROUTES.DEVICES.TIMED_ACTIONS.GET_ACTIONS, params),
+
+            /**
+             *
+             * @param {number} params.device_id
+             * @param {number} params.action_id
+             * @return {*}
+             */
+            getTimedAction: (params) => apiRequest(ROUTES.DEVICES.TIMED_ACTIONS.GET_ACTION, params),
+
+            /**
+             *
+             * @param {number} params.device_id
+             * @param {number} params.action_id
+             * @param {string} params.cron
+             * @param {[{
+             *     name: string,
+             *     value: number
+             * }]} params.parameters
+             * @return {*}
+             */
+            updateTimedAction: (params) => apiRequest(ROUTES.DEVICES.TIMED_ACTIONS.UPDATE_ACTION, params),
+
+            /**
+             *
+             * @param {number} params.device_id
+             * @param {[number]} params
+             *
+             * @return {*}
+             */
+            deleteTimedActions: (params) => apiRequest(ROUTES.DEVICES.TIMED_ACTIONS.DELETE_MULTIPLE, params)
+        },
+
+        action_links: {
+            /**
+             *
+             * @param {number} params.device_id
+             * @return {*}
+             */
+            getActionsLinks: (params) => apiRequest(ROUTES.DEVICES.ACTION_LINKS.GET_ACTIONS_LINKS, params),
+
+            /**
+             *
+             * @param {number} params.device_id
+             * @param {number} params.action_type_id
+             * @param {[{id: number}]} params.parameters
+             * @return {*}
+             */
+            createActionLink: (params) => apiRequest(ROUTES.DEVICES.ACTION_LINKS.CREATE_ACTION_LINK, params),
+
+            /**
+             * 
+             * @param {number} params.device_id
+             * @param {number} params.action_link_id
+             * @return {*}
+             */
+            deleteActionLink: (params) => apiRequest(ROUTES.DEVICES.ACTION_LINKS.GET_ACTIONS_LINKS, params),
+        }
     },
 
     sensors: {
