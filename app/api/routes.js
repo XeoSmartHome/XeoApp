@@ -1,4 +1,3 @@
-import {API_URL} from "./api_routes_v_1.0.0.0";
 
 const POST = 'POST';
 const GET = 'GET';
