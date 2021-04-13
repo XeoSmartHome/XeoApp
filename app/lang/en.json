@@ -39,6 +39,14 @@
             "title": "Terms and conditions"
         }
     },
+    "home": {
+        "all_devices": "All devices",
+        "settings": "Settings",
+        "register_device": "Add device",
+        "add_device": "Add device in room",
+        "remove_device": "Remove device from room",
+        "order_devices": "Order devices"
+    },
     "settings": {
         "account": "Account",
         "notifications": "Notifications",
@@ -104,6 +112,14 @@
             "title": "Language"
         }
     },
+    "notifications_settings": {
+        "notifications": "Notifications",
+        "sound": "Sound",
+        "vibration": "Vibration",
+        "navigation": {
+            "title": "Notifications"
+        }
+    },
     "theme_settings": {
         "light": "Light",
         "dark": "Dark",
@@ -156,6 +172,9 @@
         "scan_qr_code_button": "Scan QR code",
         "qr_code_info": "Use the phone's camera to scan the qr code of the device.",
         "confirm_button": "Add device",
+        "device_name_placeholder": "Device name",
+        "close_qr_code_scanner": "Cancel",
+        "device_serial_placeholder": "Device serial",
         "navigation": {
             "title": "Register a new device"
         }

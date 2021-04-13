@@ -5,23 +5,21 @@ import {
 	StyleSheet,
 	ScrollView,
 	TouchableOpacity,
-	Image,
 	FlatList,
-	TextInput,
-	Button,
-	LogBox,
 } from "react-native";
-import {AntDesign, Feather, FontAwesome, MaterialIcons, Octicons} from "@expo/vector-icons";
-import {Icon, Input} from "react-native-elements";
-import {t} from "i18n-js";
-import {API_URL} from "../../api/api_routes_v_1.0.0.0";
+import {AntDesign, Feather, MaterialIcons, Octicons} from "@expo/vector-icons";
+import {Icon} from "react-native-elements";
 import {FloatingAction} from "react-native-floating-action";
 import ScrollableTabView from 'react-native-scrollable-tab-view';
 import ScrollableTabBar from "react-native-scrollable-tab-view/ScrollableTabBar";
 import {DeviceBox} from "../Devices/DeviceBox";
 import {API} from "../../api/api";
+import {translator} from "../../lang/translator";
 // !!! REPLACE 'ios' with 'android' !!!
 // !!! REMOVE getNode() function !!!
+
+
+const t = translator('home');
 
 
 export default class HomeScreen extends React.Component {
@@ -34,13 +32,13 @@ export default class HomeScreen extends React.Component {
 			creating_room: false,
 			new_room_name: null,
 			tab_index: 0,
-
-			//fab_open: false
 		};
+
+		this.loadRoomsCallback = this.loadRoomsCallback.bind(this);
+		this.loadDevicesCallback = this.loadDevicesCallback.bind(this);
 	}
 
 	componentDidMount() {
-		LogBox.ignoreLogs(['Encountered two children with the same key']);
 		this.loadRooms();
 		this.loadDevices();
 		this.willFocusSubscription = this.props.navigation.addListener(
@@ -51,7 +49,7 @@ export default class HomeScreen extends React.Component {
 		);
 	}
 
-	getRoomsCallback(response) {
+	loadRoomsCallback(response) {
 		this.setState({
 			rooms: response['rooms']
 		});
@@ -60,84 +58,27 @@ export default class HomeScreen extends React.Component {
 	loadRooms() {
 		API.house.rooms.getRooms({
 			house_id: this.state.house_id
-		}).then(this.getRoomsCallback.bind(this)).catch((error) => console.warn(error));
+		}).then(
+			this.loadRoomsCallback
+		).catch(
+			(error) =>
+				console.warn(error)
+		);
 	}
 
-	getDevicesCallback(response) {
+	loadDevicesCallback(response) {
 		this.setState({
 			devices: response
 		});
 	}
 
 	loadDevices() {
-		API.devices.getDevices().then(this.getDevicesCallback.bind(this)).catch((error) => console.warn(error));
-	}
-
-
-	getFetchCreateRoomArguments(house_id, room_name) {
-		return JSON.stringify({
-			house_id: house_id,
-			name: room_name
-		});
-	}
-
-	fetchCreateRoom(request_args) {
-		const API_CREATE_ROOM = API_URL + 'create_room';
-		return fetch(`${API_CREATE_ROOM}`, {
-			method: 'POST',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json',
-			},
-			body: request_args
-		});
-	}
-
-	fetchCreateRoomCallback(response) {
-		return response.json();
-	}
-
-	fetchCreateRoomSetStateCallback(response) {
-		this.loadRooms();
-		this.setState({});
-	}
-
-	createRoom(house_id, room_name) {
-		this.fetchCreateRoom(this.getFetchCreateRoomArguments(house_id, room_name)).then(this.fetchCreateRoomCallback).then(this.fetchCreateRoomSetStateCallback.bind(this)).catch((error) => console.warn(error));
-	}
-
-
-	getFetchDeleteRoomArguments(house_id, room_id) {
-		return JSON.stringify({
-			house_id: house_id,
-			room_id: room_id
-		});
-	}
-
-	fetchDeleteRoom(request_args) {
-		const API_DELETE_ROOM = API_URL + 'delete_room';
-		return fetch(`${API_DELETE_ROOM}?${request_args}`, {
-			method: 'POST',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				name: this.state.new_room_name,
-			})
-		})
-	}
-
-	fetchDeleteRoomCallback(response) {
-		return response.json();
-	}
-
-	fetchDeleteRoomSetStateCallback(response) {
-		this.setState({});
-	}
-
-	deleteRoom() {
-		this.fetchDeleteRoom(this.getFetchDeleteRoomArguments(this.state.house_id, this.state.new_room_name)).then(this.fetchDeleteRoomCallback).then(this.fetchDeleteRoomSetStateCallback).catch((error) => console.warn(error));
+		API.devices.getDevices().then(
+			this.loadDevicesCallback
+		).catch(
+			(error) =>
+				console.warn(error)
+		);
 	}
 
 	renderAddDeviceBox() {
@@ -166,7 +107,7 @@ export default class HomeScreen extends React.Component {
 						color: theme.textColor
 					}}>
 						{
-							t('dashboard.devices.add_device')
+							t('register_device')
 						}
 					</Text>
 				</View>
@@ -227,14 +168,14 @@ export default class HomeScreen extends React.Component {
 	onAddDeviceButtonPress(room) {
 		this.props.navigation.navigate('add_device_in_room', {
 			room: room,
-			devices: this.state.devices
+			devices: this.state.devices.filter((device) => !room['devices_ids'].includes(device['id']))
 		});
 	}
 
 	onRemoveDeviceButtonPress(room) {
 		this.props.navigation.navigate('remove_device_from_room', {
 			room: room,
-			devices: this.state.devices
+			devices: this.getDevicesFromRoom(room)
 		});
 	}
 
@@ -266,20 +207,20 @@ export default class HomeScreen extends React.Component {
 
 		const actions = [
 			{
-				text: "Add device in room",
+				text: t('add_device'),
 				icon: <Feather name="plus" size={24} color={theme.lightColor}/>,
 				name: "add_device",
 				position: 3,
 				color: theme.successColor,
 			}, {
-				text: "Remove device from room",
+				text: t('remove_device'),
 				icon: <Octicons name="trashcan" size={24} color={theme.lightColor}/>,
 				name: "remove_device",
 				position: 2,
 				color: theme.dangerColor,
 			},
 			{
-				text: "Order devices",
+				text: t('order_devices'),
 				icon: <Octicons name="list-unordered" size={24} color={theme.lightColor}/>,
 				name: "order_devices",
 				position: 1,
@@ -289,10 +230,6 @@ export default class HomeScreen extends React.Component {
 
 		return (
 			<FloatingAction
-				/*floatingIcon={this.state.fab_open ? <Feather name="x" size={24} color={theme.textColor}/> :
-					<MaterialIcons name="edit" size={24} color={theme.textColor}/>}*/
-				//onOpen={() => this.setState({fab_open: true})}
-				//onClose={() => this.setState({fab_open: false})}
 				color={theme.primaryColor}
 				actions={actions}
 				onPressItem={this.onFloatingActionPressItem.bind(this)}
@@ -320,7 +257,7 @@ export default class HomeScreen extends React.Component {
 		return (
 			<View
 				key={'all-devices'}
-				tabLabel={'ALL DEVICES'}
+				tabLabel={t('all_devices').toUpperCase()}
 				style={{
 					backgroundColor: theme.screenBackgroundColor,
 					padding: '3%',
@@ -340,7 +277,7 @@ export default class HomeScreen extends React.Component {
 		return (
 			<ScrollView
 				key={'settings'}
-				tabLabel={'SETTINGS'}
+				tabLabel={t('settings').toUpperCase()}
 				style={{
 					backgroundColor: theme.screenBackgroundColor
 				}}

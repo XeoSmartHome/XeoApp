@@ -1,5 +1,5 @@
 import React from "react";
-import {FlatList, Image, Text, TouchableOpacity, View, StyleSheet, ToastAndroid} from "react-native";
+import {FlatList, StyleSheet, ToastAndroid} from "react-native";
 import {DeviceBox} from "../Devices/DeviceBox";
 import {API} from "../../api/api";
 
@@ -19,10 +19,8 @@ export default class AddDeviceInRoomScreen extends React.Component {
 	}
 
 	componentDidMount() {
-		const devices = this.props.navigation.state.params.devices.filter((device) => !this.props.navigation.state.params.room['devices_ids'].includes(device['id']));
-
 		this.setState({
-			devices: devices,
+			devices: this.props.navigation.state.params.devices,
 			room: this.props.navigation.state.params.room
 		});
 	}

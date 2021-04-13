@@ -1,195 +1,197 @@
 import React from "react";
 import I18n from 'i18n-js';
 import {
-	View,
-	StyleSheet,
-	Text,
-	FlatList
+    View,
+    StyleSheet, Text, TouchableOpacity,
 } from "react-native";
-import Swiper from "react-native-swiper";
+import {ProgressBar} from "react-native-paper";
 
 
 const t = (key) => I18n.t(`dashboard.${key}`);
 
 
 export default class DashboardScreen extends React.Component {
-	constructor() {
-		super();
-		this.state = {
-			view_mode: 'list',
-			screens: [
-				{
-					id: 1,
-					name: "Claudiu's screen",
-					shortcuts: [
-						{
-							id: 3,
-							type: 'sensor',
-							device_id: 5,
-							sensor: {
-								value: 20,
-								unit: '`C',
-								max_value: 80,
-								min_value: -50
-							}
-						},
-						{
-							id: 33,
-							type: 'action',
-							device_id: 9
-						},
-						{
-							id: 333,
-							type: 'status',
-							device_id: 34
-						},
-					]
-				},
-				{
-					id: 2,
-					name: "Claudiu's screen 2",
-					shortcuts: [
-						{
-							id: 4,
-						},
-					]
-				}
-			]
-		}
-	}
+    constructor() {
+        super();
+        this.state = {
+            view_mode: 'list',
+            screens: [
+                {
+                    id: 1,
+                    shortcuts: [
+                        {
+                            id: 1,
+                            device_name: 'Jaluzele electrice',
+                            type: 'ACTION',
+                            action: {
+                                name: 'open'
+                            }
+                        },
+                        {
+                            id: 2,
+                            device_name: 'Jaluzele electrice',
+                            type: 'SENSOR',
+                            sensor: {
+                                name: 'Temperature',
+                                unit: '`C',
+                                value: 0.5
+                            }
+                        },
+                        {
+                            id: 3,
+                            device_name: 'Sistem irigat',
+                            type: 'ACTION',
+                            action: {
+                                name: 'Irrigate'
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+        this.renderShortcut = this.renderShortcut.bind(this);
+        this.renderAction = this.renderAction.bind(this);
+        this.renderSensor = this.renderSensor.bind(this);
+    }
 
-	componentDidMount() {
+    componentDidMount() {
 
-	}
+    }
 
-	renderSensorShortcut(sensor) {
-		return (
-			<Text>
-				{sensor['value']}/{sensor['max_value']}
-			</Text>
-		);
-	}
+    renderSensor(shortcut: { id: number, sensor: { name: string, value: number, unit: string } }) {
+        const {theme} = this.props.screenProps;
+        return (
+            <View
+                key={`shortcut-${shortcut.id}`}
+                style={[
+                    styles.shortcut_container, {
+                        borderColor: theme.primaryColor,
+                        flexDirection: 'column'
+                    }
+                ]}
+            >
+                <Text
+                    style={[styles.sensor_name, {
+                        color: theme.textColor
+                    }]}
+                >
+                    {shortcut.sensor.name}: {shortcut.sensor.value}{shortcut.sensor.unit}
+                </Text>
+                <ProgressBar
+                    color={theme.primaryColor}
+                    style={[styles.progress_bar]}
+                    progress={shortcut.sensor.value}
+                />
+            </View>
+        )
+    }
 
-	renderActionShortcut() {
+    renderAction(shortcut) {
+        const {theme} = this.props.screenProps;
+        return (
+            <View
+                key={`shortcut-${shortcut.id}`}
+                style={[
+                    styles.shortcut_container, {
+                        borderColor: theme.primaryColor
+                    }
+                ]}
+            >
+                <Text
+                    style={[
+                        styles.shortcut_device_name, {
+                            color: theme.textColor
+                        }
+                    ]}
+                >
+                    {
+                        shortcut.device_name
+                    }
+                </Text>
+                <TouchableOpacity
+                    style={[
+                        styles.shortcut_action_button, {
+                            backgroundColor: theme.primaryColor
+                        }
+                    ]}
+                >
+                    <Text
+                        style={[
+                            styles.shortcut_action_button_text, {
+                                color: theme.lightColor
+                            }
+                        ]}
+                    >
+                        {
+                            shortcut.action.name
+                        }
+                    </Text>
+                </TouchableOpacity>
+            </View>
+        )
+    }
 
-	}
+    renderShortcut(shortcut) {
+        const type = {
+            'ACTION': this.renderAction,
+            'SENSOR': this.renderSensor
+        };
+        return type[shortcut.type](shortcut);
+    }
 
-	renderStatusShortcut(status) {
-
-	}
-
-	renderShortcut({item, index}) {
-		const {theme} = this.props.screenProps;
-		return (
-			<View
-				style={[styles.shortcut_container, {
-					borderColor: theme.secondaryColor
-				}]}
-			>
-				<Text
-					style={[styles.shortcut_text, {
-						color: theme.textColor
-					}]}
-				>
-					{
-						item['type'] === 'sensor' ? this.renderSensorShortcut(item['sensor']) : null
-					}
-				</Text>
-			</View>
-		)
-	}
-
-	renderScreen(screen, screen_index) {
-		const {theme} = this.props.screenProps;
-
-		let columns_number = null;
-
-		switch (this.state.view_mode) {
-			case "list":
-				columns_number = 1;
-				break;
-			case 'box':
-				columns_number = 2;
-				break;
-			default:
-				columns_number = 1;
-				break;
-		}
-
-		return undefined;
-
-		return (
-			<View
-				style={[styles.screen]}
-			>
-				<View
-					style={[styles.screen_title, {
-						borderColor: theme.textColor
-					}]}
-				>
-					<Text
-						style={[styles.screen_title_text, {
-							color: theme.textColor
-						}]}
-					>
-						{
-							screen['name']
-						}
-					</Text>
-				</View>
-				<FlatList
-					//contentContainerStyle={{padding: 10}}
-					numColumns={columns_number}
-					data={screen['shortcuts']}
-					renderItem={this.renderShortcut.bind(this)}
-					keyExtractor={(item, index) => `draggable-item-${item['id']}`}
-				/>
-			</View>
-		)
-	}
-
-	render() {
-		const {theme} = this.props.screenProps;
-		return (
-			<Swiper
-				showsPagination={true}
-				showsButtons={false}
-				loop={false}
-				activeDotColor={theme.primaryColor}
-				style={{
-					backgroundColor: theme.screenBackgroundColor,
-				}}
-			>
-				{
-					this.state.screens.map(this.renderScreen.bind(this))
-				}
-			</Swiper>
-		);
-	}
+    render() {
+        const {theme} = this.props.screenProps;
+        return (
+            <View
+                style={[
+                    styles.screen, {
+                        backgroundColor: theme.screenBackgroundColor
+                    }
+                ]}
+            >
+                {
+                    this.state.screens[0].shortcuts.map(this.renderShortcut)
+                }
+            </View>
+        );
+    }
 }
 
 
 const styles = StyleSheet.create({
-	screen: {
-		padding: '3%'
-	},
-	screen_title: {
-		borderBottomWidth: 2,
-		paddingBottom: 10
-	},
-	screen_title_text: {
-		fontSize: 24,
-		alignSelf: 'center',
-	},
-	shortcut_container: {
-		margin: '2%',
-		padding: 5,
-		borderWidth: 2,
-		marginTop: '5%',
-		borderRadius: 8,
-		flex: 1
-	},
-	shortcut_text: {
-		fontSize: 18,
-	}
+    screen: {
+        padding: '5%',
+        flex: 1
+    },
+    shortcut_container: {
+        borderWidth: 2,
+        padding: 10,
+        marginVertical: '2%',
+        borderRadius: 8,
+        flexDirection: 'row',
+    },
+    shortcut_device_name: {
+        flex: 1,
+        fontSize: 16,
+        alignSelf: 'center'
+    },
+    shortcut_action_button: {
+        flex: 1,
+        padding: 6,
+        borderRadius: 10,
+        height: 38,
+        alignSelf: 'center'
+    },
+    shortcut_action_button_text: {
+        alignSelf: 'center',
+        fontSize: 18,
+    },
+    sensor_name: {
+        fontSize: 18,
+        paddingTop: 8,
+        paddingBottom: 4
+    },
+    progress_bar: {
+        height: 16,
+    }
 });

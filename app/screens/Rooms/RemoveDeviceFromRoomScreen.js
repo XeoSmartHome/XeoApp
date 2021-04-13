@@ -21,10 +21,8 @@ export default class RemoveDeviceFromRoomScreen extends React.Component {
 	}
 
 	componentDidMount() {
-		const devices = this.props.navigation.state.params.devices.filter((device) => this.props.navigation.state.params.room['devices_ids'].includes(device['id']));
-
 		this.setState({
-			devices: devices,
+			devices: this.props.navigation.state.params.devices,
 			room: this.props.navigation.state.params.room
 		});
 	}

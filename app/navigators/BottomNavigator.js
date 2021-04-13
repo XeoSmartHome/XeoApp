@@ -3,8 +3,9 @@ import {createBottomTabNavigator} from "react-navigation-tabs";
 import SensorsDashboardScreenV2 from "../screens/Sensors/SensorsDashboardScreenV2";
 import HomeScreen from "../screens/Home/HomeScreen";
 import {Icon} from "react-native-elements";
-import {Octicons} from "@expo/vector-icons";
+import {MaterialCommunityIcons, Octicons} from "@expo/vector-icons";
 import I18n from 'i18n-js';
+import DashboardScreen from "../screens/Dashboard/DashboardScreen";
 
 
 const t = (key) => I18n.t(key);
@@ -62,7 +63,7 @@ export const BottomNavigator = createBottomTabNavigator(
 				},
 			},
 		}),
-		resetOnBlur: true,
+		//resetOnBlur: true,
 		initialRouteName: 'home',
 		order: ['home', /*'dashboard',*/ 'sensors'],
 	}

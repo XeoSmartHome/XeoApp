@@ -1,5 +1,9 @@
 import React, {Component} from "react";
 import {ScrollView, StyleSheet, Switch, Text, View} from "react-native";
+import I18n from "i18n-js";
+
+
+const t = (key) => I18n.t(`notifications_settings.${key}`);
 
 
 export default class NotificationsSettingsScreen extends Component{
@@ -9,13 +13,35 @@ export default class NotificationsSettingsScreen extends Component{
 			notifications_enabled: true,
 			sound_enabled: true,
 			vibration_enabled: true,
-
 		};
 		this.loadSettings();
+
+		this.onNotificationsSwitchValueChange = this.onNotificationsSwitchValueChange.bind(this);
+		this.onSoundSwitchValueChange = this.onSoundSwitchValueChange.bind(this);
+		this.onVibrationSwitchValueChange = this.onVibrationSwitchValueChange.bind(this);
 	}
 
 	loadSettings(){
 
+	}
+
+	saveSettings() {
+
+	}
+
+	onNotificationsSwitchValueChange(value) {
+
+		this.saveSettings();
+	}
+
+	onSoundSwitchValueChange(value) {
+
+		this.saveSettings();
+	}
+
+	onVibrationSwitchValueChange(value) {
+
+		this.saveSettings();
 	}
 
 	render() {
@@ -33,7 +59,9 @@ export default class NotificationsSettingsScreen extends Component{
 						flex: 5,
 						color: theme.textColor
 					}]}>
-						Notifications
+						{
+							t('notifications')
+						}
 					</Text>
 					<Switch
 						style={{flex: 1}}
@@ -53,7 +81,9 @@ export default class NotificationsSettingsScreen extends Component{
 						flex: 5,
 						color: theme.textColor
 					}]}>
-						Sound
+						{
+							t('sound')
+						}
 					</Text>
 					<Switch
 						style={{flex: 1}}
@@ -73,7 +103,9 @@ export default class NotificationsSettingsScreen extends Component{
 						flex: 5,
 						color: theme.textColor
 					}]}>
-						Vibration
+						{
+							t('vibration')
+						}
 					</Text>
 					<Switch
 						style={{flex: 1}}

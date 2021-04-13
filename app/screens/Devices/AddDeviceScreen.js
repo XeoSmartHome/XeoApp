@@ -14,9 +14,10 @@ import {
 import {BarCodeScanner} from 'expo-barcode-scanner';
 import I18N from 'i18n-js'
 import {API} from "../../api/api";
+import {translator} from "../../lang/translator";
 
 
-const t = (key) => I18N.t('add_device.' + key);
+const t = translator('add_device');
 
 
 export default class AddDeviceScreen extends Component {
@@ -27,6 +28,7 @@ export default class AddDeviceScreen extends Component {
 			new_device_serial: '',
 			showQRCodeScanner: false
 		};
+		this.registerDeviceCallback = this.registerDeviceCallback.bind(this);
 	}
 
 	registerDeviceCallback(response) {
@@ -50,7 +52,7 @@ export default class AddDeviceScreen extends Component {
 			name: this.state.new_device_name,
 			serial: this.state.new_device_serial
 		}).then(
-			this.registerDeviceCallback.bind(this)
+			this.registerDeviceCallback
 		).catch(
 			(error) => {
 				console.warn(error);
@@ -108,9 +110,11 @@ export default class AddDeviceScreen extends Component {
 						}}
 					>
 						<Text
-							style={{color: theme.textColor, fontSize: 16, alignSelf: "center"}}
+							style={{color: theme.lightColor, fontSize: 16, alignSelf: "center"}}
 						>
-							Cancel
+							{
+								t('close_qr_code_scanner')
+							}
 						</Text>
 					</TouchableOpacity>
 				</View>
@@ -137,7 +141,7 @@ export default class AddDeviceScreen extends Component {
 						color: theme.textColor,
 						borderColor: theme.textColor
 					}]}
-					placeholder="Device name"
+					placeholder={t('device_name_placeholder')}
 					placeholderTextColor={theme.placeholderTextColor}
 					autoCorrect={true}
 					autoCapitalize='sentences'
@@ -154,7 +158,7 @@ export default class AddDeviceScreen extends Component {
 						color: theme.textColor,
 						borderColor: theme.textColor
 					}]}
-					placeholder="Device serial"
+					placeholder={t('device_serial_placeholder')}
 					placeholderTextColor={theme.placeholderTextColor}
 					autoCorrect={true}
 					autoCapitalize='none'
@@ -167,7 +171,7 @@ export default class AddDeviceScreen extends Component {
 						onPress={this.openQRCodeScanner.bind(this)}
 					>
 						<Text
-							style={{color: theme.textColor, fontSize: 16, alignSelf: "center"}}
+							style={{color: theme.lightColor, fontSize: 16, alignSelf: "center"}}
 						>
 							{t('scan_qr_code_button')}
 						</Text>
@@ -188,7 +192,7 @@ export default class AddDeviceScreen extends Component {
 						onPress={() => this.onAddDevicePress()}
 					>
 						<Text
-							style={{color: theme.textColor, fontSize: 16, alignSelf: "center"}}
+							style={{color: theme.lightColor, fontSize: 16, alignSelf: "center"}}
 						>
 							{t('confirm_button')}
 						</Text>
@@ -221,7 +225,6 @@ const styles = StyleSheet.create({
 		margin: 5
 	},
 	saveButton: {
-		//alignSelf: 'flex-end',
 		width: '20%',
 		margin: 10
 	}

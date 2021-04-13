@@ -1,9 +1,9 @@
 import React, {Component} from "react";
-import {Button, Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {Icon} from "react-native-elements";
 // noinspection ES6CheckImport
 import {t} from "i18n-js";
-import {AntDesign, FontAwesome5, Ionicons, MaterialCommunityIcons} from '@expo/vector-icons';
+import {FontAwesome5, Ionicons, MaterialCommunityIcons} from '@expo/vector-icons';
 
 
 const SettingsOption = ({title, icon, onPress, theme}) => {
@@ -31,7 +31,7 @@ export default class SettingsScreen extends Component {
 	}
 
 	render() {
-		const {mode, theme, setTheme} = this.props.screenProps;
+		const {theme} = this.props.screenProps;
 		return (
 			<ScrollView
 				style={{

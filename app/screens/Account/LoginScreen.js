@@ -6,7 +6,8 @@ import {
 	TextInput,
 	Image,
 	TouchableOpacity,
-	ScrollView, StatusBar
+	ScrollView,
+	StatusBar
 } from "react-native";
 
 import * as Google from 'expo-google-app-auth';
@@ -178,7 +179,7 @@ export default class LoginScreen extends Component {
 						backgroundColor: theme.screenBackgroundColor
 					}}
 				>
-					<StatusBar hidden={true}/>
+					<StatusBar hidden={false}/>
 				</ScrollView>
 			)
 		}
@@ -187,7 +188,7 @@ export default class LoginScreen extends Component {
 			<ScrollView contentContainerStyle={[styles.screen, {
 				backgroundColor: theme.screenBackgroundColor
 			}]}>
-				<StatusBar hidden={true}/>
+				<StatusBar hidden={false}/>
 				<Image
 					style={styles.logo}
 					source={require("../../assets/images/logo_xeo_no_background.png")}

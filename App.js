@@ -5,7 +5,7 @@ import * as Localization from "expo-localization";
 import ThemeProvider, {ThemeContext} from "./app/themes/ThemeProvider";
 import I18n from 'i18n-js';
 import {StackNavigator} from "./app/navigators/StackNavigator";
-import {Text, View} from "react-native";
+import {StatusBar, Text, View} from "react-native";
 
 
 I18n.fallbacks = true;
@@ -25,7 +25,7 @@ AsyncStorage.getItem('locale').then((item) => {
 
 const Container = createAppContainer(StackNavigator);
 
-const ContainerWrapper = (props) => {
+/*const ContainerWrapper = (props) => {
 	const [animations_enable, setAnimationsEnable] = useState('unknown');
 
 	AsyncStorage.getItem('animations_enable').then( (animations_enable) => {
@@ -44,7 +44,7 @@ const ContainerWrapper = (props) => {
 		<Container screenProps={props.screenProps}/>
 	)
 
-}
+}*/
 
 
 const App = () => (

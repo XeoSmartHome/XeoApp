@@ -62,8 +62,12 @@ export default class DeviceRemoteControlScreen extends React.Component {
             <TouchableOpacity onPress={() => {
                 navigation.navigate('device_alarms', {device_id: navigation.state.params.device_id})
             }}>
-                <MaterialCommunityIcons name="clock-outline" size={40} color={screenProps.theme.textColor}
-                                        style={{marginHorizontal: 10}}/>
+                <MaterialCommunityIcons
+                    name="clock-outline"
+                    size={40}
+                    color={screenProps.theme.headerTextColor}
+                    style={{marginHorizontal: 10}}
+                />
             </TouchableOpacity>
         )
     });
