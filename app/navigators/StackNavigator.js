@@ -33,6 +33,7 @@ import RemoveDeviceFromRoomScreen from "../screens/Rooms/RemoveDeviceFromRoomScr
 import OrderDevicesInRoom from "../screens/Rooms/OrderDevicesInRoom";
 import {BottomNavigator} from "./BottomNavigator";
 import AnimationsSettingsScreen from "../screens/Settings/Animations/AnimationsSettingsScreen";
+import CreateTimedAction from "../screens/Devices/TimedActions/CreateTimedAction";
 
 
 //const animations_enable = await AsyncStorage.getItem('animations_enable');
@@ -110,7 +111,15 @@ export const StackNavigator = createStackNavigator({
 			headerTintColor: screenProps.theme.headerTextColor,
 		})
 	},
-	edit_timed_action: {
+	create_timed_action: {
+		screen: CreateTimedAction,
+		navigationOptions: ({screenProps}) => ({
+			title: "Create timed action",
+			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
+			headerTintColor: screenProps.theme.headerTextColor,
+		})
+	},
+	edit_device_timed_action: {
 		screen: EditTimedActionScreen,
 		navigationOptions: ({screenProps}) => ({
 			//title: t('settings.navigation.title'),

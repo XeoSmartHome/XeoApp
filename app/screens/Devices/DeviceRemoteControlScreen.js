@@ -3,12 +3,14 @@ import I18n from 'i18n-js';
 import {
     Image,
     Modal,
-    ScrollView, Slider,
+    ScrollView,
+    Slider,
     Text,
     StyleSheet,
     ToastAndroid,
     TouchableOpacity,
-    View
+    View,
+    ActivityIndicator
 } from 'react-native';
 import {MaterialCommunityIcons} from '@expo/vector-icons';
 import io from "socket.io-client";
@@ -60,7 +62,7 @@ export default class DeviceRemoteControlScreen extends React.Component {
         title: navigation.state.params.device_name === undefined ? '' : navigation.state.params.device_name,
         headerRight: () => (
             <TouchableOpacity onPress={() => {
-                navigation.navigate('device_alarms', {device_id: navigation.state.params.device_id})
+                navigation.navigate('device_alarms', {device_id: navigation.state.params.device_id, device_actions_types: navigation.state.params.device_actions_types})
             }}>
                 <MaterialCommunityIcons
                     name="clock-outline"
@@ -75,8 +77,10 @@ export default class DeviceRemoteControlScreen extends React.Component {
     constructor() {
         super();
         this.state = {
-            device_id: 0,
-            device_name: '',
+            loading: true,
+
+            device_id: null,
+            device_name: null,
             device_connected: null,
             device_active: null,
             device_actions_types: [],
@@ -96,8 +100,8 @@ export default class DeviceRemoteControlScreen extends React.Component {
 
     loadDeviceCallback(response) {
         const {device} = response;
-        //console.warn(device);
         this.setState({
+            loading: false,
             device_id: device['id'],
             device_name: device['name'],
             device_connected: device['connected'],
@@ -105,7 +109,8 @@ export default class DeviceRemoteControlScreen extends React.Component {
             device_statuses: device['statuses']
         });
         this.props.navigation.setParams({
-            device_name: device['name']
+            device_name: device['name'],
+            device_actions_types: device['actions_types']
         });
     }
 
@@ -121,7 +126,7 @@ export default class DeviceRemoteControlScreen extends React.Component {
     }
 
     setWebSocketHandler() {
-        socket_io.off().on('message', (message) => {
+        /*socket_io.off().on('message', (message) => {
             try {
                 if (message['device_id'] !== this.state.device_id)
                     return;
@@ -135,7 +140,7 @@ export default class DeviceRemoteControlScreen extends React.Component {
             } catch (error) {
 
             }
-        });
+        });*/
     }
 
     executeActionCallback(response) {
@@ -390,6 +395,15 @@ export default class DeviceRemoteControlScreen extends React.Component {
 
     render() {
         const {theme} = this.props.screenProps;
+        if (this.state.loading === true) {
+            return (
+                <View style={[styles.loading_screen, {
+                    backgroundColor: theme.screenBackgroundColor
+                }]}>
+                    <ActivityIndicator color={theme.primaryColor} size="large"/>
+                </View>
+            )
+        }
         return (
             <ScrollView
                 style={{
@@ -416,6 +430,10 @@ export default class DeviceRemoteControlScreen extends React.Component {
 
 
 const styles = StyleSheet.create({
+    loading_screen: {
+        flex: 1,
+        justifyContent: 'center'
+    },
     screen_content_container: {
         padding: '4%'
     }

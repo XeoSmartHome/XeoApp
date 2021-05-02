@@ -138,6 +138,14 @@ export const API = {
 
             /**
              *
+             * @param {number} params.action_type_id
+             * @param {number} params.device_id
+             * @return {*}
+             */
+            createTimedAction: (params) => apiRequest(ROUTES.DEVICES.TIMED_ACTIONS.CREATE_ACTION, params),
+
+            /**
+             *
              * @param {number} params.device_id
              * @param {number} params.action_id
              * @param {string} params.cron

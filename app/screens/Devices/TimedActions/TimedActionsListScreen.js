@@ -4,6 +4,7 @@ import I18n from "i18n-js";
 import {RadioButton} from "react-native-paper";
 import Cron from "../../utils/new_cron_class";
 import {API} from "../../../api/api";
+import {parseCronFromString} from "../../utils/Cron";
 
 
 const t = (key) => I18n.t('device_settings.' + key);
@@ -85,12 +86,11 @@ export default class TimedActionsListScreen extends React.Component {
 				this.loadTimedActions();
 			}
 		);
-		//BackHandler.addEventListener('hardwareBackPress', this.onHardwareBackPress.bind(this));
+		const c = parseCronFromString("0 30 12 * * *");
+		console.log(c);
 	}
 
 	componentWillUnmount() {
-		//BackHandler.removeEventListener('hardwareBackPress', this.onHardwareBackPress.bind(this));
-		//console.warn('unmounted')
 	}
 
 	getTimeFromCron(cron_string) {
@@ -118,28 +118,15 @@ export default class TimedActionsListScreen extends React.Component {
 			this.loadTimedActionsCallback.bind(this)
 		).catch(
 			(error) => {
-				alert(error);
+				console.warn(error);
 			}
 		);
 	}
 
-	/*onHardwareBackPress() {
-		console.warn('s');
-		if (this.state?.multi_select_active === true) {
-			this.setState({
-				multi_select_active: false
-			});
-			return true;
-		} else {
-			return false;
-		}
-		//return true;
-	}*/
-
-	onNewTimedActionPress() {
-		this.props.navigation.navigate('device_edit_alarm', {
-			device_id: this.props.navigation.state.params.device_id,
-			create_new: true
+	onNewTimedActionButtonPress() {
+		this.props.navigation.navigate('create_timed_action', {
+			device_actions_types: this.props.navigation.state.params.device_actions_types,
+			device_id: this.props.navigation.state.params.device_id
 		});
 	}
 
@@ -393,7 +380,7 @@ export default class TimedActionsListScreen extends React.Component {
 					}
 				</ScrollView>
 				<TouchableOpacity
-					onPress={this.onNewTimedActionPress.bind(this)}
+					onPress={this.onNewTimedActionButtonPress.bind(this)}
 					style={[styles.fab, {
 						backgroundColor: theme.primaryColor
 					}]}
