@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import I18n, {t} from 'i18n-js';
 import {Icon} from "react-native-elements";
-import AsyncStorage from "@react-native-community/async-storage";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export default class LanguageSettingsScreen extends Component{

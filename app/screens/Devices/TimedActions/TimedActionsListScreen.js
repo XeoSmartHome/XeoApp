@@ -1,13 +1,12 @@
 import React from "react";
 import {ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View} from "react-native";
-import I18n from "i18n-js";
 import {RadioButton} from "react-native-paper";
-import Cron from "../../utils/new_cron_class";
 import {API} from "../../../api/api";
-import {parseCronFromString} from "../../utils/Cron";
+import Cron from "../../utils/Cron";
+import {translator} from "../../../lang/translator";
 
 
-const t = (key) => I18n.t('device_settings.' + key);
+const t = translator('device_settings');
 
 
 export default class TimedActionsListScreen extends React.Component {
@@ -74,6 +73,7 @@ export default class TimedActionsListScreen extends React.Component {
 			selected_timed_actions: [],
 			multi_select_active: false
 		};
+		this.loadTimedActionsCallback = this.loadTimedActionsCallback.bind(this);
 	}
 
 	componentDidMount() {
@@ -86,27 +86,27 @@ export default class TimedActionsListScreen extends React.Component {
 				this.loadTimedActions();
 			}
 		);
-		const c = parseCronFromString("0 30 12 * * *");
-		console.log(c);
 	}
 
 	componentWillUnmount() {
 	}
 
-	getTimeFromCron(cron_string) {
-		const cron = new Cron();
-		cron.parseCronExpression(cron_string);
-		return cron.getHours() * 60 + Number(cron.getMinutes());
+	getTimeFromCron(cron) {
+		return Number(cron.getHour()) * 60 + Number(cron.getMinute());
 	}
 
 	sortActionsByTime(actions) {
 		return actions.sort((action_a, action_b) => this.getTimeFromCron(action_a.cron) > this.getTimeFromCron(action_b.cron))
 	}
 
+	mapCron(actions) {
+		return actions.map( (action) => ({...action, cron: new Cron(action.cron)}));
+	}
+
 	loadTimedActionsCallback(response){
-		let timed_actions = response['timed_actions'];
+		const timed_actions = response['timed_actions'];
 		this.setState({
-			timed_actions: this.sortActionsByTime(timed_actions),
+			timed_actions: this.sortActionsByTime(this.mapCron(timed_actions)),
 			selected_timed_actions: timed_actions.map(() => false)
 		});
 	}
@@ -115,7 +115,7 @@ export default class TimedActionsListScreen extends React.Component {
 		API.devices.timed_actions.getTimedActions({
 			device_id: this.props.navigation.state.params.device_id
 		}).then(
-			this.loadTimedActionsCallback.bind(this)
+			this.loadTimedActionsCallback
 		).catch(
 			(error) => {
 				console.warn(error);
@@ -223,7 +223,7 @@ export default class TimedActionsListScreen extends React.Component {
 		if (this.state.multi_select_active) {
 			this.onTimedActionLongPress(action, index);
 		} else {
-			this.props.navigation.navigate('edit_timed_action', {
+			this.props.navigation.navigate('edit_device_timed_action', {
 				device_id: this.props.navigation.state.params.device_id,
 				action_id: action.id
 			});
@@ -234,17 +234,10 @@ export default class TimedActionsListScreen extends React.Component {
 		const {theme} = this.props.screenProps;
 		const is_selected = this.state.selected_timed_actions[index];
 
-		const cronParser = new Cron();
+		const minute = action.cron.getMinute();
+		const hour = action.cron.getHour();
+		const days = action.cron.getDaysOfWeek();
 
-		try {
-			cronParser.parseCronExpression(action.cron);
-		} catch (e) {
-
-		}
-
-		const minute = cronParser.getMinutes();
-		const hour = cronParser.getHours();
-		const days = cronParser.getDaysOfWeek();
 		const alarmDaysTextOn = {
 			color: theme.textColor,
 		};
@@ -324,13 +317,13 @@ export default class TimedActionsListScreen extends React.Component {
 								alignSelf: "flex-end"
 							}}
 						>
-							<Text style={days[0] ? alarmDaysTextOn : alarmDaysTextOff}>M </Text>
-							<Text style={days[1] ? alarmDaysTextOn : alarmDaysTextOff}>T </Text>
-							<Text style={days[2] ? alarmDaysTextOn : alarmDaysTextOff}>W </Text>
-							<Text style={days[3] ? alarmDaysTextOn : alarmDaysTextOff}>T </Text>
-							<Text style={days[4] ? alarmDaysTextOn : alarmDaysTextOff}>F </Text>
-							<Text style={days[5] ? alarmDaysTextOn : alarmDaysTextOff}>S </Text>
-							<Text style={days[6] ? alarmDaysTextOn : alarmDaysTextOff}>S</Text>
+							<Text style={days.monday ? alarmDaysTextOn : alarmDaysTextOff}>M </Text>
+							<Text style={days.tuesday ? alarmDaysTextOn : alarmDaysTextOff}>T </Text>
+							<Text style={days.wednesday ? alarmDaysTextOn : alarmDaysTextOff}>W </Text>
+							<Text style={days.thursday ? alarmDaysTextOn : alarmDaysTextOff}>T </Text>
+							<Text style={days.friday ? alarmDaysTextOn : alarmDaysTextOff}>F </Text>
+							<Text style={days.saturday ? alarmDaysTextOn : alarmDaysTextOff}>S </Text>
+							<Text style={days.sunday ? alarmDaysTextOn : alarmDaysTextOff}>S</Text>
 						</Text>
 					</View>
 					{

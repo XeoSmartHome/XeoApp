@@ -1,6 +1,6 @@
 import React from 'react';
 import {availableThemes, defaultTheme, ThemeConstants} from "./ThemeConstants";
-import AsyncStorage from "@react-native-community/async-storage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 export const ThemeContext = React.createContext(null);

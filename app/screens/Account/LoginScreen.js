@@ -14,7 +14,7 @@ import * as Google from 'expo-google-app-auth';
 import {Icon} from "react-native-elements";
 import I18n from 'i18n-js';
 import * as Facebook from 'expo-facebook';
-import AsyncStorage from "@react-native-community/async-storage";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {
 	FACEBOOK_APP_ID,

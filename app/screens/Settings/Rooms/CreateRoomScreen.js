@@ -1,11 +1,12 @@
 import React from "react";
-import I18n from "i18n-js";
 import {ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
 import ToastAndroid from "react-native/Libraries/Components/ToastAndroid/ToastAndroid";
 import {API} from "../../../api/api";
+import {translator} from "../../../lang/translator";
+import {XeoButton} from "../../../components/XeoButton";
 
 
-const t = (key) => I18n.t(`create_new_room.${key}`);
+const t = translator('create_new_room');
 
 
 export default class CreateRoomScreen extends React.Component {
@@ -15,6 +16,8 @@ export default class CreateRoomScreen extends React.Component {
 			house_id: -1,
 			room_name: ''
 		};
+		this.onCreateRoomButtonPress = this.onCreateRoomButtonPress.bind(this);
+		this.onRoomNameChangeText = this.onRoomNameChangeText.bind(this);
 	}
 
 	componentDidMount() {
@@ -61,55 +64,53 @@ export default class CreateRoomScreen extends React.Component {
 		this.createRoom(this.state.house_id, this.state.room_name);
 	}
 
+	onRoomNameChangeText(value) {
+		this.setState({
+			room_name: value
+		});
+	}
+
 	render() {
 		const {theme} = this.props.screenProps;
+		const styles = Styles(theme);
 		const button_disabled = false;
 
 		return (
 			<ScrollView
-				style={{
-					backgroundColor: theme.screenBackgroundColor
-				}}
+				style={styles.screen}
 			>
 				<TextInput
-					style={[styles.text_input,{
-						borderColor: theme.primaryColor,
-						color: theme.textColor
-					}]}
+					style={styles.text_input}
 					placeholder={t('name_input_placeholder')}
 					placeholderTextColor={theme.placeholderTextColor}
 					value={this.state.room_name}
-					onChangeText={ (value) => {
-						this.setState({
-							room_name: value
-						});
-					}}
+					onChangeText={this.onRoomNameChangeText}
 					autoFocus={true}
 					autoCapitalize='sentences'
 				/>
-				<TouchableOpacity
-					style={[styles.create_room_button, {
-						backgroundColor: theme.primaryColor,
-						opacity: button_disabled ? theme.buttonDisabledOpacity : 1
-					}]}
-					disabled={button_disabled}
-					onPress={this.onCreateRoomButtonPress.bind(this)}
+				<View
+					style={styles.create_room_button}
 				>
-					<Text
-						style={[styles.create_room_button_text, {
-							color: theme.textColor,
-						}]}
-					>
-						{ t('confirm_button') }
-					</Text>
-				</TouchableOpacity>
+					<XeoButton
+						title={t('confirm_button')}
+						colors={{
+							text: theme.lightColor,
+							background: theme.primaryColor
+						}}
+						disabled={button_disabled}
+						onPress={this.onCreateRoomButtonPress}
+					/>
+				</View>
 			</ScrollView>
 		)
 	}
 }
 
 
-const styles = StyleSheet.create({
+const Styles = (theme) => ({
+	screen: {
+		backgroundColor: theme.screenBackgroundColor
+	},
 	text_input: {
 		marginTop: 60,
 		borderWidth: 2,
@@ -118,17 +119,13 @@ const styles = StyleSheet.create({
 		alignSelf: 'center',
 		padding: 6,
 		borderRadius: 6,
+		borderColor: theme.primaryColor,
+		color: theme.textColor
 	},
 	create_room_button: {
-		width: '30%',
-		padding:8,
-		borderRadius:6,
+		width: '35%',
 		marginRight: '10%',
 		alignSelf: 'flex-end',
 		marginTop: 20,
 	},
-	create_room_button_text:{
-		fontSize: 20,
-		alignSelf: 'center'
-	}
 });

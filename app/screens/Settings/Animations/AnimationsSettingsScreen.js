@@ -1,6 +1,6 @@
 import React from "react";
 import {ScrollView, StyleSheet, Switch, Text, View} from "react-native";
-import AsyncStorage from "@react-native-community/async-storage";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const DEFAULT_ANIMATIONS_VALUE = true;

@@ -1,11 +1,11 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {createAppContainer} from 'react-navigation';
-import AsyncStorage from "@react-native-community/async-storage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Localization from "expo-localization";
 import ThemeProvider, {ThemeContext} from "./app/themes/ThemeProvider";
 import I18n from 'i18n-js';
 import {StackNavigator} from "./app/navigators/StackNavigator";
-import {StatusBar, Text, View} from "react-native";
+import DeviceSetupScreen from "./app/screens/Devices/DeviceSetupScreen";
 
 
 I18n.fallbacks = true;
@@ -52,7 +52,8 @@ const App = () => (
 		<ThemeContext.Consumer>
 			{
 				(props) => (
-					<Container screenProps={props}/>
+					/*<Container screenProps={props}/>*/
+					<DeviceSetupScreen screenProps={props}/>
 				)
 			}
 		</ThemeContext.Consumer>

@@ -19,9 +19,9 @@ export default class CreateTimedAction extends React.Component {
     }
 
     createTimedActionCallback(response) {
-        /*switch (response.status) {
+        switch (response.status) {
             case 200:
-                this.props.navigation.replace('edit_timed_action', {
+                this.props.navigation.replace('edit_device_timed_action', {
                     device_id: this.props.navigation.state.params.device_id,
                     action_id: response['action']['id']
                 });
@@ -29,7 +29,7 @@ export default class CreateTimedAction extends React.Component {
             case 400:
                 console.warn(response['message']);
                 break;
-        }*/
+        }
     }
 
     createTimedAction(action_type_id) {
@@ -51,14 +51,11 @@ export default class CreateTimedAction extends React.Component {
 
     renderActionType(action_type, index) {
         const {theme} = this.props.screenProps;
+        const styles = Styles(theme);
         return (
             <View
                 key={`action-type-${action_type['id']}`}
-                style={{
-                    width: '60%',
-                    alignSelf: 'center',
-                    paddingTop: 12
-                }}
+                style={styles.action_type}
             >
                 <XeoButton
                     onPress={this.onActionTypePress(action_type)}
@@ -75,11 +72,14 @@ export default class CreateTimedAction extends React.Component {
     }
 
     render() {
-        const action_types = this.props.navigation.state.params.device_actions_types;
+        const {theme} = this.props.screenProps;
+        const styles = Styles(theme);
         return (
-            <ScrollView>
+            <ScrollView
+                style={styles.screen}
+            >
                 {
-                    action_types.map(this.renderActionType)
+                    this.props.navigation.state.params.device_actions_types.map(this.renderActionType)
                 }
             </ScrollView>
         )
@@ -87,8 +87,13 @@ export default class CreateTimedAction extends React.Component {
 }
 
 
-const styles = StyleSheet.create({
-    container: {
-
+const Styles = (theme) => ({
+    screen: {
+      padding: '3%'
+    },
+    action_type: {
+        width: '60%',
+        alignSelf: 'center',
+        paddingTop: 14
     }
 });

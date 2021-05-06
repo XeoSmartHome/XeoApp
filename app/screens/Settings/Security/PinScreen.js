@@ -3,7 +3,7 @@ import {SafeAreaView, StatusBar, StyleSheet, Text, TouchableOpacity, View} from 
 import {Icon} from "react-native-elements";
 import {BOOTSTRAP_COLOR_DANGER} from "../../../constants";
 import I18n from 'i18n-js'
-import AsyncStorage from "@react-native-community/async-storage";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const PIN_LENGTH = 4;

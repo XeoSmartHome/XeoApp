@@ -14,7 +14,8 @@ interface XeoButtonProps {
         background: string
     },
     size?: 'small' | 'medium' | 'large',
-    onPress: function
+    onPress: function,
+    disabled?: boolean
 }
 
 
@@ -23,7 +24,8 @@ const defaultXeoButtonProps : XeoButtonProps = {
     colors: {
         background: 'blue',
         text: 'white'
-    }
+    },
+    disabled: false
 };
 
 export const XeoButton = (props: XeoButtonProps = defaultXeoButtonProps) => {
@@ -35,6 +37,7 @@ export const XeoButton = (props: XeoButtonProps = defaultXeoButtonProps) => {
                 borderRadius: 8,
                 padding: 6
             }}
+            disabled={props.disabled}
         >
             <Text
                 style={{

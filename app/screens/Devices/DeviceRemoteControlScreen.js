@@ -16,45 +16,11 @@ import {MaterialCommunityIcons} from '@expo/vector-icons';
 import io from "socket.io-client";
 import {Picker} from "@react-native-picker/picker";
 import {API} from "../../api/api";
+import {XeoButton} from "../../components/XeoButton";
 
 
 const t = (key) => I18n.t('device_remote_control.' + key);
 //let socket_io = io('https://xeosmarthome.com', {transports: ['websocket'], timeout: 30000});
-
-
-const ActionButton = ({theme, action_type, onPress}) => {
-    return (
-        <TouchableOpacity
-            style={[actions_style.touchable_opacity, {
-                backgroundColor: theme.primaryColor,
-            }]}
-            disabled={false}
-            onPress={onPress}
-        >
-            <Text
-                style={[actions_style.text, {
-                    color: theme.lightColor,
-                }]}
-            >
-                {action_type['name']}
-            </Text>
-        </TouchableOpacity>
-    )
-}
-
-const actions_style = StyleSheet.create({
-    touchable_opacity: {
-        width: '70%',
-        alignSelf: "center",
-        marginTop: 20,
-        padding: 6,
-        borderRadius: 8,
-    },
-    text: {
-        alignSelf: "center",
-        fontSize: 18
-    }
-});
 
 
 export default class DeviceRemoteControlScreen extends React.Component {
@@ -181,12 +147,31 @@ export default class DeviceRemoteControlScreen extends React.Component {
     renderActionButton(action_type, index) {
         const {theme} = this.props.screenProps;
         return (
-            <View key={'device_action_type_' + index}>
-                <ActionButton
+            <View
+                key={'device_action_type_' + index}
+                style={{
+                    width: '70%',
+                    alignSelf: "center",
+                    marginTop: 20,
+                }}
+            >
+                {/*<ActionButton
                     theme={theme}
                     action_type={action_type}
                     onPress={() => {
                         this.onActionButtonPress(action_type);
+                    }}
+                />*/}
+                <XeoButton
+                    title={action_type['name']}
+                    onPress={
+                        () => {
+                            this.onActionButtonPress(action_type);
+                        }
+                    }
+                    colors={{
+                        text: theme.lightColor,
+                        background: theme.primaryColor
                     }}
                 />
             </View>
@@ -395,6 +380,7 @@ export default class DeviceRemoteControlScreen extends React.Component {
 
     render() {
         const {theme} = this.props.screenProps;
+        const styles = Styles(theme);
         if (this.state.loading === true) {
             return (
                 <View style={[styles.loading_screen, {
@@ -428,8 +414,7 @@ export default class DeviceRemoteControlScreen extends React.Component {
     }
 }
 
-
-const styles = StyleSheet.create({
+const Styles = () => ({
     loading_screen: {
         flex: 1,
         justifyContent: 'center'
