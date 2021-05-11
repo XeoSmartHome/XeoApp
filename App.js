@@ -52,8 +52,8 @@ const App = () => (
 		<ThemeContext.Consumer>
 			{
 				(props) => (
-					/*<Container screenProps={props}/>*/
-					<DeviceSetupScreen screenProps={props}/>
+					<Container screenProps={props}/>
+					/*<DeviceSetupScreen screenProps={props}/>*/
 				)
 			}
 		</ThemeContext.Consumer>

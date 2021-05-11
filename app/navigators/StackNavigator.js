@@ -34,6 +34,7 @@ import OrderDevicesInRoom from "../screens/Rooms/OrderDevicesInRoom";
 import {BottomNavigator} from "./BottomNavigator";
 import AnimationsSettingsScreen from "../screens/Settings/Animations/AnimationsSettingsScreen";
 import CreateTimedAction from "../screens/Devices/TimedActions/CreateTimedAction";
+import DeviceSetupScreen from "../screens/Devices/DeviceSetupScreen";
 
 
 //const animations_enable = await AsyncStorage.getItem('animations_enable');
@@ -289,6 +290,14 @@ export const StackNavigator = createStackNavigator({
 		screen: RoomsOrderScreen,
 		navigationOptions: ({screenProps}) => ({
 			title: 'Order rooms',
+			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
+			headerTintColor: screenProps.theme.headerTextColor
+		})
+	},
+	device_setup: {
+		screen: DeviceSetupScreen,
+		navigationOptions: ({screenProps}) => ({
+			title: 'Device setup',
 			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
 			headerTintColor: screenProps.theme.headerTextColor
 		})

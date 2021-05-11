@@ -7,9 +7,9 @@ const XeoButtonStyle = {
 };
 
 
-interface XeoButtonProps {
+export interface XeoButtonProps {
     title: string,
-    colors?: {
+    colors: {
         text: string,
         background: string
     },
@@ -28,7 +28,7 @@ const defaultXeoButtonProps : XeoButtonProps = {
     disabled: false
 };
 
-export const XeoButton = (props: XeoButtonProps = defaultXeoButtonProps) => {
+export const XeoButton = (props: XeoButtonProps) => {
     return (
         <TouchableOpacity
             onPress={props.onPress}
