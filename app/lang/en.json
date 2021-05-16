@@ -165,7 +165,7 @@
             "sensors": "SENSORS"
         }
     },
-    "add_device":  {
+    "register_device":  {
         "name": "Name",
         "name_info": "Customize your device name",
         "serial": "Serial",

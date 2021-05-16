@@ -8,10 +8,13 @@ import {XeoTextInput} from "../../components/XeoTextInput";
 
 
 const WEBSOCKET_EVENT = {
-    WIFI_SETTINGS: 'wifi_settings',
-    UPDATE_WIFI_SETTINGS: 'update_wifi_settings',
-    UPDATE_WIFI_SETTINGS_CALLBACK: 'update_wifi_settings_callback',
-
+    GET_DEVICE_STATUS: "get_device_status",
+    DEVICE_STATUS: "device_status",
+    SCAN_NETWORKS: "scan_networks",
+    SCAN_NETWORKS_RESULT: "scan_networks_result",
+    UPDATE_SETTINGS: "update_settings",
+    UPDATE_SETTINGS_RESULT: "update_settings_result",
+    REBOOT: "reboot",
 };
 
 const WEBSOCKET_CONNECTION_STATUS = {
@@ -22,7 +25,7 @@ const WEBSOCKET_CONNECTION_STATUS = {
 
 const IP_TYPE = {
     STATIC: 'static',
-    DYNAMIC: 'dynamic'
+    DYNAMIC: 'DHCP'
 };
 
 export default class extends React.Component {
@@ -30,13 +33,26 @@ export default class extends React.Component {
         super();
         this.state = {
             websocket_connection_status: null,
-            ip_type: IP_TYPE.DYNAMIC,
-            device_current_ip: '',
-            device_ip: '',
-            gateway: '',
-            subnet: '',
-            dns_1: '',
-            dns_2: '',
+
+            device: {
+                connected: null,
+                ssid: '',
+                ip_type: null,
+                ip: '',
+                gateway: '',
+                subnet: '',
+                dns: ''
+            },
+
+            network_settings: {
+                ssid: '',
+                password: '',
+                ip: '',
+                ip_type: IP_TYPE.DYNAMIC,
+                gateway: '',
+                subnet: '',
+                dns: ''
+            },
 
         };
         this.websocket = null;
@@ -68,7 +84,6 @@ export default class extends React.Component {
     }
 
     connectToWebsocket(device_access_point_ip) {
-        console.log('connecting to', device_access_point_ip);
         device_access_point_ip = '192.168.99.30';
         this.websocket = new WebSocket(`http://${device_access_point_ip}/ws`);
         this.websocket.onopen = this.onWebsocketConnect.bind(this);
@@ -86,19 +101,11 @@ export default class extends React.Component {
     onWebsocketMessage({data}) {
         const message = JSON.parse(data);
         switch (message['event']) {
-            case WEBSOCKET_EVENT.UPDATE_WIFI_SETTINGS_CALLBACK:
-                this.updateWifiSettingsCallback(message);
+            case WEBSOCKET_EVENT.DEVICE_STATUS:
+                this.getDeviceStatusCallback(message);
                 break;
-            case WEBSOCKET_EVENT.WIFI_SETTINGS:
-                this.setState({
-                    //wifi_ssid: message['ssid'],
-                    ip_type: message['dhcp'] ? IP_TYPE.DYNAMIC : IP_TYPE.STATIC,
-                    device_ip: message['ip'],
-                    gateway: message['gateway'],
-                    subnet: message['subnet'],
-                    dns_1: message['dns_1'],
-                    dns_2: message['dns_2']
-                });
+            case WEBSOCKET_EVENT.UPDATE_SETTINGS_RESULT:
+                this.updateWifiSettingsCallback(message);
                 break;
             default:
                 console.log('WebsocketEventNotFound');
@@ -115,16 +122,26 @@ export default class extends React.Component {
         })
     }
 
-    websocketSendMessage(event, message) {
-        message['event'] = event;
-        this.websocket.send(JSON.stringify(message));
-    }
-
-    updateWifiSettings() {
-        this.websocketSendMessage(WEBSOCKET_EVENT.UPDATE_WIFI_SETTINGS, {
-            ssid: this.state.device_settings.wifi_ssid,
-            password: this.state.device_settings.wifi_password,
-            dhcp: this.state.ip_type === IP_TYPE.DYNAMIC
+    getDeviceStatusCallback(message) {
+        this.setState({
+            device: {
+                connected: message['connected'],
+                ssid: message['ssid'],
+                ip_type: message['dhcp'] ? IP_TYPE.DYNAMIC : IP_TYPE.STATIC,
+                ip: message['ip'],
+                gateway: message['gateway'],
+                subnet: message['subnet'],
+                dns: message['dns']
+            },
+            network_settings: {
+                ssid: message['ssid'],
+                password: '',
+                ip: message['ip'],
+                ip_type: message['dhcp'] ? IP_TYPE.DYNAMIC : IP_TYPE.STATIC,
+                gateway: message['gateway'],
+                subnet: message['subnet'],
+                dns: message['dns']
+            }
         });
     }
 
@@ -132,33 +149,117 @@ export default class extends React.Component {
         console.log(data);
     }
 
+    websocketSendMessage(event, message) {
+        message['event'] = event;
+        this.websocket.send(JSON.stringify(message));
+    }
+
+    getDeviceStatus() {
+        this.websocketSendMessage(WEBSOCKET_EVENT.GET_DEVICE_STATUS, {});
+    }
+
+    updateWifiSettings() {
+        this.websocketSendMessage(WEBSOCKET_EVENT.UPDATE_SETTINGS, {
+            ssid: this.state.device_settings.ssid,
+            password: this.state.device_settings.password,
+            dhcp: this.state.device_settings.ip_type === IP_TYPE.DYNAMIC,
+            ip: this.state.device_settings.ip,
+            gateway: this.state.device_settings.gateway,
+            subnet: this.state.device_settings.subnet,
+            dns: this.state.device_settings.dns
+        });
+    }
+
     onUpdateWifiSettingsButtonPress() {
         this.updateWifiSettings();
     }
 
-    onIpTypeChange(value) {
-        console.log(value);
+    onSsidChange(value) {
         this.setState({
-            ip_type: value
+            network_settings: {
+                ...this.state.network_settings,
+                ssid: value
+            }
+        });
+    }
+
+    onPasswordChange(value) {
+        this.setState({
+            network_settings: {
+                ...this.state.network_settings,
+                password: value
+            }
+        });
+    }
+
+    onIpTypeChange(value) {
+        this.setState({
+            network_settings: {
+                ...this.state.network_settings,
+                ip_type: value
+            }
         });
     }
 
     onDeviceIpChange(value) {
         this.setState({
-            device_ip: value
+            network_settings: {
+                ...this.state.network_settings,
+                ip: value
+            }
         });
     }
 
     onGatewayChange(value) {
         this.setState({
-            gateway: value
+            network_settings: {
+                ...this.state.network_settings,
+                gateway: value
+            }
         });
     }
 
     onSubnetChange(value) {
         this.setState({
-            subnet: value
-        })
+            network_settings: {
+                ...this.state.network_settings,
+                subnet: value
+            }
+        });
+    }
+
+    renderDeviceStatus(theme, styles) {
+        return (
+            <View
+                style={styles.device_state_container}
+            >
+                <Text
+                    style={[styles.text, styles.device_state_row]}
+                >
+                    Network: connected to {this.state.device.ssid}
+                </Text>
+                <Text
+                    style={[styles.text, styles.device_state_row]}
+                >
+                    Device IP: {this.state.device.ip} ({this.state.device.ip_type})
+                </Text>
+                <Text
+                    style={[styles.text, styles.device_state_row]}
+                >
+                    Gateway: {this.state.device.gateway}
+                </Text>
+                <Text
+                    style={[styles.text, styles.device_state_row]}
+                >
+                    Subnet: {this.state.device.subnet}
+                </Text>
+                <Text
+                    style={[styles.text, styles.device_state_row]}
+                >
+                    Dns: {this.state.device.dns}
+                </Text>
+            </View>
+        )
     }
 
     renderStaticIpSettings(theme, styles) {
@@ -167,34 +268,78 @@ export default class extends React.Component {
                 <Text
                     style={styles.input_title}
                 >
-                    Device ip:
+                    Local ip:
                 </Text>
                 <XeoTextInput
+                    style={styles.text_input}
                     colors={{
                         text: theme.textColor,
                         border: theme.primaryColor
                     }}
-                    placeholder={'Device ip'}
+                    placeholder={'192.168.0.10'}
                     placeholderTextColor={theme.secondaryColor}
-                    style={styles.text_input}
+                    value={this.state.network_settings.ip}
                     onChangeText={this.onDeviceIpChange.bind(this)}
                 />
 
                 <Text
                     style={styles.input_title}
                 >
-                    Gateway ip:
+                    Gateway:
+                </Text>
+                <XeoTextInput
+                    style={styles.text_input}
+                    colors={{
+                        text: theme.textColor,
+                        border: theme.primaryColor
+                    }}
+                    placeholder={'192.168.0.1'}
+                    placeholderTextColor={theme.secondaryColor}
+                    value={this.state.network_settings.gateway}
+                    onChangeText={this.onGatewayChange.bind(this)}
+                />
+                <Text
+                    style={styles.input_title}
+                >
+                    Subnet:
+                </Text>
+                <XeoTextInput
+                    style={styles.text_input}
+                    colors={{
+                        text: theme.textColor,
+                        border: theme.primaryColor
+                    }}
+                    placeholder={'255.255.255.0'}
+                    placeholderTextColor={theme.secondaryColor}
+                    value={this.state.network_settings.subnet}
+                    onChangeText={this.onSubnetChange.bind(this)}
+                />
+            </View>
+        )
+    }
+
+    renderNetworkSettings(theme, styles) {
+        return (
+            <View
+                style={styles.network_settings_container}
+            >
+                <Text
+                    style={styles.input_title}
+                >
+                    Network SSID
                 </Text>
                 <XeoTextInput
                     colors={{
                         text: theme.textColor,
                         border: theme.primaryColor
                     }}
-                    placeholder={'Gateway ip'}
+                    placeholder={'Network SSID'}
                     placeholderTextColor={theme.secondaryColor}
                     style={styles.text_input}
-                    onChangeText={this.onGatewayChange.bind(this)}
+                    value={this.state.network_settings.ssid}
+                    onChangeText={this.onSsidChange.bind(this)}
                 />
+
                 <Text
                     style={styles.input_title}
                 >
@@ -205,54 +350,50 @@ export default class extends React.Component {
                         text: theme.textColor,
                         border: theme.primaryColor
                     }}
-                    placeholder={'Subnet'}
+                    placeholder={'Network SSID'}
                     placeholderTextColor={theme.secondaryColor}
                     style={styles.text_input}
-                    onChangeText={this.onSubnetChange.bind(this)}
+                    secureTextEntry={true}
+                    value={this.state.network_settings.password}
+                    onChangeText={this.onPasswordChange.bind(this)}
                 />
-            </View>
-        )
-    }
 
-    renderDeviceStatus(theme, styles) {
-        return (
-            <View
-                style={{
-                    borderBottomWidth: 2,
-                    borderColor: theme.primaryColor,
-                    padding: 10
-                }}
-            >
                 <Text
-                    style={[styles.text]}
+                    style={styles.input_title}
                 >
-                    Network: connected to Paltinis2
+                    Ip settings:
                 </Text>
-                <Text
-                    style={[styles.text]}
+                <XeoPicker
+                    colors={{
+                        text: theme.textColor,
+                        border: theme.primaryColor
+                    }}
+                    style={styles.text_input}
+                    selectedValue={this.state.network_settings.ip_type}
+                    onValueChange={this.onIpTypeChange.bind(this)}
                 >
-                    Device IP: {this.state.device_ip} ({this.state.ip_type})
-                </Text>
-                <Text
-                    style={[styles.text]}
+                    <Picker.Item label={'Dynamic ip'} value={IP_TYPE.DYNAMIC}/>
+                    <Picker.Item label={'Static ip'} value={IP_TYPE.STATIC}/>
+                </XeoPicker>
+
+                {
+                    this.state.network_settings.ip_type === IP_TYPE.STATIC
+                    &&
+                    this.renderStaticIpSettings(theme, styles)
+                }
+
+                <View
+                    style={styles.button}
                 >
-                    Gateway: {this.state.gateway}
-                </Text>
-                <Text
-                    style={[styles.text]}
-                >
-                    Subnet: {this.state.subnet}
-                </Text>
-                <Text
-                    style={[styles.text]}
-                >
-                    DNS 1: {this.state.dns_1}
-                </Text>
-                <Text
-                    style={[styles.text]}
-                >
-                    DNS 2: {this.state.dns_2}
-                </Text>
+                    <XeoButton
+                        title={'Update settings'}
+                        onPress={this.onUpdateWifiSettingsButtonPress.bind(this)}
+                        colors={{
+                            text: theme.lightColor,
+                            background: theme.primaryColor
+                        }}
+                    />
+                </View>
             </View>
         )
     }
@@ -277,71 +418,9 @@ export default class extends React.Component {
                         {
                             this.renderDeviceStatus(theme, styles)
                         }
-                        <Text
-                            style={styles.input_title}
-                        >
-                            Network SSID
-                        </Text>
-                        <XeoTextInput
-                            colors={{
-                                text: theme.textColor,
-                                border: theme.primaryColor
-                            }}
-                            placeholder={'Network SSID'}
-                            placeholderTextColor={theme.secondaryColor}
-                            style={styles.text_input}
-                        />
-
-                        <Text
-                            style={styles.input_title}
-                        >
-                            Network password
-                        </Text>
-                        <XeoTextInput
-                            colors={{
-                                text: theme.textColor,
-                                border: theme.primaryColor
-                            }}
-                            placeholder={'Network SSID'}
-                            placeholderTextColor={theme.secondaryColor}
-                            style={styles.text_input}
-                        />
-
-                        <Text
-                            style={styles.input_title}
-                        >
-                            DHCP:
-                        </Text>
-                        <XeoPicker
-                            colors={{
-                                text: theme.lightColor,
-                                border: theme.primaryColor
-                            }}
-                            style={styles.text_input}
-                            selectedValue={this.state.ip_type}
-                            onValueChange={this.onIpTypeChange.bind(this)}
-                        >
-                            <Picker.Item label={'Dynamic ip'} value={IP_TYPE.DYNAMIC}/>
-                            <Picker.Item label={'Static ip'} value={IP_TYPE.STATIC}/>
-                        </XeoPicker>
-
                         {
-                            this.state.ip_type === IP_TYPE.STATIC && this.renderStaticIpSettings(theme, styles)
+                            this.renderNetworkSettings(theme, styles)
                         }
-
-                        <View
-                            style={styles.button}
-                        >
-                            <XeoButton
-                                title={'Update settings'}
-                                onPress={this.onUpdateWifiSettingsButtonPress.bind(this)}
-                                colors={{
-                                    text: theme.lightColor,
-                                    background: theme.primaryColor
-                                }}
-                            />
-                        </View>
-
                     </View>
                 }
             </ScrollView>
@@ -362,19 +441,31 @@ const Style = (theme) => ({
         fontSize: 20,
         borderBottomWidth: 2,
         borderColor: theme.primaryColor,
-        paddingVertical: 10,
+        padding: '3%',
     },
     text_input: {
-        margin: 10
+        marginVertical: 10
     },
     input_title: {
         color: theme.textColor,
-        fontSize: 18,
+        fontSize: 16,
     },
     button: {
         padding: 10
     },
     text: {
         color: theme.textColor
+    },
+    device_state_container: {
+        borderBottomWidth: 2,
+        borderColor: theme.primaryColor,
+        padding: '3%'
+    },
+    device_state_row: {
+        fontSize: 16,
+        paddingVertical: 2
+    },
+    network_settings_container: {
+        padding: '3%'
     }
 });

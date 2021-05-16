@@ -4,7 +4,7 @@ import LoginScreen from "../screens/Account/LoginScreen";
 import {t} from "i18n-js";
 import {AsyncStorage, TouchableOpacity} from "react-native";
 import {Icon} from "react-native-elements";
-import AddDeviceScreen from "../screens/Devices/AddDeviceScreen";
+import RegisterDeviceScreen from "../screens/Devices/RegisterDeviceScreen";
 import DeviceRemoteControlScreen from "../screens/Devices/DeviceRemoteControlScreen";
 import DeviceSettingsScreen2 from "../screens/Devices/Settings/DeviceSettings";
 import TimedActionsListScreen from "../screens/Devices/TimedActions/TimedActionsListScreen";
@@ -82,9 +82,9 @@ export const StackNavigator = createStackNavigator({
 		})
 	},
 	add_device: {
-		screen: AddDeviceScreen,
+		screen: RegisterDeviceScreen,
 		navigationOptions: ({screenProps}) => ({
-			title: t('add_device.navigation.title'),
+			title: t('register_device.navigation.title'),
 			headerStyle: {backgroundColor: screenProps.theme.headerBackgroundColor},
 			headerTintColor: screenProps.theme.headerTextColor,
 		})

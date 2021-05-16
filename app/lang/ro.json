@@ -147,7 +147,7 @@
             "sensors": "SENZORI"
         }
     },
-    "add_device":  {
+    "register_device":  {
         "name": "Nume",
         "name_info": "Nume dispozitiv",
         "serial": "Cod serial",

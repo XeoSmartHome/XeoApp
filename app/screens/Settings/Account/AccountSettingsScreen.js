@@ -1,22 +1,17 @@
 import React, {Component} from "react";
 import {
-	Image,
-	SafeAreaView,
 	Text,
-	TextInput,
 	TouchableOpacity,
 	StyleSheet,
-	Button,
 	View,
 	ScrollView
 } from "react-native";
 import {NavigationActions, StackActions} from 'react-navigation';
-import I18n from 'i18n-js'
 import {API} from "../../../api/api";
+import {translator} from "../../../lang/translator";
 
 
-const t = (key) => I18n.t('account_settings.' + key);
-
+const t = translator('account_settings');
 
 export default class AccountSettingsScreen extends Component {
 	constructor() {
@@ -27,6 +22,7 @@ export default class AccountSettingsScreen extends Component {
 			user_email: '',
 			user_phone_number: ''
 		};
+		this.onSignOutButtonPress = this.onSignOutButtonPress.bind(this);
 	}
 
 	componentDidMount() {
@@ -75,20 +71,15 @@ export default class AccountSettingsScreen extends Component {
 
 	render() {
 		const {theme} = this.props.screenProps;
+		const styles = Styles(theme);
 		return (
 			<ScrollView
-				style={{
-					flex: 1,
-					backgroundColor: theme.screenBackgroundColor,
-					padding: '3%'
-				}}
+				style={styles.screen}
 			>
 
 				<View style={styles.row}>
 					<Text
-						style={[styles.row_text, {
-							color: theme.textColor
-						}]}
+						style={styles.rowText}
 					>
 						{t('user')}: {this.state.first_name} {this.state.last_name}
 					</Text>
@@ -96,15 +87,14 @@ export default class AccountSettingsScreen extends Component {
 
 				<View style={styles.row}>
 					<Text
-						style={[styles.row_text, {
-							color: theme.textColor
-						}]}
+						style={styles.rowText}
 					>
 						{t('email')}: {this.state.email}
 					</Text>
 				</View>
 
 				<View
+					// TODO: remove inline style
 					style={{
 						borderTopColor: theme.textColor,
 						borderTopWidth: 2,
@@ -122,7 +112,7 @@ export default class AccountSettingsScreen extends Component {
 								color: theme.textColor,
 								fontSize: 20
 							}}
-							onPress={() => this.onSignOutButtonPress()}
+							onPress={this.onSignOutButtonPress}
 						>
 							{t('sign_out')}
 						</Text>
@@ -136,11 +126,17 @@ export default class AccountSettingsScreen extends Component {
 }
 
 
-const styles = StyleSheet.create({
+const Styles = (theme) => ({
+	screen: {
+		flex: 1,
+		backgroundColor: theme.screenBackgroundColor,
+		padding: '3%'
+	},
 	row: {
 		paddingVertical: '3%',
 	},
-	row_text: {
+	rowText: {
 		fontSize: 20,
+		color: theme.textColor
 	}
 });

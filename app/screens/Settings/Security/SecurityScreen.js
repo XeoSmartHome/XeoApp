@@ -7,55 +7,67 @@ import I18n from "i18n-js";
 const t = (key) => I18n.t('security.' + key)
 
 
-export default class SecurityScreen extends Component{
-	constructor() {
-		super();
-	}
+export default class SecurityScreen extends Component {
+    constructor() {
+        super();
+        this.onChangePasswordButtonPress = this.onChangePasswordButtonPress.bind(this);
+        this.onAppPinButtonPress = this.onAppPinButtonPress.bind(this);
+    }
 
-	render(){
-		const {mode, theme, setTheme} = this.props.screenProps;
-		return(
-			<ScrollView style={{
-				backgroundColor: theme.screenBackgroundColor,
-				flex: 1,
-			}}>
+    onChangePasswordButtonPress() {
+        this.props.navigation.navigate('change_password');
+    }
 
-				<TouchableOpacity
-					style={styles.row}
-					onPress={ () => { this.props.navigation.navigate('change_password') } }
-				>
-					<Text style={[styles.button_text, {
-						color: theme.textColor
-					}]}>
-						{t('change_password')}
-					</Text>
-				</TouchableOpacity>
+    onAppPinButtonPress() {
+        this.props.navigation.navigate('pin_settings')
+    }
 
-				<TouchableOpacity
-					style={styles.row}
-					onPress={ () => { this.props.navigation.navigate('pin_settings') } }
-				>
-					<Text style={[styles.button_text, {
-						color: theme.textColor
-					}]}>
-						{t('app_pin')}
-					</Text>
-				</TouchableOpacity>
+    render() {
+        const {theme} = this.props.screenProps;
+        const styles = Styles(theme);
+        return (
+            <ScrollView style={styles.screen}>
 
-			</ScrollView>
-		)
-	}
+                <TouchableOpacity
+                    style={styles.row}
+                    onPress={this.onChangePasswordButtonPress}
+                >
+                    <Text style={styles.buttonText}>
+                        {t('change_password')}
+                    </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                    style={styles.row}
+                    onPress={this.onAppPinButtonPress}
+                >
+                    <Text style={styles.buttonText}>
+                        {t('app_pin')}
+                    </Text>
+                </TouchableOpacity>
+
+            </ScrollView>
+        )
+    }
 }
 
 
-const styles = StyleSheet.create({
-	row: {
-		paddingVertical: '3%',
-		paddingHorizontal: '1%',
-		width: '94%',
-		marginHorizontal: '3%',
-	},
-	button_text:{
-		fontSize: 20,
-	}
+const Styles = (theme) => ({
+    screen: {
+        backgroundColor: theme.screenBackgroundColor
+    },
+    row: {
+        paddingVertical: '3%',
+        paddingHorizontal: '1%',
+        width: '94%',
+        marginHorizontal: '3%',
+    },
+    button: {
+        flexDirection: 'row'
+    },
+    buttonText: {
+        fontSize: 20,
+        marginLeft: 8,
+        color: theme.textColor
+    }
 });

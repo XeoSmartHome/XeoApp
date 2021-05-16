@@ -4,11 +4,13 @@ import {
     BOOTSTRAP_COLOR_LIGHT,
     BOOTSTRAP_COLOR_PRIMARY,
 } from "../../../themes/bootstrap_colors";
-import I18n from 'i18n-js';
 import {API} from "../../../api/api";
+import {translator} from "../../../lang/translator";
+import {XeoTextInput} from "../../../components/XeoTextInput";
+import {XeoButton} from "../../../components/XeoButton";
 
 
-const t = (key) => I18n.t('change_password.' + key);
+const t = translator('change_password');
 
 
 export default class ChangePasswordScreen extends Component {
@@ -24,6 +26,7 @@ export default class ChangePasswordScreen extends Component {
             password_dont_match: null,
             password_updated: false
         }
+        this.onUpdatePasswordButtonPress = this.onUpdatePasswordButtonPress.bind(this);
     }
 
     checkNewPasswords(new_password, confirm_new_password) {
@@ -84,20 +87,30 @@ export default class ChangePasswordScreen extends Component {
         }
     }
 
+    onUpdatePasswordButtonPress() {
+        this.updatePassword();
+    }
+
     render() {
         const {theme} = this.props.screenProps;
+        const styles = Styles(theme);
+        const text_input_colors = {
+            text: theme.textColor,
+            border: theme.primaryColor
+        }
+
         const button_disabled = this.state.wrong_password || this.state.empty_password || this.state.password_to_weak ||
             this.state.password_dont_match || this.state.new_password.length === 0;
+
         return (
             <ScrollView
                 style={{
                     backgroundColor: theme.screenBackgroundColor
                 }}
             >
-                <TextInput
-                    style={[styles.text_input, {
-                        color: theme.textColor
-                    }]}
+                <XeoTextInput
+                    style={styles.textInput}
+                    colors={text_input_colors}
                     value={this.state.current_password}
                     onChangeText={(value) => {
                         this.setState({
@@ -114,10 +127,9 @@ export default class ChangePasswordScreen extends Component {
                     autoCorrect={false}
                 />
 
-                <TextInput
-                    style={[styles.text_input, {
-                        color: theme.textColor
-                    }]}
+                <XeoTextInput
+                    style={styles.textInput}
+                    colors={text_input_colors}
                     value={this.state.new_password}
                     onChangeText={(value) => {
                         this.setState({new_password: value});
@@ -130,10 +142,9 @@ export default class ChangePasswordScreen extends Component {
                     autoCorrect={false}
                 />
 
-                <TextInput
-                    style={[styles.text_input, {
-                        color: theme.textColor
-                    }]}
+                <XeoTextInput
+                    style={styles.textInput}
+                    colors={text_input_colors}
                     value={this.state.confirm_new_password}
                     onChangeText={(value) => {
                         this.setState({confirm_new_password: value});
@@ -146,66 +157,48 @@ export default class ChangePasswordScreen extends Component {
                     autoCorrect={false}
                 />
 
+                <Text
+                    style={[styles.warningText, {
+                        color: this.state.password_updated ? theme.successColor : theme.dangerColor
+                    }]}
+                >
+                    {this.getMessage()}
+                </Text>
+
                 <View
-                    style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        margin: '5%'
-                    }}>
-                    <Text
-                        style={[styles.warning_text, {
-                            color: this.state.password_updated ? theme.successColor : theme.dangerColor
-                        }]}
-                    >
-                        {this.getMessage()}
-                    </Text>
-                    <TouchableOpacity
-                        style={[styles.save_button, {
-                            opacity: button_disabled ? theme.buttonDisabledOpacity : 1
-                        }]}
-                        onPress={() => {
-                            this.updatePassword()
+                    style={styles.updateButtonContainer}
+                >
+                    <XeoButton
+                        title={t('save_button')}
+                        colors={{
+                            text: theme.lightColor,
+                            background: theme.primaryColor
                         }}
                         disabled={button_disabled}
-                    >
-                        <Text style={styles.save_button_text}>
-                            {t('save_button')}
-                        </Text>
-                    </TouchableOpacity>
+                        onPress={this.onUpdatePasswordButtonPress}
+                    />
                 </View>
+
             </ScrollView>
         )
     }
 }
 
 
-const styles = StyleSheet.create({
-    text_input: {
-        fontSize: 20,
-        borderWidth: 2,
-        borderColor: 'gray',
-        borderRadius: 8,
-        padding: 8,
-        width: '90%',
+const Styles = (theme) => ({
+    textInput: {
         alignSelf: 'center',
+        width: '90%',
         marginTop: 20,
     },
-    save_button: {
-        backgroundColor: BOOTSTRAP_COLOR_PRIMARY,
-        width: '25%',
-        borderRadius: 10,
-        padding: 5,
-        justifyContent: 'center',
-        height: 40
+    updateButtonContainer: {
+        width: '35%',
+        alignSelf: 'flex-end',
+        marginRight: '5%'
     },
-    save_button_text: {
-        fontSize: 20,
-        color: BOOTSTRAP_COLOR_LIGHT,
-        alignSelf: 'center'
-    },
-    warning_text: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        width: '70%'
+    warningText: {
+        width: '90%',
+        alignSelf: 'center',
+        marginVertical: 20
     }
 });

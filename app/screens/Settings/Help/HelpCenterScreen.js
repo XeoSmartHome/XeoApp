@@ -17,10 +17,3 @@ export default class HelpCenterScreen extends React.Component{
 		)
 	}
 }
-
-
-const styles = StyleSheet.create({
-	screen: {
-		flex: 1
-	}
-});

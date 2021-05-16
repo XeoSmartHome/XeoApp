@@ -19,15 +19,6 @@ export interface XeoButtonProps {
 }
 
 
-const defaultXeoButtonProps : XeoButtonProps = {
-    size: 'medium',
-    colors: {
-        background: 'blue',
-        text: 'white'
-    },
-    disabled: false
-};
-
 export const XeoButton = (props: XeoButtonProps) => {
     return (
         <TouchableOpacity
@@ -35,7 +26,8 @@ export const XeoButton = (props: XeoButtonProps) => {
             style={{
                 backgroundColor: props.colors.background,
                 borderRadius: 8,
-                padding: 6
+                padding: 6,
+                opacity: props.disabled === true ? 0.5 : 1,
             }}
             disabled={props.disabled}
         >

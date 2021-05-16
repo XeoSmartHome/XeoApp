@@ -13,7 +13,7 @@ import {
     ActivityIndicator
 } from 'react-native';
 import {MaterialCommunityIcons} from '@expo/vector-icons';
-import io from "socket.io-client";
+//import io from "socket.io-client";
 import {Picker} from "@react-native-picker/picker";
 import {API} from "../../api/api";
 import {XeoButton} from "../../components/XeoButton";

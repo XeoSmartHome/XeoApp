@@ -1,54 +1,60 @@
 import React, {Component} from "react";
 import {
-	Text,
-	TouchableOpacity,
-	StyleSheet,
-	ScrollView
+    Text,
+    TouchableOpacity,
+    StyleSheet,
+    ScrollView
 } from "react-native";
-import I18n from 'i18n-js';
+import {translator} from "../../../lang/translator";
 
 
-const t = (key) => I18n.t('help.' + key);
+const t = translator('help');
 
 
-export default class HelpScreen extends Component{
-	constructor() {
-		super();
-	}
+export default class HelpScreen extends Component {
+    constructor() {
+        super();
+        this.onHelpCenterButtonPress = this.onHelpCenterButtonPress.bind(this);
+    }
 
-	render(){
-		const {theme} = this.props.screenProps;
-		return(
-			<ScrollView style={{
-				backgroundColor: theme.screenBackgroundColor
-			}}>
+    onHelpCenterButtonPress() {
+        this.props.navigation.navigate('help_center');
+    }
 
-				<TouchableOpacity
-					style={styles.row}
-					onPress={ () => this.props.navigation.navigate('help_center') }
-				>
-					<Text style={[styles.row_text, {
-						color: theme.textColor
-					}]}>
-						{t('help_center')}
-					</Text>
-				</TouchableOpacity>
+    render() {
+        const {theme} = this.props.screenProps;
+        const styles = Styles(theme);
+        return (
+            <ScrollView style={styles.screen}>
 
-			</ScrollView>
-		)
+                <TouchableOpacity
+                    style={styles.row}
+                    onPress={this.onHelpCenterButtonPress}
+                >
+                    <Text style={styles.rowText}>
+                        {t('help_center')}
+                    </Text>
+                </TouchableOpacity>
 
-	}
+            </ScrollView>
+        )
+
+    }
 }
 
 
-const styles = StyleSheet.create({
-	row: {
-		paddingVertical: '3%',
-		paddingHorizontal: '1%',
-		width: '94%',
-		marginHorizontal: '3%',
-	},
-	row_text:{
-		fontSize: 20,
-	}
+const Styles = (theme) => ({
+    screen: {
+        backgroundColor: theme.screenBackgroundColor
+    },
+    row: {
+        paddingVertical: '3%',
+        paddingHorizontal: '1%',
+        width: '94%',
+        marginHorizontal: '3%',
+    },
+    rowText: {
+        fontSize: 20,
+        color: theme.textColor
+    }
 });

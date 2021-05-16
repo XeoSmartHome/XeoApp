@@ -14,7 +14,7 @@ const SettingsOption = ({title, icon, onPress, theme}) => {
                               onPress={onPress}
             >
                 {icon}
-                <Text style={styles.button_text}>
+                <Text style={styles.buttonText}>
                     {title}
                 </Text>
             </TouchableOpacity>
@@ -167,7 +167,7 @@ const Styles = (theme) => ({
     button: {
         flexDirection: 'row'
     },
-    button_text: {
+    buttonText: {
         fontSize: 20,
         marginLeft: 8,
         color: theme.textColor

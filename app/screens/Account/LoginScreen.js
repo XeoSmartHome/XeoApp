@@ -88,8 +88,8 @@ export default class LoginScreen extends Component {
 	}
 
 	go_to_main_page() {
-		//this.props.navigation.replace('main', {});
-		this.props.navigation.replace('device_setup', {});
+		this.props.navigation.replace('main', {});
+		//this.props.navigation.replace('device_setup', {});
 	}
 
 	login() {

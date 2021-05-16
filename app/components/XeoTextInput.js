@@ -10,7 +10,7 @@ export interface XeoTextInputProps extends TextInputProps {
 }
 
 const defaultXeoTextInputProps = {
-    fontSize: 18
+    fontSize: 16
 }
 
 export const XeoTextInput = (props: XeoTextInputProps) => {
@@ -21,7 +21,7 @@ export const XeoTextInput = (props: XeoTextInputProps) => {
                 color: props.colors.text,
                 borderColor: props.colors.border,
                 borderWidth: 2,
-                padding: 8,
+                padding: 6,
                 borderRadius: 6,
                 fontSize: props.fontSize || defaultXeoTextInputProps.fontSize
             }, props.style]}
